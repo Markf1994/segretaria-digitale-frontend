@@ -1,2 +1,21 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+input, select, button {
+  font-size: 1rem;
+}
 
-body { font-family: system-ui, sans-serif; margin: 0; padding: 0; }
+// src/main.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
