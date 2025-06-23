@@ -1,0 +1,9 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+input, select, button {
+  font-size: 1rem;
+}
