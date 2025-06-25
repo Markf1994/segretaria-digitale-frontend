@@ -1,0 +1,49 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
+import "./LoginPage.css";
+
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await api.post("/login", { email, password });
+      localStorage.setItem("token", res.data.access_token);
+      navigate("/");
+    } catch {
+      alert("Credenziali errate");
+    }
+  };
+
+  return (
+    <div className="login-wrapper">
+      <img src="/logo.png" alt="Logo" className="login-logo" />
+      <form className="login-form" onSubmit={onSubmit}>
+        <h1>Segretaria Digitale</h1>
+        <input
+          type="email"
+          placeholder="Email istituzionale"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Accedi</button>
+      </form>
+    </div>
+  );
+};
+
+export default LoginPage;
+
+
