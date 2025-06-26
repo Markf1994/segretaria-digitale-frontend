@@ -1,11 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/auth";
 import "./Header.css";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const setToken = useAuthStore(s => s.setToken);
   const logout = () => {
-    localStorage.removeItem("token");
+    setToken(null);
     navigate("/login");
   };
 

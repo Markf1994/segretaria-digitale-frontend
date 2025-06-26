@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { useAuthStore } from "../store/auth";
 import "./LoginPage.css";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const setToken = useAuthStore(s => s.setToken);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await api.post("/login", { email, password });
-      localStorage.setItem("token", res.data.access_token);
+      setToken(res.data.access_token);
       navigate("/");
     } catch {
       alert("Credenziali errate");
