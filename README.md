@@ -43,6 +43,16 @@ npm run serve
 
 This serves the `dist` directory using Vite's preview mode.
 
+## Testing
+
+Run the Jest test suite:
+
+```bash
+npm test
+```
+
+The tests use Jest together with React Testing Library.
+
 ## Backend API
 
 The frontend expects a REST backend exposing at least the following endpoints:
