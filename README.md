@@ -51,3 +51,7 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `GET /determinazioni` – list existing determinations.
 - `POST /determinazioni` – create a new determination.
 
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
