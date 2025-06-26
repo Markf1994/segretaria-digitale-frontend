@@ -1,0 +1,19 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+}
+.calendar-container {
+  width: 100%;
+}
+.notifications ul {
+  list-style: none;
+  padding: 0;
+}
+.notifications li {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
