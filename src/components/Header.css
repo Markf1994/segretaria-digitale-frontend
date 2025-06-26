@@ -1,8 +1,9 @@
 .site-header {
+  /* See "grafica istituzionale" palette https://designers.italia.it/kit/grafica/ */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #800000;
+  background-color: #0066cc;
   color: #fff;
   padding: 0.5rem 1rem;
 }
@@ -21,7 +22,7 @@
 }
 .site-header button {
   background: #fff;
-  color: #800000;
+  color: #0066cc;
   border: none;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
