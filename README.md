@@ -42,3 +42,12 @@ npm run serve
 ```
 
 This serves the `dist` directory using Vite's preview mode.
+
+## Backend API
+
+The frontend expects a REST backend exposing at least the following endpoints:
+
+- `POST /login` – authenticate the user and return an `access_token`.
+- `GET /determinazioni` – list existing determinations.
+- `POST /determinazioni` – create a new determination.
+
