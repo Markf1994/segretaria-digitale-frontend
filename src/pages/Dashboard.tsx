@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { useNotificheStore } from '../store/notifiche';
 
 interface EventItem { id: string; title: string; date: string; }
 interface TodoItem { id: string; text: string; due: string; }
@@ -11,11 +12,18 @@ export default function Dashboard() {
   const [events] = useLocalStorage<EventItem[]>('events', []);
   const [todos] = useLocalStorage<TodoItem[]>('todos', []);
   const [determinations] = useLocalStorage<Determination[]>('determinations', []);
+  const notifications = useNotificheStore(s => s.notifications);
+  const fetchNotifications = useNotificheStore(s => s.fetch);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   const today = new Date();
   const upcomingEvents = events.filter(e => differenceInCalendarDays(parseISO(e.date), today) <= 3);
   const upcomingTodos = todos.filter(t => differenceInCalendarDays(parseISO(t.due), today) <= 3);
   const upcomingDeterminations = determinations.filter(d => differenceInCalendarDays(parseISO(d.due), today) <= 7);
+  const unreadNotifications = notifications.filter(n => !n.read);
 
   return (
     <div className="dashboard">
@@ -27,6 +35,17 @@ export default function Dashboard() {
           width="100%"
           height="600"
         ></iframe>
+      </div>
+      <div className="notifications">
+        <h2>Ultime notifiche</h2>
+        <ul>
+          {unreadNotifications.map(n => (
+            <li key={n.id}>{n.message}</li>
+          ))}
+          {!unreadNotifications.length && (
+            <li>Nessuna notifica.</li>
+          )}
+        </ul>
       </div>
       <div className="notifications">
         <h2>Prossime scadenze</h2>
