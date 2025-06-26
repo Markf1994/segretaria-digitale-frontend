@@ -3,16 +3,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0066cc;
+  background-color: #A52019;
   color: #fff;
-  padding: 1rem 1.5rem;
+  padding: 1.5rem 1.5rem;
 }
 .site-header nav a {
   color: #fff;
   margin-right: 1rem;
   text-decoration: none;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 .site-header nav a:hover {
   text-decoration: underline;
@@ -22,16 +22,16 @@
   align-items: center;
 }
 .site-header h1 {
-  font-size: 1.6rem;
+  font-size: 2rem;
   margin: 0;
 }
 .small-logo {
-  height: 40px;
+  height: 60px;
   margin-right: 0.5rem;
 }
 .site-header button {
   background: #fff;
-  color: #0066cc;
+  color: #A52019;
   border: none;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
