@@ -1,0 +1,29 @@
+.list-page {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.item-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.item-form input {
+  flex: 1;
+  padding: 0.5rem;
+}
+.item-list {
+  list-style: none;
+  padding: 0;
+}
+.item-list li {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.item-list button {
+  margin-left: 0.5rem;
+}

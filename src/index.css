@@ -88,3 +88,11 @@ body {
   }
 }
 
+
+/* Layout di base */
+body, html, #root {
+  height: 100%;
+}
+.app-container {
+  padding: 1rem;
+}
