@@ -22,7 +22,7 @@ const Header: React.FC = () => {
     <header className="site-header">
       <div className="logo-title">
         <img src="/logo.png" alt="Logo" className="small-logo" />
-        <h1>Polizia Locale Castione Presolana</h1>
+        <h1>Polizia Locale - Castione della Presolana</h1>
       </div>
       <nav>
         <Link to="/">Home</Link>
