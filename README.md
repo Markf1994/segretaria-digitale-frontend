@@ -15,6 +15,8 @@ npm install
 
 ```
 VITE_API_URL=<url-of-your-api>
+VITE_GOOGLE_CLIENT_ID=<google-oauth-client-id>
+VITE_GOOGLE_API_KEY=<google-api-key>
 ```
 
 ## Development

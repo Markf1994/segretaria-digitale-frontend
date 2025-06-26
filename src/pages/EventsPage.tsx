@@ -1,30 +1,37 @@
-import React, { useState } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
+import React, { useEffect, useState } from 'react';
 import './ListPages.css';
-
-interface EventItem { id: string; title: string; date: string; }
+import { signIn, listEvents, createEvent, CalendarEvent } from '../api/googleCalendar';
 
 export default function EventsPage() {
-  const [events, setEvents] = useLocalStorage<EventItem[]>('events', []);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
-  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const resetForm = () => { setTitle(''); setDate(''); setEditingId(null); };
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !date) return;
-    if (editingId) {
-      setEvents(events.map(ev => ev.id === editingId ? { ...ev, title, date } : ev));
-    } else {
-      setEvents([...events, { id: Date.now().toString(), title, date }]);
+  const fetchEvents = async () => {
+    try {
+      const evs = await listEvents();
+      setEvents(evs);
+    } catch (err) {
+      console.error('Failed to load events', err);
     }
-    resetForm();
   };
 
-  const onEdit = (item: EventItem) => { setEditingId(item.id); setTitle(item.title); setDate(item.date); };
-  const onDelete = (id: string) => setEvents(events.filter(e => e.id !== id));
+  useEffect(() => {
+    signIn().then(fetchEvents).catch(console.error);
+  }, []);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !date) return;
+    await createEvent({
+      summary: title,
+      start: { date },
+      end: { date }
+    });
+    setTitle('');
+    setDate('');
+    fetchEvents();
+  };
 
   return (
     <div className="list-page">
@@ -32,17 +39,12 @@ export default function EventsPage() {
       <form onSubmit={onSubmit} className="item-form">
         <input placeholder="Titolo" value={title} onChange={e => setTitle(e.target.value)} />
         <input type="date" value={date} onChange={e => setDate(e.target.value)} />
-        <button type="submit">{editingId ? 'Salva' : 'Aggiungi'}</button>
-        {editingId && <button type="button" onClick={resetForm}>Annulla</button>}
+        <button type="submit">Aggiungi</button>
       </form>
       <ul className="item-list">
         {events.map(ev => (
           <li key={ev.id}>
-            <span>{ev.title} – {new Date(ev.date).toLocaleDateString()}</span>
-            <div>
-              <button onClick={() => onEdit(ev)}>Modifica</button>
-              <button onClick={() => onDelete(ev.id)}>Elimina</button>
-            </div>
+            <span>{ev.summary} – {new Date(ev.start.date || ev.start.dateTime).toLocaleDateString()}</span>
           </li>
         ))}
       </ul>
