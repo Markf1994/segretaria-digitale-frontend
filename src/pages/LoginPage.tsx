@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuthStore } from "../store/auth";
+import Footer from "../components/Footer";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -21,10 +22,11 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        <img src="/logo.png" alt="Logo" className="login-logo" />
-        <form className="login-form" onSubmit={onSubmit}>
+    <>
+      <div className="login-page">
+        <div className="login-card">
+          <img src="/logo.png" alt="Logo" className="login-logo" />
+          <form className="login-form" onSubmit={onSubmit}>
           <h1>Segretaria Digitale</h1>
           <input
             type="email"
@@ -40,10 +42,12 @@ const LoginPage: React.FC = () => {
             onChange={e => setPassword(e.target.value)}
             required
           />
-          <button type="submit">Accedi</button>
-        </form>
+            <button type="submit">Accedi</button>
+          </form>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

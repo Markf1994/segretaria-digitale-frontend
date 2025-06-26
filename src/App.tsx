@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import LoginPage from "./pages/LoginPage";
@@ -25,6 +26,7 @@ const ProtectedLayout: React.FC = () => (
     <main className="app-container">
       <Outlet />
     </main>
+    <Footer />
   </>
 );
 
