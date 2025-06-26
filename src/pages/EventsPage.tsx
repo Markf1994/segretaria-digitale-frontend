@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import { signIn, listEvents, createEvent } from '../api/googleCalendar';
 import './ListPages.css';
 
 interface EventItem { id: string; title: string; date: string; }
@@ -20,9 +20,15 @@ export default function EventsPage() {
     const fetchEvents = async () => {
       if (navigator.onLine) {
         try {
-          const res = await api.get<EventItem[]>('/events');
-          setEvents(res.data);
-          saveLocal(res.data);
+          await signIn();
+          const res = await listEvents();
+          const mapped = res.map((ev: any) => ({
+            id: ev.id,
+            title: ev.summary,
+            date: ev.start?.date || ev.start?.dateTime?.slice(0, 10),
+          }));
+          setEvents(mapped);
+          saveLocal(mapped);
           return;
         } catch {
           // fall back to local storage
@@ -39,30 +45,20 @@ export default function EventsPage() {
     if (!title || !date) return;
 
     if (editingId) {
-      if (navigator.onLine) {
-        try {
-          const res = await api.put<EventItem>(`/events/${editingId}`,
-            { title, date });
-          const updated = events.map(ev => ev.id === editingId ? res.data : ev);
-          setEvents(updated);
-          saveLocal(updated);
-        } catch {
-          const updated = events.map(ev =>
-            ev.id === editingId ? { ...ev, title, date } : ev);
-          setEvents(updated);
-          saveLocal(updated);
-        }
-      } else {
-        const updated = events.map(ev =>
-          ev.id === editingId ? { ...ev, title, date } : ev);
-        setEvents(updated);
-        saveLocal(updated);
-      }
+      const updated = events.map(ev =>
+        ev.id === editingId ? { ...ev, title, date } : ev);
+      setEvents(updated);
+      saveLocal(updated);
     } else {
       if (navigator.onLine) {
         try {
-          const res = await api.post<EventItem>('/events', { title, date });
-          const updated = [...events, res.data];
+          const res = await createEvent({
+            summary: title,
+            start: { date },
+            end: { date },
+          });
+          const newItem = { id: res.id, title, date } as EventItem;
+          const updated = [...events, newItem];
           setEvents(updated);
           saveLocal(updated);
         } catch {
@@ -83,14 +79,7 @@ export default function EventsPage() {
   };
 
   const onEdit = (item: EventItem) => { setEditingId(item.id); setTitle(item.title); setDate(item.date); };
-  const onDelete = async (id: string) => {
-    if (navigator.onLine) {
-      try {
-        await api.delete(`/events/${id}`);
-      } catch {
-        // ignore and remove locally
-      }
-    }
+  const onDelete = (id: string) => {
     const updated = events.filter(e => e.id !== id);
     setEvents(updated);
     saveLocal(updated);
