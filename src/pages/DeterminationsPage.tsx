@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
+import React, { useEffect, useState } from 'react';
+import {
+  listDeterminations,
+  createDetermination,
+  updateDetermination,
+  deleteDetermination,
+  Determination,
+} from '../api/determinations';
 import './ListPages.css';
 
-interface Determination {
-  id: string;
-  capitolo: string;
-  numero: string;
-  somma: number;
-  scadenza: string;
-}
-
 const DeterminationsPage: React.FC = () => {
-  const [items, setItems] = useLocalStorage<Determination[]>('determinations', []);
+  const [items, setItems] = useState<Determination[]>([]);
   const [capitolo, setCapitolo] = useState('');
   const [numero, setNumero] = useState('');
   const [somma, setSomma] = useState('');
   const [scadenza, setScadenza] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
+
+  const saveLocal = (data: Determination[]): void => {
+    localStorage.setItem('determinations', JSON.stringify(data));
+  };
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      if (navigator.onLine) {
+        try {
+          const data = await listDeterminations();
+          setItems(data);
+          saveLocal(data);
+          return;
+        } catch {
+          // ignore
+        }
+      }
+      const stored = localStorage.getItem('determinations');
+      if (stored) {
+        try {
+          setItems(JSON.parse(stored) as Determination[]);
+        } catch {
+          // ignore
+        }
+      }
+    };
+    fetchAll();
+  }, []);
 
   const reset = () => {
     setCapitolo('');
@@ -26,33 +52,78 @@ const DeterminationsPage: React.FC = () => {
     setEdit(null);
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!capitolo || !numero || !somma || !scadenza) return;
+
     if (edit) {
-      setItems(items.map(d =>
-        d.id === edit
-          ? {
-              ...d,
-              capitolo,
-              numero,
-              somma: parseFloat(somma),
-              scadenza,
-            }
-          : d
-      ));
+      if (navigator.onLine) {
+        try {
+          const res = await updateDetermination(edit, {
+            capitolo,
+            numero,
+            somma: parseFloat(somma),
+            scadenza,
+          });
+          const updated = items.map(d => (d.id === edit ? res : d));
+          setItems(updated);
+          saveLocal(updated);
+        } catch {
+          const updated = items.map(d =>
+            d.id === edit
+              ? { id: edit, capitolo, numero, somma: parseFloat(somma), scadenza }
+              : d
+          );
+          setItems(updated);
+          saveLocal(updated);
+        }
+      } else {
+        const updated = items.map(d =>
+          d.id === edit
+            ? { id: edit, capitolo, numero, somma: parseFloat(somma), scadenza }
+            : d
+        );
+        setItems(updated);
+        saveLocal(updated);
+      }
     } else {
-      setItems([
-        ...items,
-        {
+      if (navigator.onLine) {
+        try {
+          const res = await createDetermination({
+            capitolo,
+            numero,
+            somma: parseFloat(somma),
+            scadenza,
+          });
+          const updated = [...items, res];
+          setItems(updated);
+          saveLocal(updated);
+        } catch {
+          const newItem: Determination = {
+            id: Date.now().toString(),
+            capitolo,
+            numero,
+            somma: parseFloat(somma),
+            scadenza,
+          };
+          const updated = [...items, newItem];
+          setItems(updated);
+          saveLocal(updated);
+        }
+      } else {
+        const newItem: Determination = {
           id: Date.now().toString(),
           capitolo,
           numero,
           somma: parseFloat(somma),
           scadenza,
-        },
-      ]);
+        };
+        const updated = [...items, newItem];
+        setItems(updated);
+        saveLocal(updated);
+      }
     }
+
     reset();
   };
 
@@ -63,7 +134,18 @@ const DeterminationsPage: React.FC = () => {
     setSomma(String(d.somma));
     setScadenza(d.scadenza);
   };
-  const onDelete = (id: string) => setItems(items.filter(d => d.id !== id));
+  const onDelete = async (id: string) => {
+    if (navigator.onLine) {
+      try {
+        await deleteDetermination(id);
+      } catch {
+        // ignore
+      }
+    }
+    const updated = items.filter(d => d.id !== id);
+    setItems(updated);
+    saveLocal(updated);
+  };
 
   return (
     <div className="list-page">
