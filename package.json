@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "vite --host --port 3000",
-    "build": "chmod +x node_modules/.bin/vite && vite build",
+    "build": "vite build",
     "serve": "vite preview",
     "test": "jest"
   },
