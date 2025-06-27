@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import ProtectedLayout from "./components/ProtectedLayout";
+import PageTemplate from "./components/PageTemplate";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import LoginPage from "./pages/LoginPage";
@@ -28,7 +28,7 @@ const App: React.FC = () => {
         <Route
           element={
             <ProtectedRoute>
-              <ProtectedLayout />
+              <PageTemplate />
             </ProtectedRoute>
           }
         >
