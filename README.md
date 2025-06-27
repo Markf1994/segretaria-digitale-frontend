@@ -11,11 +11,14 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 npm install
 ```
 
-3. (Optional) Create a `.env` file in the project root to set the backend API endpoint:
+3. Copy `.env.example` to `.env` and set the environment variables:
 
 ```
-VITE_API_URL=<url-of-your-api>
+cp .env.example .env
 ```
+
+Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
+`VITE_GAPI_API_KEY`.
 
 ## Development
 
