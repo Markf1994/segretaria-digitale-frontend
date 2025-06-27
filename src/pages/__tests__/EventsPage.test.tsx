@@ -22,7 +22,18 @@ beforeEach(() => {
 
 describe('EventsPage', () => {
   it('loads events from localStorage', async () => {
-    localStorage.setItem('events', JSON.stringify([{ id: '1', title: 'Test', date: '2023-01-01' }]));
+    localStorage.setItem(
+      'events',
+      JSON.stringify([
+        {
+          id: '1',
+          title: 'Test',
+          description: 'desc',
+          dateTime: '2023-01-01T10:00',
+          isPublic: false,
+        },
+      ])
+    );
 
     render(<EventsPage />);
 
@@ -35,8 +46,13 @@ describe('EventsPage', () => {
     const { container } = render(<EventsPage />);
 
     await userEvent.type(screen.getByPlaceholderText('Titolo'), 'My Event');
-    const dateInput = container.querySelector('input[type="date"]') as HTMLInputElement;
-    await userEvent.type(dateInput, '2023-05-01');
+    await userEvent.type(
+      screen.getByPlaceholderText('Descrizione'),
+      'Desc'
+    );
+    const dateInput = container.querySelector('input[type="datetime-local"]') as HTMLInputElement;
+    await userEvent.type(dateInput, '2023-05-01T12:00');
+    await userEvent.click(screen.getByLabelText(/pubblico/i));
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
     expect(await screen.findByText('My Event')).toBeInTheDocument();
