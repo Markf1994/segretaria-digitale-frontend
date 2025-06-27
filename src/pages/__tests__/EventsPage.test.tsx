@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EventsPage from '../EventsPage';
 import api from '../../api/axios';
-import ProtectedLayout from '../../components/ProtectedLayout';
+import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../api/axios', () => ({
@@ -39,9 +39,9 @@ describe('EventsPage', () => {
 
     render(
       <MemoryRouter>
-        <ProtectedLayout>
+        <PageTemplate>
           <EventsPage />
-        </ProtectedLayout>
+        </PageTemplate>
       </MemoryRouter>
     );
 
@@ -53,9 +53,9 @@ describe('EventsPage', () => {
 
     const { container } = render(
       <MemoryRouter>
-        <ProtectedLayout>
+        <PageTemplate>
           <EventsPage />
-        </ProtectedLayout>
+        </PageTemplate>
       </MemoryRouter>
     );
 

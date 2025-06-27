@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 
-const ProtectedLayout: React.FC = () => (
+const PageTemplate: React.FC = () => (
   <>
     <Header />
     <main className="app-container">
@@ -13,4 +13,4 @@ const ProtectedLayout: React.FC = () => (
   </>
 );
 
-export default ProtectedLayout;
+export default PageTemplate;
