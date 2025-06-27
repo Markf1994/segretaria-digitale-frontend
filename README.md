@@ -11,7 +11,7 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 npm install
 ```
 
-3. Copy `.env.example` to `.env` and set the environment variables:
+3. Copy `.env.example` to `.env` and replace the placeholder values:
 
 ```
 cp .env.example .env
