@@ -43,7 +43,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      <div className="calendar-container">
+      <div className="calendar-container dashboard-section">
         <iframe
           title="calendar"
           src="https://calendar.google.com/calendar/embed?mode=AGENDA"
@@ -52,7 +52,7 @@ export default function Dashboard() {
           height="600"
         ></iframe>
       </div>
-      <div className="notifications">
+      <div className="notifications dashboard-section">
         <h2>Ultime notifiche</h2>
         <ul>
           {unreadNotifications.map(n => (
@@ -63,7 +63,7 @@ export default function Dashboard() {
           )}
         </ul>
       </div>
-      <div className="notifications">
+      <div className="notifications dashboard-section">
         <h2>Prossime scadenze</h2>
         <ul>
           {upcomingEvents.map(e => (
