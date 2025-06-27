@@ -1,59 +1,70 @@
-interface GapiWindow extends Window {
-  gapi: any;
+// src/api/googleCalendar.ts
+import type { GcEvent } from './types'   // definisci GcEvent in un file types.ts se vuoi
+
+const CALENDAR_ID = 'primary'
+
+export const signIn = async (): Promise<void> => {
+  const gapi = (window as any).gapi
+  await gapi.load('client:auth2')
+  await gapi.client.init({
+    apiKey: import.meta.env.VITE_GAPI_API_KEY,
+    clientId: import.meta.env.VITE_GAPI_CLIENT_ID,
+    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+    scope: 'https://www.googleapis.com/auth/calendar.events',
+  })
+  await gapi.auth2.getAuthInstance().signIn()
 }
 
-const CLIENT_ID = import.meta.env.VITE_GAPI_CLIENT_ID;
-const API_KEY = import.meta.env.VITE_GAPI_API_KEY;
-const DISCOVERY_DOCS = [
-  'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-];
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
-
-export const signIn = () => {
-  return new Promise<void>((resolve, reject) => {
-    const gapi = (window as GapiWindow).gapi;
-    if (!gapi) {
-      reject(new Error('gapi not loaded'));
-      return;
-    }
-    gapi.load('client:auth2', async () => {
-      try {
-        await gapi.client.init({
-          apiKey: API_KEY,
-          clientId: CLIENT_ID,
-          discoveryDocs: DISCOVERY_DOCS,
-          scope: SCOPES,
-        });
-        await gapi.auth2.getAuthInstance().signIn();
-        resolve();
-      } catch (err) {
-        reject(err);
-      }
-    });
-  });
-};
-
-export const listEvents = async () => {
-  const gapi = (window as GapiWindow).gapi;
+export const listEvents = async (): Promise<GcEvent[]> => {
+  const gapi = (window as any).gapi
   const res = await gapi.client.calendar.events.list({
-    calendarId: 'primary',
+    calendarId: CALENDAR_ID,
     singleEvents: true,
     orderBy: 'startTime',
     timeMin: new Date(0).toISOString(),
-  });
-  return res.result.items || [];
-};
+  })
+  return res.result.items || []
+}
 
 export const createEvent = async (event: {
-  summary: string;
-  description?: string;
-  start: { dateTime: string };
-  end: { dateTime: string };
-}) => {
-  const gapi = (window as GapiWindow).gapi;
+  summary: string
+  description?: string
+  start: { dateTime: string }
+  end: { dateTime: string }
+}): Promise<GcEvent> => {
+  const gapi = (window as any).gapi
   const res = await gapi.client.calendar.events.insert({
-    calendarId: 'primary',
+    calendarId: CALENDAR_ID,
     resource: event,
-  });
-  return res.result;
-};
+  })
+  return res.result
+}
+
+// ---- Nuove funzioni ----
+
+export const updateEvent = async (
+  id: string,
+  event: {
+    summary?: string
+    description?: string
+    start?: { dateTime: string }
+    end?: { dateTime: string }
+  }
+): Promise<GcEvent> => {
+  const gapi = (window as any).gapi
+  const res = await gapi.client.calendar.events.patch({
+    calendarId: CALENDAR_ID,
+    eventId: id,
+    resource: event,
+  })
+  return res.result
+}
+
+export const deleteEvent = async (id: string): Promise<void> => {
+  const gapi = (window as any).gapi
+  await gapi.client.calendar.events.delete({
+    calendarId: CALENDAR_ID,
+    eventId: id,
+  })
+}
+
