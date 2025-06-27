@@ -5,10 +5,12 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 ## Setup
 
 1. Ensure [Node.js](https://nodejs.org/) and npm are installed.
-2. Install dependencies:
+2. Install dependencies (creates `node_modules/.bin/jest` used by the test suite):
 
 ```bash
 npm install
+# or run the helper script
+./scripts/setup.sh
 ```
 
 3. Copy `.env.example` to `.env` and replace the placeholder values:
@@ -55,6 +57,9 @@ Run the Jest test suite:
 ```bash
 npm test
 ```
+
+If Jest is missing, ensure dependencies are installed first using `npm install`
+or `./scripts/setup.sh`.
 
 The tests use Jest together with React Testing Library.
 
