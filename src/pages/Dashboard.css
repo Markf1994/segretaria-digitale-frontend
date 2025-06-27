@@ -23,3 +23,19 @@
   padding: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
+.upcoming-wrapper {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.upcoming-wrapper .dashboard-section {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .upcoming-wrapper {
+    flex-direction: column;
+  }
+}
