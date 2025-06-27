@@ -94,21 +94,31 @@ const DeterminationsPage: React.FC = () => {
         <button type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
         {edit && <button type="button" onClick={reset}>Annulla</button>}
       </form>
-      <ul className="item-list">
-        {items.map(d => (
-          <li key={d.id}>
-            <span>
-              {d.capitolo} – {d.numero} – €{d.somma} –
-              {" "}
-              {new Date(d.scadenza).toLocaleDateString()}
-            </span>
-            <div>
-              <button onClick={() => onEdit(d)}>Modifica</button>
-              <button onClick={() => onDelete(d.id)}>Elimina</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <table className="item-table">
+        <thead>
+          <tr>
+            <th>Capitolo</th>
+            <th>Numero</th>
+            <th>Somma</th>
+            <th>Scadenza</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map(d => (
+            <tr key={d.id}>
+              <td>{d.capitolo}</td>
+              <td>{d.numero}</td>
+              <td>€{d.somma}</td>
+              <td>{new Date(d.scadenza).toLocaleDateString()}</td>
+              <td>
+                <button onClick={() => onEdit(d)}>Modifica</button>
+                <button onClick={() => onDelete(d.id)}>Elimina</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

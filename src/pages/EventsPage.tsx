@@ -172,21 +172,31 @@ export default function EventsPage() {
           </button>
         )}
       </form>
-      <ul className="item-list">
-        {events.map(ev => (
-          <li key={ev.id}>
-            <span>
-              {ev.title} – {new Date(ev.dateTime).toLocaleString()}
-              {ev.description && ` – ${ev.description}`}
-              {ev.isPublic && ' (Pubblico)'}
-            </span>
-            <div>
-              <button onClick={() => onEdit(ev)}>Modifica</button>
-              <button onClick={() => onDelete(ev.id)}>Elimina</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <table className="item-table">
+        <thead>
+          <tr>
+            <th>Titolo</th>
+            <th>Data</th>
+            <th>Descrizione</th>
+            <th>Pubblico?</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {events.map(ev => (
+            <tr key={ev.id}>
+              <td>{ev.title}</td>
+              <td>{new Date(ev.dateTime).toLocaleString()}</td>
+              <td>{ev.description}</td>
+              <td>{ev.isPublic ? 'S\u00ec' : 'No'}</td>
+              <td>
+                <button onClick={() => onEdit(ev)}>Modifica</button>
+                <button onClick={() => onDelete(ev.id)}>Elimina</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
