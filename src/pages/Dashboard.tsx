@@ -4,7 +4,13 @@ import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { useNotificheStore } from '../store/notifiche';
 
-interface EventItem { id: string; title: string; date: string; }
+interface EventItem {
+  id: string;
+  title: string;
+  description: string;
+  dateTime: string;
+  isPublic: boolean;
+}
 interface TodoItem { id: string; text: string; due: string; }
 interface Determination { id: string; title: string; due: string; }
 
@@ -20,7 +26,9 @@ export default function Dashboard() {
   }, [fetchNotifications]);
 
   const today = new Date();
-  const upcomingEvents = events.filter(e => differenceInCalendarDays(parseISO(e.date), today) <= 3);
+  const upcomingEvents = events.filter(
+    e => differenceInCalendarDays(parseISO(e.dateTime), today) <= 3
+  );
   const upcomingTodos = todos.filter(t => differenceInCalendarDays(parseISO(t.due), today) <= 3);
   const upcomingDeterminations = determinations.filter(d => differenceInCalendarDays(parseISO(d.due), today) <= 7);
   const unreadNotifications = notifications.filter(n => !n.read);
@@ -51,7 +59,9 @@ export default function Dashboard() {
         <h2>Prossime scadenze</h2>
         <ul>
           {upcomingEvents.map(e => (
-            <li key={e.id}>Evento: {e.title} – {new Date(e.date).toLocaleDateString()}</li>
+            <li key={e.id}>
+              Evento: {e.title} – {new Date(e.dateTime).toLocaleDateString()}
+            </li>
           ))}
           {upcomingTodos.map(t => (
             <li key={t.id}>To-Do: {t.text} – {new Date(t.due).toLocaleDateString()}</li>

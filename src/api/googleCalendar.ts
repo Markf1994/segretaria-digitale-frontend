@@ -46,8 +46,9 @@ export const listEvents = async () => {
 
 export const createEvent = async (event: {
   summary: string;
-  start: { date: string };
-  end: { date: string };
+  description?: string;
+  start: { dateTime: string };
+  end: { dateTime: string };
 }) => {
   const gapi = (window as GapiWindow).gapi;
   const res = await gapi.client.calendar.events.insert({
