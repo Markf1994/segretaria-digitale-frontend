@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import {
+  listTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+} from '../api/todos';
 import './ListPages.css';
 
 interface TodoItem { id: string; text: string; due: string; }
@@ -20,9 +25,9 @@ export default function TodoPage() {
     const fetchTodos = async () => {
       if (navigator.onLine) {
         try {
-          const res = await api.get<TodoItem[]>('/todos');
-          setTodos(res.data);
-          saveLocal(res.data);
+          const data = await listTodos();
+          setTodos(data);
+          saveLocal(data);
           return;
         } catch {
           // use fallback
@@ -41,25 +46,29 @@ export default function TodoPage() {
     if (edit) {
       if (navigator.onLine) {
         try {
-          const res = await api.put<TodoItem>(`/todos/${edit}`, { text, due });
-          const updated = todos.map(t => t.id === edit ? res.data : t);
+          const res = await updateTodo(edit, { text, due });
+          const updated = todos.map(t => (t.id === edit ? res : t));
           setTodos(updated);
           saveLocal(updated);
         } catch {
-          const updated = todos.map(t => t.id === edit ? { ...t, text, due } : t);
+          const updated = todos.map(t =>
+            t.id === edit ? { ...t, text, due } : t
+          );
           setTodos(updated);
           saveLocal(updated);
         }
       } else {
-        const updated = todos.map(t => t.id === edit ? { ...t, text, due } : t);
+        const updated = todos.map(t =>
+          t.id === edit ? { ...t, text, due } : t
+        );
         setTodos(updated);
         saveLocal(updated);
       }
     } else {
       if (navigator.onLine) {
         try {
-          const res = await api.post<TodoItem>('/todos', { text, due });
-          const updated = [...todos, res.data];
+          const res = await createTodo({ text, due });
+          const updated = [...todos, res];
           setTodos(updated);
           saveLocal(updated);
         } catch {
@@ -83,7 +92,7 @@ export default function TodoPage() {
   const onDelete = async (id: string) => {
     if (navigator.onLine) {
       try {
-        await api.delete(`/todos/${id}`);
+        await deleteTodo(id);
       } catch {
         // ignore
       }

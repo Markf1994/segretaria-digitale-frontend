@@ -1,23 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TodoPage from '../TodoPage';
-import api from '../../api/axios';
+import * as todosApi from '../../api/todos';
 
-jest.mock('../../api/axios', () => ({
+jest.mock('../../api/todos', () => ({
   __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn(),
-  },
+  listTodos: jest.fn(),
+  createTodo: jest.fn(),
+  updateTodo: jest.fn(),
+  deleteTodo: jest.fn(),
 }));
 
-const mockedApi = api as jest.Mocked<typeof api>;
+const mockedApi = todosApi as jest.Mocked<typeof todosApi>;
 
 beforeEach(() => {
   localStorage.clear();
-  mockedApi.get.mockResolvedValue({ data: [] });
+  mockedApi.listTodos.mockResolvedValue([]);
 });
 
 describe('TodoPage offline', () => {
