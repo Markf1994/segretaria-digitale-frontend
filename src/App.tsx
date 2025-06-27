@@ -8,8 +8,7 @@ import {
   Outlet,
 } from "react-router-dom";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import PageTemplate from "./components/PageTemplate";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import LoginPage from "./pages/LoginPage";
@@ -20,13 +19,9 @@ import DeterminationsPage from "./pages/DeterminationsPage";
 
 // Layout per tutte le pagine protette
 const ProtectedLayout: React.FC = () => (
-  <>
-    <Header />
-    <main className="app-container">
-      <Outlet />
-    </main>
-    <Footer />
-  </>
+  <PageTemplate>
+    <Outlet />
+  </PageTemplate>
 );
 
 const App: React.FC = () => {
