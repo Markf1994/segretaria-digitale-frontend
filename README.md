@@ -18,9 +18,10 @@ cp .env.example .env
 ```
 
 Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID`,
-`VITE_GAPI_API_KEY` and `VITE_INTEGRATION_TOKEN`.
-The integration token is required for the third-party widget displayed on the
-dashboard.
+`VITE_GAPI_API_KEY`, `VITE_INTEGRATION_TOKEN` and `VITE_OPENAI_KEY`.
+The integration token was originally used for a third-party widget. The
+`VITE_OPENAI_KEY` variable is required to enable the chat box shown on the
+dashboard, which sends prompts to the OpenAI API.
 
 ## Development
 
@@ -57,6 +58,11 @@ npm test
 ```
 
 The tests use Jest together with React Testing Library.
+
+## Chat Integration
+
+The dashboard displays a small chat box powered by OpenAI. Configure
+`VITE_OPENAI_KEY` in your `.env` file with a valid API key to enable it.
 
 ## Backend API
 
