@@ -86,3 +86,10 @@
 .item-table button:hover {
   background: #8B1B13;
 }
+
+@media (max-width: 600px) {
+  .item-form {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
