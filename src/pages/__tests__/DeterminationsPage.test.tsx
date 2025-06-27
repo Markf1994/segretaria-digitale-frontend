@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DeterminationsPage from '../DeterminationsPage';
+import PageTemplate from '../../components/PageTemplate';
+import { MemoryRouter } from 'react-router-dom';
 
 beforeEach(() => {
   localStorage.clear();
@@ -8,7 +10,13 @@ beforeEach(() => {
 
 describe('DeterminationsPage', () => {
   it('creates a new determination', async () => {
-    const { container } = render(<DeterminationsPage />);
+    const { container } = render(
+      <MemoryRouter>
+        <PageTemplate>
+          <DeterminationsPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     await userEvent.type(screen.getByLabelText('Capitolo'), 'C1');
     await userEvent.type(screen.getByLabelText('Numero'), '001');
@@ -25,7 +33,13 @@ describe('DeterminationsPage', () => {
       JSON.stringify([{ id: '1', capitolo: 'A', numero: '1', somma: 5, scadenza: '2023-01-01' }])
     );
 
-    const { container } = render(<DeterminationsPage />);
+    const { container } = render(
+      <MemoryRouter>
+        <PageTemplate>
+          <DeterminationsPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     await screen.findByText(/A/);
     await userEvent.click(screen.getByRole('button', { name: /modifica/i }));

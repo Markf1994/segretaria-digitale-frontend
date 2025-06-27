@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EventsPage from '../EventsPage';
 import api from '../../api/axios';
+import PageTemplate from '../../components/PageTemplate';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -35,7 +37,13 @@ describe('EventsPage', () => {
       ])
     );
 
-    render(<EventsPage />);
+    render(
+      <MemoryRouter>
+        <PageTemplate>
+          <EventsPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     expect(await screen.findByText('Test')).toBeInTheDocument();
   });
@@ -43,7 +51,13 @@ describe('EventsPage', () => {
   it('adds new event offline', async () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    const { container } = render(<EventsPage />);
+    const { container } = render(
+      <MemoryRouter>
+        <PageTemplate>
+          <EventsPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     await userEvent.type(screen.getByLabelText('Titolo'), 'My Event');
     await userEvent.type(screen.getByLabelText('Descrizione'), 'Desc');

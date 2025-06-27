@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TodoPage from '../TodoPage';
 import * as todosApi from '../../api/todos';
+import PageTemplate from '../../components/PageTemplate';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../api/todos', () => ({
   __esModule: true,
@@ -22,7 +24,13 @@ describe('TodoPage offline', () => {
   it('adds new todo offline', async () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    render(<TodoPage />);
+    render(
+      <MemoryRouter>
+        <PageTemplate>
+          <TodoPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     await userEvent.type(screen.getByLabelText('Attività'), 'Task 1');
     await userEvent.type(screen.getByLabelText('Scadenza'), '2023-06-01');
@@ -35,7 +43,13 @@ describe('TodoPage offline', () => {
     localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01' }]));
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    render(<TodoPage />);
+    render(
+      <MemoryRouter>
+        <PageTemplate>
+          <TodoPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     await screen.findByText('Task');
     await userEvent.click(screen.getByRole('button', { name: /modifica/i }));
@@ -53,7 +67,13 @@ describe('TodoPage offline', () => {
     localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01' }]));
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    render(<TodoPage />);
+    render(
+      <MemoryRouter>
+        <PageTemplate>
+          <TodoPage />
+        </PageTemplate>
+      </MemoryRouter>
+    );
 
     await screen.findByText('Task');
     await userEvent.click(screen.getByRole('button', { name: /elimina/i }));
