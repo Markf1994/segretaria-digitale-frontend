@@ -106,8 +106,10 @@ export default function TodoPage() {
     <div className="list-page">
       <h2>To-Do</h2>
       <form onSubmit={onSubmit} className="item-form">
-        <input placeholder="Attività" value={text} onChange={e => setText(e.target.value)} />
-        <input type="date" value={due} onChange={e => setDue(e.target.value)} />
+        <label htmlFor="todo-text">Attività</label>
+        <input id="todo-text" placeholder="Attività" value={text} onChange={e => setText(e.target.value)} />
+        <label htmlFor="todo-due">Scadenza</label>
+        <input id="todo-due" type="date" value={due} onChange={e => setDue(e.target.value)} />
         <button type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
         {edit && <button type="button" onClick={reset}>Annulla</button>}
       </form>
