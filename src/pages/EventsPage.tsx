@@ -14,7 +14,6 @@ import {
   DbEvent,
 } from '../api/events';
 import './ListPages.css';
-import PageTemplate from '../components/PageTemplate';
 
 interface UnifiedEvent {
   id: string;
@@ -224,8 +223,7 @@ export default function EventsPage() {
   };
 
   return (
-    <PageTemplate>
-      <div className="list-page">
+    <div className="list-page">
         <h2>Eventi</h2>
         <form onSubmit={onSubmit} className="item-form">
         <label htmlFor="ev-title">Titolo</label>
@@ -289,6 +287,5 @@ export default function EventsPage() {
         </tbody>
       </table>
       </div>
-    </PageTemplate>
   );
 }

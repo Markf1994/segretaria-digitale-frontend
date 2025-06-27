@@ -6,7 +6,6 @@ import {
   deleteTodo,
 } from '../api/todos';
 import './ListPages.css';
-import PageTemplate from '../components/PageTemplate';
 
 interface TodoItem { id: string; text: string; due: string; }
 
@@ -104,8 +103,7 @@ export default function TodoPage() {
   };
 
   return (
-    <PageTemplate>
-      <div className="list-page">
+    <div className="list-page">
         <h2>To-Do</h2>
         <form onSubmit={onSubmit} className="item-form">
         <label htmlFor="todo-text">Attività</label>
@@ -137,6 +135,5 @@ export default function TodoPage() {
         </tbody>
       </table>
       </div>
-    </PageTemplate>
   );
 }

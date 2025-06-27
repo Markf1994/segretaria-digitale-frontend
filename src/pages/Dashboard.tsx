@@ -3,7 +3,6 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import IntegrationBox from '../components/IntegrationBox';
-import PageTemplate from '../components/PageTemplate';
 
 interface EventItem {
   id: string;
@@ -25,8 +24,7 @@ export default function Dashboard() {
   const upcomingTodos = todos.filter(t => differenceInCalendarDays(parseISO(t.due), today) <= 3);
 
   return (
-    <PageTemplate>
-      <div className="dashboard">
+    <div className="dashboard">
         <h1>Dashboard</h1>
         <div className="top-wrapper">
           <div className="calendar-container dashboard-section">
@@ -63,6 +61,5 @@ export default function Dashboard() {
         </div>
       </div>
       </div>
-    </PageTemplate>
   );
 }
