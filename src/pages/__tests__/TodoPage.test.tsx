@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TodoPage from '../TodoPage';
 import * as todosApi from '../../api/todos';
-import PageTemplate from '../../components/PageTemplate';
+import ProtectedLayout from '../../components/ProtectedLayout';
 import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../api/todos', () => ({
@@ -26,9 +26,9 @@ describe('TodoPage offline', () => {
 
     render(
       <MemoryRouter>
-        <PageTemplate>
+        <ProtectedLayout>
           <TodoPage />
-        </PageTemplate>
+        </ProtectedLayout>
       </MemoryRouter>
     );
 
@@ -45,9 +45,9 @@ describe('TodoPage offline', () => {
 
     render(
       <MemoryRouter>
-        <PageTemplate>
+        <ProtectedLayout>
           <TodoPage />
-        </PageTemplate>
+        </ProtectedLayout>
       </MemoryRouter>
     );
 
@@ -69,9 +69,9 @@ describe('TodoPage offline', () => {
 
     render(
       <MemoryRouter>
-        <PageTemplate>
+        <ProtectedLayout>
           <TodoPage />
-        </PageTemplate>
+        </ProtectedLayout>
       </MemoryRouter>
     );
 

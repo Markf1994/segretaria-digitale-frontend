@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DeterminationsPage from '../DeterminationsPage';
-import PageTemplate from '../../components/PageTemplate';
+import ProtectedLayout from '../../components/ProtectedLayout';
 import { MemoryRouter } from 'react-router-dom';
 
 beforeEach(() => {
@@ -12,9 +12,9 @@ describe('DeterminationsPage', () => {
   it('creates a new determination', async () => {
     const { container } = render(
       <MemoryRouter>
-        <PageTemplate>
+        <ProtectedLayout>
           <DeterminationsPage />
-        </PageTemplate>
+        </ProtectedLayout>
       </MemoryRouter>
     );
 
@@ -35,9 +35,9 @@ describe('DeterminationsPage', () => {
 
     const { container } = render(
       <MemoryRouter>
-        <PageTemplate>
+        <ProtectedLayout>
           <DeterminationsPage />
-        </PageTemplate>
+        </ProtectedLayout>
       </MemoryRouter>
     );
 

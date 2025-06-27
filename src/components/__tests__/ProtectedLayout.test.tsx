@@ -1,17 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
-import PageTemplate from '../PageTemplate';
+import ProtectedLayout from '../ProtectedLayout';
 
 const Dummy: React.FC = () => <div>Dummy Page</div>;
 
-describe('PageTemplate', () => {
+describe('ProtectedLayout', () => {
   it('shows navigation, sidebar buttons and footer', () => {
     render(
       <MemoryRouter>
-        <PageTemplate>
+        <ProtectedLayout>
           <Dummy />
-        </PageTemplate>
+        </ProtectedLayout>
       </MemoryRouter>
     );
 
