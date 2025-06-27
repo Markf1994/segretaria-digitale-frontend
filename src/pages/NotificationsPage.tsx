@@ -13,12 +13,25 @@ const NotificationsPage: React.FC = () => {
   return (
     <div className="list-page">
       <h2>Notifiche</h2>
-      <ul className="item-list">
-        {notifications.map(n => (
-          <li key={n.id}>{n.message}</li>
-        ))}
-        {!notifications.length && <li>Nessuna notifica.</li>}
-      </ul>
+      <table className="item-table">
+        <thead>
+          <tr>
+            <th>Messaggio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {notifications.map(n => (
+            <tr key={n.id}>
+              <td>{n.message}</td>
+            </tr>
+          ))}
+          {!notifications.length && (
+            <tr>
+              <td>Nessuna notifica.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

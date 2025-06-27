@@ -102,17 +102,27 @@ export default function TodoPage() {
         <button type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
         {edit && <button type="button" onClick={reset}>Annulla</button>}
       </form>
-      <ul className="item-list">
-        {todos.map(t => (
-          <li key={t.id}>
-            <span>{t.text} – {new Date(t.due).toLocaleDateString()}</span>
-            <div>
-              <button onClick={() => onEdit(t)}>Modifica</button>
-              <button onClick={() => onDelete(t.id)}>Elimina</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <table className="item-table">
+        <thead>
+          <tr>
+            <th>Attività</th>
+            <th>Scadenza</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {todos.map(t => (
+            <tr key={t.id}>
+              <td>{t.text}</td>
+              <td>{new Date(t.due).toLocaleDateString()}</td>
+              <td>
+                <button onClick={() => onEdit(t)}>Modifica</button>
+                <button onClick={() => onDelete(t.id)}>Elimina</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
