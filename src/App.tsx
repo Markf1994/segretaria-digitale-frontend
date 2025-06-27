@@ -5,11 +5,9 @@ import {
   Routes,
   Route,
   Navigate,
-  Outlet,
 } from "react-router-dom";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import ProtectedLayout from "./components/ProtectedLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import LoginPage from "./pages/LoginPage";
@@ -18,16 +16,6 @@ import EventsPage from "./pages/EventsPage";
 import TodoPage from "./pages/TodoPage";
 import DeterminationsPage from "./pages/DeterminationsPage";
 
-// Layout per tutte le pagine protette
-const ProtectedLayout: React.FC = () => (
-  <>
-    <Header />
-    <main className="app-container">
-      <Outlet />
-    </main>
-    <Footer />
-  </>
-);
 
 const App: React.FC = () => {
   return (
