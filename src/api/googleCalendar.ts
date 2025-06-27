@@ -1,5 +1,5 @@
 // src/api/googleCalendar.ts
-import type { GcEvent } from './types'   // definisci GcEvent in un file types.ts se vuoi
+import type { GcEvent } from './types'
 
 const CALENDAR_ID = 'primary'
 
