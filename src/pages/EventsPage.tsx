@@ -226,29 +226,34 @@ export default function EventsPage() {
     <div className="list-page">
       <h2>Eventi</h2>
       <form onSubmit={onSubmit} className="item-form">
+        <label htmlFor="ev-title">Titolo</label>
         <input
+          id="ev-title"
           placeholder="Titolo"
           value={form.title}
           onChange={e => setForm({ ...form, title: e.target.value })}
         />
+        <label htmlFor="ev-description">Descrizione</label>
         <textarea
+          id="ev-description"
           placeholder="Descrizione"
           value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
         />
+        <label htmlFor="ev-date">Data e ora</label>
         <input
+          id="ev-date"
           type="datetime-local"
           value={form.dateTime}
           onChange={e => setForm({ ...form, dateTime: e.target.value })}
         />
-        <label>
-          <input
-            type="checkbox"
-            checked={form.isPublic}
-            onChange={e => setForm({ ...form, isPublic: e.target.checked })}
-          />
-          Pubblico
-        </label>
+        <input
+          id="ev-public"
+          type="checkbox"
+          checked={form.isPublic}
+          onChange={e => setForm({ ...form, isPublic: e.target.checked })}
+        />
+        <label htmlFor="ev-public">Pubblico</label>
         <button type="submit">{editing ? 'Salva' : 'Aggiungi'}</button>
         {editing && (
           <button type="button" onClick={resetForm}>

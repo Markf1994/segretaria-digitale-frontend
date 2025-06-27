@@ -28,14 +28,18 @@ const LoginPage: React.FC = () => {
           <img src="/logo.png" alt="Logo" className="login-logo" />
           <form className="login-form" onSubmit={onSubmit}>
           <h1>Segretaria Digitale<br/> Polizia Locale Castione della Presolana</h1>
+          <label htmlFor="login-email">Email</label>
           <input
+            id="login-email"
             type="email"
             placeholder="Email istituzionale"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
           />
+          <label htmlFor="login-password">Password</label>
           <input
+            id="login-password"
             type="password"
             placeholder="Password"
             value={password}

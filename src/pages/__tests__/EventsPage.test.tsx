@@ -45,11 +45,8 @@ describe('EventsPage', () => {
 
     const { container } = render(<EventsPage />);
 
-    await userEvent.type(screen.getByPlaceholderText('Titolo'), 'My Event');
-    await userEvent.type(
-      screen.getByPlaceholderText('Descrizione'),
-      'Desc'
-    );
+    await userEvent.type(screen.getByLabelText('Titolo'), 'My Event');
+    await userEvent.type(screen.getByLabelText('Descrizione'), 'Desc');
     const dateInput = container.querySelector('input[type="datetime-local"]') as HTMLInputElement;
     await userEvent.type(dateInput, '2023-05-01T12:00');
     await userEvent.click(screen.getByLabelText(/pubblico/i));

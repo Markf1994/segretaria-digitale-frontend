@@ -151,24 +151,32 @@ const DeterminationsPage: React.FC = () => {
     <div className="list-page">
       <h2>Determine</h2>
       <form onSubmit={onSubmit} className="item-form">
+        <label htmlFor="det-capitolo">Capitolo</label>
         <input
+          id="det-capitolo"
           placeholder="Capitolo"
           value={capitolo}
           onChange={e => setCapitolo(e.target.value)}
         />
+        <label htmlFor="det-numero">Numero</label>
         <input
+          id="det-numero"
           placeholder="Numero"
           value={numero}
           onChange={e => setNumero(e.target.value)}
         />
+        <label htmlFor="det-somma">Somma</label>
         <input
+          id="det-somma"
           type="number"
           step="0.01"
           placeholder="Somma"
           value={somma}
           onChange={e => setSomma(e.target.value)}
         />
+        <label htmlFor="det-scadenza">Scadenza</label>
         <input
+          id="det-scadenza"
           type="date"
           value={scadenza}
           onChange={e => setScadenza(e.target.value)}

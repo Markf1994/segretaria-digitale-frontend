@@ -22,11 +22,10 @@ describe('TodoPage offline', () => {
   it('adds new todo offline', async () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    const { container } = render(<TodoPage />);
+    render(<TodoPage />);
 
-    await userEvent.type(screen.getByPlaceholderText('Attività'), 'Task 1');
-    const dateInput = container.querySelector('input[type="date"]') as HTMLInputElement;
-    await userEvent.type(dateInput, '2023-06-01');
+    await userEvent.type(screen.getByLabelText('Attività'), 'Task 1');
+    await userEvent.type(screen.getByLabelText('Scadenza'), '2023-06-01');
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
     expect(await screen.findByText('Task 1')).toBeInTheDocument();
@@ -36,16 +35,15 @@ describe('TodoPage offline', () => {
     localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01' }]));
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    const { container } = render(<TodoPage />);
+    render(<TodoPage />);
 
     await screen.findByText('Task');
     await userEvent.click(screen.getByRole('button', { name: /modifica/i }));
 
-    await userEvent.clear(screen.getByPlaceholderText('Attività'));
-    await userEvent.type(screen.getByPlaceholderText('Attività'), 'Task edited');
-    const dateInput = container.querySelector('input[type="date"]') as HTMLInputElement;
-    await userEvent.clear(dateInput);
-    await userEvent.type(dateInput, '2023-02-02');
+    await userEvent.clear(screen.getByLabelText('Attività'));
+    await userEvent.type(screen.getByLabelText('Attività'), 'Task edited');
+    await userEvent.clear(screen.getByLabelText('Scadenza'));
+    await userEvent.type(screen.getByLabelText('Scadenza'), '2023-02-02');
     await userEvent.click(screen.getByRole('button', { name: /salva/i }));
 
     expect(await screen.findByText('Task edited')).toBeInTheDocument();
