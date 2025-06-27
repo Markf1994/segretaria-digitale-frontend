@@ -6,6 +6,7 @@ import {
   deleteTodo,
 } from '../api/todos';
 import './ListPages.css';
+import PageTemplate from '../components/PageTemplate';
 
 interface TodoItem { id: string; text: string; due: string; }
 
@@ -103,9 +104,10 @@ export default function TodoPage() {
   };
 
   return (
-    <div className="list-page">
-      <h2>To-Do</h2>
-      <form onSubmit={onSubmit} className="item-form">
+    <PageTemplate>
+      <div className="list-page">
+        <h2>To-Do</h2>
+        <form onSubmit={onSubmit} className="item-form">
         <label htmlFor="todo-text">Attività</label>
         <input id="todo-text" placeholder="Attività" value={text} onChange={e => setText(e.target.value)} />
         <label htmlFor="todo-due">Scadenza</label>
@@ -134,6 +136,7 @@ export default function TodoPage() {
           ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </PageTemplate>
   );
 }

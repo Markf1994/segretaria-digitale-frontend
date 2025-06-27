@@ -3,6 +3,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import IntegrationBox from '../components/IntegrationBox';
+import PageTemplate from '../components/PageTemplate';
 
 interface EventItem {
   id: string;
@@ -24,12 +25,13 @@ export default function Dashboard() {
   const upcomingTodos = todos.filter(t => differenceInCalendarDays(parseISO(t.due), today) <= 3);
 
   return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
-      <div className="top-wrapper">
-        <div className="calendar-container dashboard-section">
-          <iframe
-            title="calendar"
+    <PageTemplate>
+      <div className="dashboard">
+        <h1>Dashboard</h1>
+        <div className="top-wrapper">
+          <div className="calendar-container dashboard-section">
+            <iframe
+              title="calendar"
             src="https://calendar.google.com/calendar/embed?mode=AGENDA"
             style={{ border: 0 }}
             width="100%"
@@ -60,6 +62,7 @@ export default function Dashboard() {
           </ul>
         </div>
       </div>
-    </div>
+      </div>
+    </PageTemplate>
   );
 }
