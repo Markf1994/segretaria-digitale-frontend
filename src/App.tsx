@@ -17,7 +17,6 @@ import Dashboard from "./pages/Dashboard";
 import EventsPage from "./pages/EventsPage";
 import TodoPage from "./pages/TodoPage";
 import DeterminationsPage from "./pages/DeterminationsPage";
-import NotificationsPage from "./pages/NotificationsPage";
 
 // Layout per tutte le pagine protette
 const ProtectedLayout: React.FC = () => (
@@ -49,7 +48,6 @@ const App: React.FC = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/todo" element={<TodoPage />} />
           <Route path="/determinazioni" element={<DeterminationsPage />} />
-          <Route path="/notifiche" element={<NotificationsPage />} />
         </Route>
 
         {/* Qualunque altra rotta redirige alla dashboard */}
