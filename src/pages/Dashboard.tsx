@@ -2,6 +2,7 @@ import React from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
+import IntegrationBox from '../components/IntegrationBox';
 
 interface EventItem {
   id: string;
@@ -25,14 +26,17 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <h1>Dashboard</h1>
-      <div className="calendar-container dashboard-section">
-        <iframe
-          title="calendar"
-          src="https://calendar.google.com/calendar/embed?mode=AGENDA"
-          style={{ border: 0 }}
-          width="100%"
-          height="600"
-        ></iframe>
+      <div className="top-wrapper">
+        <div className="calendar-container dashboard-section">
+          <iframe
+            title="calendar"
+            src="https://calendar.google.com/calendar/embed?mode=AGENDA"
+            style={{ border: 0 }}
+            width="100%"
+            height="600"
+          ></iframe>
+        </div>
+        <IntegrationBox />
       </div>
       <div className="upcoming-wrapper">
         <div className="notifications dashboard-section">

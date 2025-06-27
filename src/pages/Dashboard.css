@@ -13,6 +13,16 @@
 .calendar-container {
   width: 100%;
 }
+
+.top-wrapper {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.top-wrapper .dashboard-section {
+  flex: 1;
+}
 .notifications ul {
   list-style: none;
   padding: 0;
