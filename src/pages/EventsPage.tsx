@@ -1,202 +1,56 @@
+// src/pages/EventsPage.tsx
 import React, { useEffect, useState } from 'react';
-import { signIn, listEvents, createEvent } from '../api/googleCalendar';
+import {
+  signIn,
+  listEvents as listGcEvents,
+  createEvent as createGcEvent,
+  updateEvent as updateGcEvent,
+  deleteEvent as deleteGcEvent,
+} from '../api/googleCalendar';
+import {
+  listDbEvents,
+  createDbEvent,
+  updateDbEvent,
+  deleteDbEvent,
+  DbEvent,
+} from '../api/events';
 import './ListPages.css';
 
-interface EventItem {
-  id: string;
+type UnifiedEvent =
+  | (DbEvent & { source: 'db' })
+  | ({
+      id: string;
+      summary: string;
+      description?: string;
+      start: { dateTime: string };
+      end: { dateTime: string };
+    } & { source: 'gc' });
+
+interface FormValues {
   title: string;
   description: string;
   dateTime: string;
+  endDateTime: string;
   isPublic: boolean;
 }
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dateTime, setDateTime] = useState('');
-  const [isPublic, setIsPublic] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [events, setEvents] = useState<UnifiedEvent[]>([]);
+  const [form, setForm] = useState<FormValues>({
+    title: '',
+    description: '',
+    dateTime: '',
+    endDateTime: '',
+    isPublic: false,
+  });
+  const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setDateTime('');
-    setIsPublic(false);
-    setEditingId(null);
-  };
-
-  const saveLocal = (data: EventItem[]) => {
+  // salva su localStorage
+  const saveLocal = (data: UnifiedEvent[]) =>
     localStorage.setItem('events', JSON.stringify(data));
-  };
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      if (navigator.onLine) {
-        try {
-          await signIn();
-          const res = await listEvents();
-          const mapped = res.map((ev: any) => ({
-            id: ev.id,
-            title: ev.summary,
-            description: ev.description || '',
-            dateTime: ev.start?.dateTime || ev.start?.date || '',
-            isPublic: ev.visibility === 'public',
-          }));
-          setEvents(mapped);
-          saveLocal(mapped);
-          return;
-        } catch {
-          // fall back to local storage
-        }
-      }
-      const stored = localStorage.getItem('events');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const normalized = parsed.map((ev: any) => ({
-          id: ev.id,
-          title: ev.title || ev.titolo,
-          description: ev.description || ev.descrizione || '',
-          dateTime: ev.dateTime || ev.date || ev.data_ora || '',
-          isPublic: ev.isPublic ?? ev.is_public ?? false,
-        }));
-        setEvents(normalized);
-      }
-    };
-    fetchEvents();
-  }, []);
+    const fetchAll = async () => {
+      // offline fallback
+      if (!naviga
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !dateTime) return;
-
-    if (editingId) {
-      const updated = events.map(ev =>
-        ev.id === editingId
-          ? { ...ev, title, description, dateTime, isPublic }
-          : ev);
-      setEvents(updated);
-      saveLocal(updated);
-    } else {
-      if (navigator.onLine) {
-        try {
-          const res = await createEvent({
-            summary: title,
-            description,
-            start: { dateTime },
-            end: { dateTime },
-          });
-          const newItem: EventItem = {
-            id: res.id,
-            title,
-            description,
-            dateTime,
-            isPublic,
-          };
-          const updated = [...events, newItem];
-          setEvents(updated);
-          saveLocal(updated);
-        } catch {
-          const newItem: EventItem = {
-            id: Date.now().toString(),
-            title,
-            description,
-            dateTime,
-            isPublic,
-          };
-          const updated = [...events, newItem];
-          setEvents(updated);
-          saveLocal(updated);
-        }
-      } else {
-        const newItem: EventItem = {
-          id: Date.now().toString(),
-          title,
-          description,
-          dateTime,
-          isPublic,
-        };
-        const updated = [...events, newItem];
-        setEvents(updated);
-        saveLocal(updated);
-      }
-    }
-
-    resetForm();
-  };
-
-  const onEdit = (item: EventItem) => {
-    setEditingId(item.id);
-    setTitle(item.title);
-    setDescription(item.description);
-    setDateTime(item.dateTime);
-    setIsPublic(item.isPublic);
-  };
-  const onDelete = (id: string) => {
-    const updated = events.filter(e => e.id !== id);
-    setEvents(updated);
-    saveLocal(updated);
-  };
-
-  return (
-    <div className="list-page">
-      <h2>Eventi</h2>
-      <form onSubmit={onSubmit} className="item-form">
-        <input
-          placeholder="Titolo"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-        />
-        <textarea
-          placeholder="Descrizione"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-        />
-        <input
-          type="datetime-local"
-          value={dateTime}
-          onChange={e => setDateTime(e.target.value)}
-        />
-        <label>
-          <input
-            type="checkbox"
-            checked={isPublic}
-            onChange={e => setIsPublic(e.target.checked)}
-          />
-          Pubblico
-        </label>
-        <button type="submit">{editingId ? 'Salva' : 'Aggiungi'}</button>
-        {editingId && (
-          <button type="button" onClick={resetForm}>
-            Annulla
-          </button>
-        )}
-      </form>
-      <table className="item-table">
-        <thead>
-          <tr>
-            <th>Titolo</th>
-            <th>Data</th>
-            <th>Descrizione</th>
-            <th>Pubblico?</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.map(ev => (
-            <tr key={ev.id}>
-              <td>{ev.title}</td>
-              <td>{new Date(ev.dateTime).toLocaleString()}</td>
-              <td>{ev.description}</td>
-              <td>{ev.isPublic ? 'S\u00ec' : 'No'}</td>
-              <td>
-                <button onClick={() => onEdit(ev)}>Modifica</button>
-                <button onClick={() => onDelete(ev.id)}>Elimina</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
