@@ -7,7 +7,6 @@ import {
   Determination,
 } from '../api/determinations';
 import './ListPages.css';
-import PageTemplate from '../components/PageTemplate';
 
 const DeterminationsPage: React.FC = () => {
   const [items, setItems] = useState<Determination[]>([]);
@@ -149,8 +148,7 @@ const DeterminationsPage: React.FC = () => {
   };
 
   return (
-    <PageTemplate>
-      <div className="list-page">
+    <div className="list-page">
         <h2>Determine</h2>
         <form onSubmit={onSubmit} className="item-form">
         <label htmlFor="det-capitolo">Capitolo</label>
@@ -212,7 +210,6 @@ const DeterminationsPage: React.FC = () => {
         </tbody>
       </table>
       </div>
-    </PageTemplate>
   );
 };
 
