@@ -17,8 +17,10 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
-`VITE_GAPI_API_KEY`.
+Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID`,
+`VITE_GAPI_API_KEY` and `VITE_INTEGRATION_TOKEN`.
+The integration token is required for the third-party widget displayed on the
+dashboard.
 
 ## Development
 
