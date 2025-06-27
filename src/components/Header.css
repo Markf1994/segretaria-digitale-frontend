@@ -30,9 +30,9 @@
   margin-right: 0.5rem;
 }
 .site-header button {
-  background: #fff;
-  color: #A52019;
-  border: none;
+  background: #A52019;
+  color: #fff;
+  border: 1px solid #000;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
 }
