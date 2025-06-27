@@ -12,7 +12,13 @@ interface EventItem {
   isPublic: boolean;
 }
 interface TodoItem { id: string; text: string; due: string; }
-interface Determination { id: string; title: string; due: string; }
+interface Determination {
+  id: string;
+  capitolo: string;
+  numero: string;
+  somma: number;
+  scadenza: string;
+}
 
 export default function Dashboard() {
   const [events] = useLocalStorage<EventItem[]>('events', []);
@@ -30,7 +36,9 @@ export default function Dashboard() {
     e => differenceInCalendarDays(parseISO(e.dateTime), today) <= 3
   );
   const upcomingTodos = todos.filter(t => differenceInCalendarDays(parseISO(t.due), today) <= 3);
-  const upcomingDeterminations = determinations.filter(d => differenceInCalendarDays(parseISO(d.due), today) <= 7);
+  const upcomingDeterminations = determinations.filter(
+    d => differenceInCalendarDays(parseISO(d.scadenza), today) <= 7
+  );
   const unreadNotifications = notifications.filter(n => !n.read);
 
   return (
@@ -67,7 +75,10 @@ export default function Dashboard() {
             <li key={t.id}>To-Do: {t.text} – {new Date(t.due).toLocaleDateString()}</li>
           ))}
           {upcomingDeterminations.map(d => (
-            <li key={d.id}>Determina: {d.title} – {new Date(d.due).toLocaleDateString()}</li>
+            <li key={d.id}>
+              Determina: {d.capitolo} – {d.numero} –{' '}
+              {new Date(d.scadenza).toLocaleDateString()}
+            </li>
           ))}
           {!upcomingEvents.length && !upcomingTodos.length && !upcomingDeterminations.length && (
             <li>Nessuna scadenza imminente.</li>
