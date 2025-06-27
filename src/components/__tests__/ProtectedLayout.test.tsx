@@ -23,6 +23,9 @@ describe('ProtectedLayout', () => {
     expect(screen.getByRole('button', { name: /esci/i })).toBeInTheDocument();
 
     // footer
-    expect(screen.getByText(/© M.Fenaroli 2k25/i)).toBeInTheDocument();
+    const currentYear = new Date().getFullYear();
+    expect(
+      screen.getByText(new RegExp(`© M.Fenaroli ${currentYear}`, 'i'))
+    ).toBeInTheDocument();
   });
 });
