@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
         <div className="login-card">
           <img src="/logo.png" alt="Logo" className="login-logo" />
           <form className="login-form" onSubmit={onSubmit}>
-          <h1>Segretaria Digitale</h1>
+          <h1>Segretaria Digitale<br />Polizia Locale Castione della Presolana</h1>
           <input
             type="email"
             placeholder="Email istituzionale"
