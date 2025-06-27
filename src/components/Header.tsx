@@ -19,10 +19,10 @@ const Header: React.FC = () => {
         <h1>Polizia Locale - Castione della Presolana</h1>
       </div>
       <nav>
-        <Link to="/">Home</Link>
-        <Link to="/events">Eventi</Link>
-        <Link to="/todo">To-Do</Link>
-        <Link to="/determinazioni">Determine</Link>
+        <Link to="/">🏠 Home</Link>
+        <Link to="/events">📅 Eventi</Link>
+        <Link to="/todo">📝 To-Do</Link>
+        <Link to="/determinazioni">📄 Determine</Link>
         <button onClick={logout}>Esci</button>
       </nav>
     </header>
