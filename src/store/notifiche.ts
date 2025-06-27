@@ -18,9 +18,7 @@ export const useNotificheStore = create<NotificheState>((set) => ({
   fetch: async () => {
     const token = useAuthStore.getState().token;
     if (!token) return;
-    const res = await api.get('/notifications', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await api.get('/notifications');
     set({ notifications: res.data });
   }
 }));
