@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -10,7 +10,6 @@ const IntegrationBox: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
-  const apiKey = import.meta.env.VITE_OPENAI_KEY;
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -18,17 +17,10 @@ const IntegrationBox: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
 
-    if (!apiKey) return;
-
     try {
-      const res = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: 'gpt-3.5-turbo',
-          messages: [...messages, userMessage],
-        },
-        { headers: { Authorization: `Bearer ${apiKey}` } }
-      );
+      const res = await api.post('/chat', {
+        messages: [...messages, userMessage],
+      });
       const assistant = res.data.choices[0].message as Message;
       setMessages(prev => [...prev, assistant]);
     } catch (err) {
