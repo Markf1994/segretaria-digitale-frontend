@@ -18,10 +18,10 @@ cp .env.example .env
 ```
 
 Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID`,
-`VITE_GAPI_API_KEY`, `VITE_INTEGRATION_TOKEN` and `VITE_OPENAI_KEY`.
-The integration token was originally used for a third-party widget. The
-`VITE_OPENAI_KEY` variable is required to enable the chat box shown on the
-dashboard, which sends prompts to the OpenAI API.
+`VITE_GAPI_API_KEY` and `VITE_INTEGRATION_TOKEN`.
+The integration token was originally used for a third-party widget.
+The chat box now sends prompts to a backend endpoint instead of directly to
+OpenAI, so no OpenAI key is needed in the client.
 
 ## Development
 
@@ -61,8 +61,10 @@ The tests use Jest together with React Testing Library.
 
 ## Chat Integration
 
-The dashboard displays a small chat box powered by OpenAI. Configure
-`VITE_OPENAI_KEY` in your `.env` file with a valid API key to enable it.
+The dashboard displays a small chat box powered by OpenAI. Messages are sent to
+`/chat` on your backend, which must forward them to OpenAI. Configure the
+backend with an `OPENAI_KEY` environment variable containing a valid API key to
+enable the feature.
 
 ## Backend API
 
@@ -71,6 +73,7 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `POST /login` – authenticate the user and return an `access_token`.
 - `GET /determinazioni` – list existing determinations.
 - `POST /determinazioni` – create a new determination.
+- `POST /chat` – forward chat messages to OpenAI using the `OPENAI_KEY`.
 
 
 ## License
