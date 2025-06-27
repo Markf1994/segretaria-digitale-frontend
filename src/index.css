@@ -13,16 +13,6 @@ body {
   color: #333;
 }
 
-.app-wrapper {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
-.main-content {
-  flex: 1;
-  padding: 1rem;
-}
 
 /* LOGIN */
 .login-page {
