@@ -105,3 +105,14 @@ body, html, #root {
 .app-container {
   padding: 1rem;
 }
+
+/* Red bold headings for boxes and form labels */
+h2 {
+  color: #A52019;
+  font-weight: 700;
+}
+
+label {
+  color: #A52019;
+  font-weight: 700;
+}
