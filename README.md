@@ -87,6 +87,21 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `POST /chat` – forward chat messages to OpenAI using the `OPENAI_KEY`.
 
 
+## Backend Setup
+
+The API used by the frontend resides in a separate backend repository. Clone
+the backend and follow its README to install Python dependencies and start the
+server. The backend expects a few environment variables to be configured:
+
+- `DATABASE_URL` – connection string for the persistent database.
+- `ALGORITHM` – algorithm used for signing JWT access tokens.
+- `SECRET_KEY` – secret key for token generation.
+- `OPENAI_KEY` – API key enabling the `/chat` endpoint.
+
+Once the environment variables are set you can run `uvicorn main:app` to launch
+the API.
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
