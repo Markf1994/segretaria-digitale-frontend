@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import PageTemplate from '../PageTemplate';
 
@@ -8,10 +8,12 @@ const Dummy: React.FC = () => <div>Dummy Page</div>;
 describe('PageTemplate', () => {
   it('shows navigation, sidebar buttons and footer', () => {
     render(
-      <MemoryRouter>
-        <PageTemplate>
-          <Dummy />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dummy />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 
