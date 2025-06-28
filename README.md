@@ -24,9 +24,9 @@ Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
 
 The variables are:
 
-- `VITE_API_URL` – base URL of your backend API.
-- `VITE_GAPI_CLIENT_ID` – Google OAuth client ID for calendar integration.
-- `VITE_GAPI_API_KEY` – Google API key used by the Google Calendar features.
+- `VITE_API_URL` – https://segretaria-digitale-backend.onrender.com.
+- `VITE_GAPI_CLIENT_ID` – 915439779647-54l80fl9mdsu71j6lsn8n1ggao2p5br6.apps.googleusercontent.com.
+- `VITE_GAPI_API_KEY` – AIzaSyAxum50Fxrntu2tewEsDCFOQbE3ortfaMc.
 
 The chat box sends prompts to a backend endpoint instead of directly to OpenAI,
 so no OpenAI key is needed in the client.
