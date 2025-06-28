@@ -25,6 +25,28 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
         <h1>Dashboard</h1>
+        <div className="upcoming-wrapper">
+          <div className="notifications dashboard-section">
+            <h2>Todo list 📝</h2>
+            <ul>
+              {upcomingTodos.map(t => (
+                <li key={t.id}>To-Do: {t.text} – {new Date(t.due).toLocaleDateString()}</li>
+              ))}
+              {!upcomingTodos.length && <li>Nessun todo imminente.</li>}
+            </ul>
+          </div>
+          <div className="notifications dashboard-section">
+            <h2>Eventi in scadenza 📅</h2>
+            <ul>
+              {upcomingEvents.map(e => (
+                <li key={e.id}>
+                  Evento: {e.title} – {new Date(e.dateTime).toLocaleDateString()}
+                </li>
+              ))}
+              {!upcomingEvents.length && <li>Nessun evento imminente.</li>}
+            </ul>
+          </div>
+        </div>
         <div className="top-wrapper">
           <div className="calendar-container dashboard-section">
            <iframe
@@ -41,28 +63,6 @@ export default function Dashboard() {
 }}>
   Aggiorna calendario
 </button>
-        </div>
-      </div>
-      <div className="upcoming-wrapper">
-        <div className="notifications dashboard-section">
-          <h2>Todo list 📝</h2>
-          <ul>
-            {upcomingTodos.map(t => (
-              <li key={t.id}>To-Do: {t.text} – {new Date(t.due).toLocaleDateString()}</li>
-            ))}
-            {!upcomingTodos.length && <li>Nessun todo imminente.</li>}
-          </ul>
-        </div>
-        <div className="notifications dashboard-section">
-          <h2>Eventi in scadenza 📅</h2>
-          <ul>
-            {upcomingEvents.map(e => (
-              <li key={e.id}>
-                Evento: {e.title} – {new Date(e.dateTime).toLocaleDateString()}
-              </li>
-            ))}
-            {!upcomingEvents.length && <li>Nessun evento imminente.</li>}
-          </ul>
         </div>
       </div>
       </div>
