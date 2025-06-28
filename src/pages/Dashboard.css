@@ -8,7 +8,7 @@
   border: 1px solid #A52019;
   border-radius: 4px;
   padding: 1rem;
-  background: #fff;
+  background: #a8a3a3;
 }
 .calendar-container {
   width: 100%;
@@ -28,7 +28,7 @@
   padding: 0;
 }
 .notifications li {
-  background: #fff;
+  background: #a8a3a3;
   border: 1px solid #ddd;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
