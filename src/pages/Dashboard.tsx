@@ -2,7 +2,6 @@ import React from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
-import IntegrationBox from '../components/IntegrationBox';
 interface EventItem {
   id: string;
   title: string;
@@ -43,7 +42,6 @@ export default function Dashboard() {
   Aggiorna calendario
 </button>
         </div>
-        <IntegrationBox />
       </div>
       <div className="upcoming-wrapper">
         <div className="notifications dashboard-section">
