@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import TodoPage from '../TodoPage';
 import * as todosApi from '../../api/todos';
 import PageTemplate from '../../components/PageTemplate';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 jest.mock('../../api/todos', () => ({
   __esModule: true,
@@ -25,10 +25,12 @@ describe('TodoPage offline', () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
     render(
-      <MemoryRouter>
-        <PageTemplate>
-          <TodoPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/todo"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/todo" element={<TodoPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 
@@ -44,10 +46,12 @@ describe('TodoPage offline', () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
     render(
-      <MemoryRouter>
-        <PageTemplate>
-          <TodoPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/todo"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/todo" element={<TodoPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 
@@ -68,10 +72,12 @@ describe('TodoPage offline', () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
     render(
-      <MemoryRouter>
-        <PageTemplate>
-          <TodoPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/todo"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/todo" element={<TodoPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 

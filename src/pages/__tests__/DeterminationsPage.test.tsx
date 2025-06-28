@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DeterminationsPage from '../DeterminationsPage';
 import PageTemplate from '../../components/PageTemplate';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 beforeEach(() => {
   localStorage.clear();
@@ -11,10 +11,12 @@ beforeEach(() => {
 describe('DeterminationsPage', () => {
   it('creates a new determination', async () => {
     const { container } = render(
-      <MemoryRouter>
-        <PageTemplate>
-          <DeterminationsPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/determinazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/determinazioni" element={<DeterminationsPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 
@@ -34,10 +36,12 @@ describe('DeterminationsPage', () => {
     );
 
     const { container } = render(
-      <MemoryRouter>
-        <PageTemplate>
-          <DeterminationsPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/determinazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/determinazioni" element={<DeterminationsPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 

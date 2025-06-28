@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import EventsPage from '../EventsPage';
 import api from '../../api/axios';
 import PageTemplate from '../../components/PageTemplate';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -38,10 +38,12 @@ describe('EventsPage', () => {
     );
 
     render(
-      <MemoryRouter>
-        <PageTemplate>
-          <EventsPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 
@@ -52,10 +54,12 @@ describe('EventsPage', () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
     const { container } = render(
-      <MemoryRouter>
-        <PageTemplate>
-          <EventsPage />
-        </PageTemplate>
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
       </MemoryRouter>
     );
 
