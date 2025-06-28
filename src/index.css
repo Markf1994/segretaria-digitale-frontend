@@ -29,7 +29,7 @@ body {
   position: fixed;
   inset: 0;
   background: inherit;
-  filter: blur(8px);
+  filter: blur(16px);
   z-index: -1;
 }
 
