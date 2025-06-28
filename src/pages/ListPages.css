@@ -62,6 +62,9 @@
   border: 1px solid #ddd;
   padding: 0.5rem;
 }
+.item-table td {
+  background: #fff;
+}
 .item-table th {
   background: #f5f5f5;
   text-align: left;
