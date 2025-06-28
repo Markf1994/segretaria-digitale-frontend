@@ -28,8 +28,6 @@ The variables are:
 - `VITE_GAPI_CLIENT_ID` – 915439779647-54l80fl9mdsu71j6lsn8n1ggao2p5br6.apps.googleusercontent.com.
 - `VITE_GAPI_API_KEY` – AIzaSyAxum50Fxrntu2tewEsDCFOQbE3ortfaMc.
 
-The chat box sends prompts to a backend endpoint instead of directly to OpenAI,
-so no OpenAI key is needed in the client.
 
 ## Development
 
@@ -70,12 +68,6 @@ or `./scripts/setup.sh`.
 
 The tests use Jest together with React Testing Library.
 
-## Chat Integration
-
-The dashboard displays a small chat box powered by OpenAI. Messages are sent to
-`/chat` on your backend, which must forward them to OpenAI. Configure the
-backend with an `OPENAI_KEY` environment variable containing a valid API key to
-enable the feature.
 
 ## Backend API
 
@@ -84,7 +76,6 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `POST /login` – authenticate the user and return an `access_token`.
 - `GET /determinazioni` – list existing determinations.
 - `POST /determinazioni` – create a new determination.
-- `POST /chat` – forward chat messages to OpenAI using the `OPENAI_KEY`.
 
 
 ## Backend Setup
@@ -96,7 +87,6 @@ server. The backend expects a few environment variables to be configured:
 - `DATABASE_URL` – connection string for the persistent database.
 - `ALGORITHM` – algorithm used for signing JWT access tokens.
 - `SECRET_KEY` – secret key for token generation.
-- `OPENAI_KEY` – API key enabling the `/chat` endpoint.
 
 Once the environment variables are set you can run `uvicorn main:app` to launch
 the API.
