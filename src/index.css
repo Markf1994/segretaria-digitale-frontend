@@ -1,6 +1,6 @@
 /* Styles based on the "grafica istituzionale" guidelines
    https://designers.italia.it/kit/grafica/ */
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
 * {
   box-sizing: border-box;
@@ -8,7 +8,8 @@
 
 body {
   margin: 0;
-  font-family: 'Titillium Web', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
   background: url('/background.png') no-repeat center/cover fixed;
   color: #333;
 }
