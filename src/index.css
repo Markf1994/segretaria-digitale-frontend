@@ -20,7 +20,8 @@ body {
   justify-content: center;
   align-items: center;
   flex: 1;
-  background: linear-gradient(135deg, #ffffff 0%, #e5e5e5 100%);
+  background: url('/background.png') no-repeat center/cover fixed;
+  position: relative;
 }
 .login-page::before {
   content: "";
