@@ -30,7 +30,7 @@ export default function Dashboard() {
           <div className="calendar-container dashboard-section">
             <iframe
               title="calendar"
-            src="https://calendar.google.com/calendar/embed?mode=AGENDA"
+            src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
             style={{ border: 0 }}
             width="100%"
             height="600"
