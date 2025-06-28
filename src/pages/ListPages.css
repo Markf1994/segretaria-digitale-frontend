@@ -62,6 +62,9 @@
   border: 1px solid #ddd;
   padding: 0.5rem;
 }
+.item-table td {
+  background: #fff;
+}
 .item-table th {
   background: #f5f5f5;
   text-align: left;
@@ -72,7 +75,7 @@
 .item-table button {
   margin-left: 0.5rem;
   background: #A52019;
-  color: #fff;
+  color: #a8a3a3;
   border: none;
   border-radius: 4px;
   padding: 0.25rem 0.75rem;
