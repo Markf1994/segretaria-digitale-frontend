@@ -21,6 +21,13 @@ cp .env.example .env
 
 Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
 `VITE_GAPI_API_KEY`.
+
+The variables are:
+
+- `VITE_API_URL` – base URL of your backend API.
+- `VITE_GAPI_CLIENT_ID` – Google OAuth client ID for calendar integration.
+- `VITE_GAPI_API_KEY` – Google API key used by the Google Calendar features.
+
 The chat box sends prompts to a backend endpoint instead of directly to OpenAI,
 so no OpenAI key is needed in the client.
 
