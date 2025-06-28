@@ -3,7 +3,6 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import IntegrationBox from '../components/IntegrationBox';
-const CALENDAR_ID = 'plcastionedellapresolana@gmail.com'; 
 interface EventItem {
   id: string;
   title: string;
@@ -16,6 +15,7 @@ interface TodoItem { id: string; text: string; due: string; }
 export default function Dashboard() {
   const [events] = useLocalStorage<EventItem[]>('events', []);
   const [todos] = useLocalStorage<TodoItem[]>('todos', []);
+  const CALENDAR_ID = 'plcastionedellapresolana@gmail.com';
 
   const today = new Date();
   const upcomingEvents = events.filter(
