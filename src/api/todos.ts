@@ -2,8 +2,8 @@ import api from './axios'
 
 export interface Todo {
   id: string
-  text: string
-  due: string
+  descrizione: string
+  scadenza: string        // ISO 8601: "2025-07-01T00:00:00"
 }
 
 export const listTodos = (): Promise<Todo[]> =>
