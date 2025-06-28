@@ -23,6 +23,7 @@ describe('DeterminationsPage', () => {
     await userEvent.type(screen.getByLabelText('Capitolo'), 'C1');
     await userEvent.type(screen.getByLabelText('Numero'), '001');
     await userEvent.type(screen.getByLabelText('Somma'), '10');
+    await userEvent.type(screen.getByLabelText('Descrizione'), 'desc');
     await userEvent.type(screen.getByLabelText('Scadenza'), '2023-06-10');
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
@@ -32,7 +33,7 @@ describe('DeterminationsPage', () => {
   it('edits an existing determination', async () => {
     localStorage.setItem(
       'determinations',
-      JSON.stringify([{ id: '1', capitolo: 'A', numero: '1', somma: 5, scadenza: '2023-01-01' }])
+      JSON.stringify([{ id: '1', capitolo: 'A', numero: '1', somma: 5, scadenza: '2023-01-01', descrizione: 'old' }])
     );
 
     const { container } = render(
@@ -53,6 +54,8 @@ describe('DeterminationsPage', () => {
     await userEvent.type(screen.getByLabelText('Numero'), '2');
     await userEvent.clear(screen.getByLabelText('Somma'));
     await userEvent.type(screen.getByLabelText('Somma'), '6');
+    await userEvent.clear(screen.getByLabelText('Descrizione'));
+    await userEvent.type(screen.getByLabelText('Descrizione'), 'new');
     await userEvent.clear(screen.getByLabelText('Scadenza'));
     await userEvent.type(screen.getByLabelText('Scadenza'), '2023-02-02');
     await userEvent.click(screen.getByRole('button', { name: /salva/i }));

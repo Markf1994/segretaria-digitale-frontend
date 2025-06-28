@@ -13,6 +13,7 @@ const DeterminationsPage: React.FC = () => {
   const [capitolo, setCapitolo] = useState('');
   const [numero, setNumero] = useState('');
   const [somma, setSomma] = useState('');
+  const [descrizione, setDescrizione] = useState('');
   const [scadenza, setScadenza] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
 
@@ -48,6 +49,7 @@ const DeterminationsPage: React.FC = () => {
     setCapitolo('');
     setNumero('');
     setSomma('');
+    setDescrizione('');
     setScadenza('');
     setEdit(null);
   };
@@ -64,6 +66,7 @@ const DeterminationsPage: React.FC = () => {
             numero,
             somma: parseFloat(somma),
             scadenza,
+            descrizione,
           });
           const updated = items.map(d => (d.id === edit ? res : d));
           setItems(updated);
@@ -71,7 +74,14 @@ const DeterminationsPage: React.FC = () => {
         } catch {
           const updated = items.map(d =>
             d.id === edit
-              ? { id: edit, capitolo, numero, somma: parseFloat(somma), scadenza }
+              ? {
+                  id: edit,
+                  capitolo,
+                  numero,
+                  somma: parseFloat(somma),
+                  scadenza,
+                  descrizione,
+                }
               : d
           );
           setItems(updated);
@@ -80,7 +90,14 @@ const DeterminationsPage: React.FC = () => {
       } else {
         const updated = items.map(d =>
           d.id === edit
-            ? { id: edit, capitolo, numero, somma: parseFloat(somma), scadenza }
+            ? {
+                id: edit,
+                capitolo,
+                numero,
+                somma: parseFloat(somma),
+                scadenza,
+                descrizione,
+              }
             : d
         );
         setItems(updated);
@@ -94,6 +111,7 @@ const DeterminationsPage: React.FC = () => {
             numero,
             somma: parseFloat(somma),
             scadenza,
+            descrizione,
           });
           const updated = [...items, res];
           setItems(updated);
@@ -105,6 +123,7 @@ const DeterminationsPage: React.FC = () => {
             numero,
             somma: parseFloat(somma),
             scadenza,
+            descrizione,
           };
           const updated = [...items, newItem];
           setItems(updated);
@@ -117,6 +136,7 @@ const DeterminationsPage: React.FC = () => {
           numero,
           somma: parseFloat(somma),
           scadenza,
+          descrizione,
         };
         const updated = [...items, newItem];
         setItems(updated);
@@ -132,6 +152,7 @@ const DeterminationsPage: React.FC = () => {
     setCapitolo(d.capitolo);
     setNumero(d.numero);
     setSomma(String(d.somma));
+    setDescrizione(d.descrizione || '');
     setScadenza(d.scadenza);
   };
   const onDelete = async (id: string) => {
@@ -174,6 +195,13 @@ const DeterminationsPage: React.FC = () => {
           value={somma}
           onChange={e => setSomma(e.target.value)}
         />
+        <label htmlFor="det-descrizione">Descrizione</label>
+        <textarea
+          id="det-descrizione"
+          placeholder="Descrizione"
+          value={descrizione}
+          onChange={e => setDescrizione(e.target.value)}
+        />
         <label htmlFor="det-scadenza">Scadenza</label>
         <input
           id="det-scadenza"
@@ -190,6 +218,7 @@ const DeterminationsPage: React.FC = () => {
             <th>Capitolo</th>
             <th>Numero</th>
             <th>Somma</th>
+            <th>Descrizione</th>
             <th>Scadenza</th>
             <th></th>
           </tr>
@@ -200,6 +229,7 @@ const DeterminationsPage: React.FC = () => {
               <td>{d.capitolo}</td>
               <td>{d.numero}</td>
               <td>€{d.somma}</td>
+              <td>{d.descrizione}</td>
               <td>{new Date(d.scadenza).toLocaleDateString()}</td>
               <td>
                 <button onClick={() => onEdit(d)}>Modifica</button>
