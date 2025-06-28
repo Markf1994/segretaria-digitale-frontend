@@ -18,7 +18,7 @@ const IntegrationBox: React.FC = () => {
     setInput('');
 
     try {
-      const res = await api.post('/chat', {
+      const res = await api.post('/api/chat', {
         messages: [...messages, userMessage],
       });
       const assistant = res.data.choices[0].message as Message;
