@@ -28,13 +28,21 @@ export default function Dashboard() {
         <h1>Dashboard</h1>
         <div className="top-wrapper">
           <div className="calendar-container dashboard-section">
-            <iframe
-              title="calendar"
-            src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
-            style={{ border: 0 }}
-            width="100%"
-            height="600"
-          ></iframe>
+            const CALENDAR_ID = 'plcastionedellapresolana@gmail.com'; // oppure l’ID alfanumerico
+           <iframe
+                title="calendar"
+               src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
+              style={{ border: 0 }}
+               width="100%"
+               height="600"
+               scrolling="no"
+             ></iframe>
+            <button onClick={() => {
+  const el = document.querySelector<HTMLIFrameElement>('iframe[title="calendar"]');
+  if (el) el.src = el.src;        // forza reload
+}}>
+  Aggiorna calendario
+</button>
         </div>
         <IntegrationBox />
       </div>
