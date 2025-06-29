@@ -3,6 +3,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
 import './Dashboard.css';
+import Greeting from '../components/Greeting';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 interface EventItem {
   id: string;
@@ -31,6 +32,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
+        <Greeting />
         <h1>Dashboard</h1>
         <div className="upcoming-wrapper">
           <div className="notifications dashboard-section">
