@@ -43,7 +43,7 @@ export default function Dashboard() {
             </ul>
           </div>
           <div className="notifications dashboard-section">
-            <h2>Eventi in scadenza 📅</h2>
+            <h2>Impegni dei prossimi giorni 📅</h2>
             <ul>
               {upcomingEvents.map(e => (
                 <li key={e.id}>
