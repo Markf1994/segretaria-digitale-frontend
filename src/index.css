@@ -21,7 +21,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex: 1;
-  background: url('/Login.png') no-repeat center/cover fixed;
+  background: url('/Login.png') no-repeat center/contain fixed;
   position: relative;
   padding-left: 2rem;
 }
