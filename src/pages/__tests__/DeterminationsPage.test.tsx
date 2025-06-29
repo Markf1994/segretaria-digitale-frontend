@@ -20,12 +20,12 @@ describe('DeterminationsPage', () => {
       </MemoryRouter>
     );
 
-    await userEvent.type(screen.getByPlaceholderText('Capitolo'), 'C1');
-    await userEvent.type(screen.getByPlaceholderText('Numero'), '001');
-    await userEvent.type(screen.getByPlaceholderText('Somma'), '10');
-    await userEvent.type(screen.getByPlaceholderText('Descrizione'), 'desc');
-    await userEvent.type(screen.getByLabelText('Scadenza'), '2023-06-10');
-    await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
+    await userEvent.type(screen.getByTestId('det-capitolo'), 'C1');
+    await userEvent.type(screen.getByTestId('det-numero'), '001');
+    await userEvent.type(screen.getByTestId('det-somma'), '10');
+    await userEvent.type(screen.getByTestId('det-descrizione'), 'desc');
+    await userEvent.type(screen.getByTestId('det-scadenza'), '2023-06-10');
+    await userEvent.click(screen.getByTestId('det-submit'));
 
     expect(await screen.findByText(/C1/)).toBeInTheDocument();
   });
@@ -47,18 +47,18 @@ describe('DeterminationsPage', () => {
     );
 
     await screen.findByText(/A/);
-    await userEvent.click(screen.getByRole('button', { name: /modifica/i }));
-    await userEvent.clear(screen.getByPlaceholderText('Capitolo'));
-    await userEvent.type(screen.getByPlaceholderText('Capitolo'), 'B');
-    await userEvent.clear(screen.getByPlaceholderText('Numero'));
-    await userEvent.type(screen.getByPlaceholderText('Numero'), '2');
-    await userEvent.clear(screen.getByPlaceholderText('Somma'));
-    await userEvent.type(screen.getByPlaceholderText('Somma'), '6');
-    await userEvent.clear(screen.getByPlaceholderText('Descrizione'));
-    await userEvent.type(screen.getByPlaceholderText('Descrizione'), 'new');
-    await userEvent.clear(screen.getByLabelText('Scadenza'));
-    await userEvent.type(screen.getByLabelText('Scadenza'), '2023-02-02');
-    await userEvent.click(screen.getByRole('button', { name: /salva/i }));
+    await userEvent.click(screen.getByTestId('det-edit'));
+    await userEvent.clear(screen.getByTestId('det-capitolo'));
+    await userEvent.type(screen.getByTestId('det-capitolo'), 'B');
+    await userEvent.clear(screen.getByTestId('det-numero'));
+    await userEvent.type(screen.getByTestId('det-numero'), '2');
+    await userEvent.clear(screen.getByTestId('det-somma'));
+    await userEvent.type(screen.getByTestId('det-somma'), '6');
+    await userEvent.clear(screen.getByTestId('det-descrizione'));
+    await userEvent.type(screen.getByTestId('det-descrizione'), 'new');
+    await userEvent.clear(screen.getByTestId('det-scadenza'));
+    await userEvent.type(screen.getByTestId('det-scadenza'), '2023-02-02');
+    await userEvent.click(screen.getByTestId('det-submit'));
 
     expect(await screen.findByText(/B/)).toBeInTheDocument();
   });
