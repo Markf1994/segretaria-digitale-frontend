@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
           <img src="/logo.png" alt="Logo" className="login-logo" />
           <form className="login-form" onSubmit={onSubmit}>
           <h1>Segretaria digitale Polizia Locale Castione della Presolana</h1>
-          <label htmlFor="login-email">Email</label>
+          <label htmlFor="login-email">email istituzionale</label>
           <input
             id="login-email"
             type="email"

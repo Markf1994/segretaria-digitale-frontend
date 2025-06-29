@@ -142,6 +142,11 @@ label {
   font-weight: 700;
 }
 
+.login-form label {
+  color: #000;
+  font-weight: bold;
+}
+
 /* Slightly smaller font for div elements */
 div {
   font-size: 0.9rem;
