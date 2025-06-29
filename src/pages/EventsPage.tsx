@@ -227,23 +227,23 @@ export default function EventsPage() {
     <div className="list-page">
         <h2>Eventi</h2>
         <form onSubmit={onSubmit} className="item-form">
-        <label htmlFor="ev-title">Titolo</label>
         <input
           id="ev-title"
+          data-testid="title-input"
           placeholder="Titolo"
           value={form.title}
           onChange={e => setForm({ ...form, title: e.target.value })}
         />
-        <label htmlFor="ev-description">Descrizione</label>
         <textarea
           id="ev-description"
+          data-testid="description-input"
           placeholder="Descrizione"
           value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
         />
-        <label htmlFor="ev-date">Data e ora</label>
         <input
           id="ev-date"
+          data-testid="date-input"
           type="datetime-local"
           value={form.dateTime}
           onChange={e => setForm({ ...form, dateTime: e.target.value })}
@@ -267,9 +267,9 @@ export default function EventsPage() {
       <table className="item-table">
         <thead>
           <tr>
-            <th>Titolo</th>
-            <th>Data</th>
-            <th>Descrizione</th>
+            <th></th>
+            <th></th>
+            <th></th>
             <th>Pubblico?</th>
             <th></th>
           </tr>

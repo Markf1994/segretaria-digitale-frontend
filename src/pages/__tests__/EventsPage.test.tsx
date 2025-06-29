@@ -53,7 +53,7 @@ describe('EventsPage', () => {
   it('adds new event offline', async () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
-    const { container } = render(
+    render(
       <MemoryRouter initialEntries={["/events"]}>
         <Routes>
           <Route element={<PageTemplate />}>
@@ -63,10 +63,9 @@ describe('EventsPage', () => {
       </MemoryRouter>
     );
 
-    await userEvent.type(screen.getByLabelText('Titolo'), 'My Event');
-    await userEvent.type(screen.getByLabelText('Descrizione'), 'Desc');
-    const dateInput = container.querySelector('input[type="datetime-local"]') as HTMLInputElement;
-    await userEvent.type(dateInput, '2023-05-01T12:00');
+    await userEvent.type(screen.getByTestId('title-input'), 'My Event');
+    await userEvent.type(screen.getByTestId('description-input'), 'Desc');
+    await userEvent.type(screen.getByTestId('date-input'), '2023-05-01T12:00');
     await userEvent.click(screen.getByLabelText(/pubblico/i));
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
