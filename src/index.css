@@ -12,6 +12,10 @@ body {
   font-family: 'Almendra SC', serif;
   font-weight: 600;
   color: #333;
+  background: url('/Login.png') no-repeat center/cover fixed;
+}
+body.login-bg {
+  background-size: contain;
 }
 
 
@@ -22,17 +26,8 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex: 1;
-  background: url('/Login.png') no-repeat center/contain fixed;
   position: relative;
   padding-left: 17rem;
-}
-.login-page::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: url('/Login.png') no-repeat center/cover fixed;
-  filter: blur(16px);
-  z-index: -1;
 }
 
 .login-card {
@@ -106,10 +101,11 @@ body {
   }
 
   /* Allow the background to scroll on mobile devices */
-  body,
-  .login-page {
+  body.login-bg {
     background-attachment: scroll;
     background-size: contain;
+  }
+  .login-page {
     justify-content: center;
     padding-left: 0;
   }
