@@ -133,7 +133,7 @@ export default function TodoPage() {
         {edit && <button type="button" onClick={reset}>Annulla</button>}
       </form>
       <details className="item-dropdown" open={!isMobile}>
-        <summary>Todo salvati</summary>
+        <summary>{isMobile ? 'Lista to-do salvati' : 'Todo salvati'}</summary>
       <table className="item-table">
         <thead>
           <tr>
