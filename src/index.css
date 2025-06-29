@@ -21,7 +21,7 @@ body {
   justify-content: center;
   align-items: center;
   flex: 1;
-  background: url('/background.png') no-repeat center/cover fixed;
+  background: url('/Login.png') no-repeat center/cover fixed;
   position: relative;
 }
 .login-page::before {
