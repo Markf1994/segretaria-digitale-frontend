@@ -42,9 +42,9 @@ describe('TodoPage offline', () => {
       </MemoryRouter>
     );
 
-    await userEvent.type(screen.getByPlaceholderText('Attività'), 'Task 1');
-    await userEvent.type(screen.getByLabelText('Scadenza'), '2023-06-01');
-    await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
+    await userEvent.type(screen.getByTestId('todo-text'), 'Task 1');
+    await userEvent.type(screen.getByTestId('todo-due'), '2023-06-01');
+    await userEvent.click(screen.getByTestId('todo-submit'));
 
     expect(await screen.findByText('Task 1')).toBeInTheDocument();
   });
@@ -64,13 +64,13 @@ describe('TodoPage offline', () => {
     );
 
     await screen.findByText('Task');
-    await userEvent.click(screen.getByRole('button', { name: /modifica/i }));
+    await userEvent.click(screen.getByTestId('todo-edit'));
 
-    await userEvent.clear(screen.getByPlaceholderText('Attività'));
-    await userEvent.type(screen.getByPlaceholderText('Attività'), 'Task edited');
-    await userEvent.clear(screen.getByLabelText('Scadenza'));
-    await userEvent.type(screen.getByLabelText('Scadenza'), '2023-02-02');
-    await userEvent.click(screen.getByRole('button', { name: /salva/i }));
+    await userEvent.clear(screen.getByTestId('todo-text'));
+    await userEvent.type(screen.getByTestId('todo-text'), 'Task edited');
+    await userEvent.clear(screen.getByTestId('todo-due'));
+    await userEvent.type(screen.getByTestId('todo-due'), '2023-02-02');
+    await userEvent.click(screen.getByTestId('todo-submit'));
 
     expect(await screen.findByText('Task edited')).toBeInTheDocument();
   });
@@ -90,7 +90,7 @@ describe('TodoPage offline', () => {
     );
 
     await screen.findByText('Task');
-    await userEvent.click(screen.getByRole('button', { name: /elimina/i }));
+    await userEvent.click(screen.getByTestId('todo-delete'));
 
     expect(screen.queryByText('Task')).not.toBeInTheDocument();
   });
