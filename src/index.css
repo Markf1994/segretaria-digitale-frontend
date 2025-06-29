@@ -153,6 +153,9 @@ label {
   color: #000;
   font-weight: bold;
   text-transform: uppercase;
+  display: inline-block;
+  padding: 0.25rem;
+  border: 2px solid #A52019;
 }
 
 /* Slightly smaller font for div elements */
