@@ -1,6 +1,6 @@
 /* Styles based on the "grafica istituzionale" guidelines
    https://designers.italia.it/kit/grafica/ */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
 
 * {
   box-sizing: border-box;
@@ -8,7 +8,7 @@
 
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Almendra SC', serif;
   font-weight: 600;
   color: #333;
 }
