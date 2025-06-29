@@ -43,6 +43,7 @@ export default function EventsPage() {
     isPublic: false,
   });
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
+  const isMobile = window.innerWidth <= 600;
 
   const resetForm = (): void => {
     setForm({ title: '', description: '', dateTime: '', endDateTime: '', isPublic: false });
@@ -261,6 +262,8 @@ export default function EventsPage() {
           </button>
         )}
       </form>
+      <details className="item-dropdown" open={!isMobile}>
+        <summary>Eventi salvati</summary>
       <table className="item-table">
         <thead>
           <tr>
@@ -286,6 +289,7 @@ export default function EventsPage() {
           ))}
         </tbody>
       </table>
+      </details>
       </div>
   );
 }

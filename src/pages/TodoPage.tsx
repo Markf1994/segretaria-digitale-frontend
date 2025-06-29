@@ -14,6 +14,7 @@ export default function TodoPage() {
   const [text, setText] = useState('');
   const [due, setDue] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
+  const isMobile = window.innerWidth <= 600;
 
   const reset = () => { setText(''); setDue(''); setEdit(null); };
 
@@ -113,6 +114,8 @@ export default function TodoPage() {
         <button type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
         {edit && <button type="button" onClick={reset}>Annulla</button>}
       </form>
+      <details className="item-dropdown" open={!isMobile}>
+        <summary>Todo salvati</summary>
       <table className="item-table">
         <thead>
           <tr>
@@ -134,6 +137,7 @@ export default function TodoPage() {
           ))}
         </tbody>
       </table>
+      </details>
       </div>
   );
 }
