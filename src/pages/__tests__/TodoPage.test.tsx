@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TodoPage from '../TodoPage';
 import * as todosApi from '../../api/todos';
+import * as detApi from '../../api/determinations';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
@@ -13,11 +14,18 @@ jest.mock('../../api/todos', () => ({
   deleteTodo: jest.fn(),
 }));
 
+jest.mock('../../api/determinations', () => ({
+  __esModule: true,
+  listDeterminations: jest.fn(),
+}));
+
 const mockedApi = todosApi as jest.Mocked<typeof todosApi>;
+const mockedDetApi = detApi as jest.Mocked<typeof detApi>;
 
 beforeEach(() => {
   localStorage.clear();
   mockedApi.listTodos.mockResolvedValue([]);
+  mockedDetApi.listDeterminations.mockResolvedValue([] as any);
 });
 
 describe('TodoPage offline', () => {
@@ -85,5 +93,44 @@ describe('TodoPage offline', () => {
     await userEvent.click(screen.getByRole('button', { name: /elimina/i }));
 
     expect(screen.queryByText('Task')).not.toBeInTheDocument();
+  });
+
+  it('shows determinations due within a month', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-05-01T00:00:00Z'));
+    localStorage.setItem(
+      'determinations',
+      JSON.stringify([
+        {
+          id: '1',
+          capitolo: 'C1',
+          numero: '001',
+          somma: 5,
+          scadenza: '2023-05-15',
+          descrizione: 'desc',
+        },
+        {
+          id: '2',
+          capitolo: 'C1',
+          numero: '002',
+          somma: 5,
+          scadenza: '2023-08-01',
+          descrizione: 'desc',
+        },
+      ])
+    );
+    Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
+
+    render(
+      <MemoryRouter initialEntries={["/todo"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/todo" element={<TodoPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Determina 001')).toBeInTheDocument();
+    expect(screen.queryByText('Determina 002')).not.toBeInTheDocument();
   });
 });
