@@ -95,6 +95,13 @@
   list-style: none;
   margin-bottom: 0.5rem;
 }
+.item-dropdown summary::after {
+  content: ' \25BC';
+  float: right;
+}
+.item-dropdown[open] > summary::after {
+  content: ' \25B2';
+}
 .item-dropdown summary::-webkit-details-marker {
   display: none;
 }

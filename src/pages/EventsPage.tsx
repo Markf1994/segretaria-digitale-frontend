@@ -263,7 +263,7 @@ export default function EventsPage() {
         )}
       </form>
       <details className="item-dropdown" open={!isMobile}>
-        <summary>Eventi salvati</summary>
+        <summary>{isMobile ? 'Lista Eventi Salvati' : 'Eventi salvati'}</summary>
       <table className="item-table">
         <thead>
           <tr>
