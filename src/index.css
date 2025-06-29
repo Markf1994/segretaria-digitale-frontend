@@ -18,11 +18,12 @@ body {
 /* LOGIN */
 .login-page {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex: 1;
   background: url('/Login.png') no-repeat center/cover fixed;
   position: relative;
+  padding-left: 2rem;
 }
 .login-page::before {
   content: "";
@@ -107,6 +108,8 @@ body {
   .login-page {
     background-attachment: scroll;
     background-size: contain;
+    justify-content: center;
+    padding-left: 0;
   }
 }
 
