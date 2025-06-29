@@ -127,4 +127,7 @@
     flex-direction: column;
     gap: 0.75rem;
   }
+  .list-page h2 {
+    text-align: center;
+  }
 }
