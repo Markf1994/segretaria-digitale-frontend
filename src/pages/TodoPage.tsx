@@ -5,11 +5,18 @@ import {
   updateTodo,
   deleteTodo,
 } from '../api/todos';
+import { listDeterminations, Determination } from '../api/determinations';
+import { differenceInCalendarDays, parseISO } from 'date-fns';
 import './ListPages.css';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
 
-interface TodoItem { id: string; text: string; due: string; }
+interface TodoItem {
+  id: string;
+  text: string;
+  due: string;
+  readonly?: boolean;
+}
 
 export default function TodoPage() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
@@ -31,23 +38,55 @@ export default function TodoPage() {
 
   useEffect(() => {
     const fetchTodos = async () => {
+      let all: TodoItem[] = [];
+
       if (navigator.onLine) {
         try {
           const data = await listTodos();
-          const mapped = data.map(t => ({
-            id: t.id,
-            text: t.descrizione,
-            due: t.scadenza,
-          }));
-          setTodos(mapped);
-          saveLocal(mapped);
-          return;
+          all = data.map(t => ({ id: t.id, text: t.descrizione, due: t.scadenza }));
         } catch {
-          // use fallback
+          // ignore and try local storage
         }
       }
-      const stored = localStorage.getItem(storageKey);
-      if (stored) setTodos(JSON.parse(stored));
+
+      if (!all.length) {
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          try { all = JSON.parse(stored) as TodoItem[]; } catch {}
+        }
+      }
+
+      let dets: Determination[] = [];
+      if (navigator.onLine) {
+        try {
+          dets = await listDeterminations();
+        } catch {
+          // ignore and try local storage
+        }
+      }
+      if (!dets.length) {
+        const stored = localStorage.getItem('determinations');
+        if (stored) {
+          try { dets = JSON.parse(stored) as Determination[]; } catch {}
+        }
+      }
+
+      const today = new Date();
+      const detTodos = dets
+        .filter(d => {
+          const diff = differenceInCalendarDays(parseISO(d.scadenza), today);
+          return diff >= 0 && diff <= 30;
+        })
+        .map(d => ({
+          id: `det-${d.id}`,
+          text: `Determina ${d.numero}`,
+          due: d.scadenza,
+          readonly: true,
+        }));
+
+      all = [...all, ...detTodos];
+      setTodos(all);
+      saveLocal(all);
     };
     fetchTodos();
   }, [storageKey]);
@@ -155,8 +194,12 @@ export default function TodoPage() {
               <td>{t.text}</td>
               <td>{new Date(t.due).toLocaleDateString()}</td>
               <td>
-                <button onClick={() => onEdit(t)}>Modifica</button>
-                <button onClick={() => onDelete(t.id)}>Elimina</button>
+                {!t.readonly && (
+                  <>
+                    <button onClick={() => onEdit(t)}>Modifica</button>
+                    <button onClick={() => onDelete(t.id)}>Elimina</button>
+                  </>
+                )}
               </td>
             </tr>
           ))}
