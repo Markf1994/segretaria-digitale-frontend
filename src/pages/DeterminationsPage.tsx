@@ -174,18 +174,21 @@ const DeterminationsPage: React.FC = () => {
         <form onSubmit={onSubmit} className="item-form">
         <input
           id="det-capitolo"
+          data-testid="det-capitolo"
           placeholder="Capitolo"
           value={capitolo}
           onChange={e => setCapitolo(e.target.value)}
         />
         <input
           id="det-numero"
+          data-testid="det-numero"
           placeholder="Numero"
           value={numero}
           onChange={e => setNumero(e.target.value)}
         />
         <input
           id="det-somma"
+          data-testid="det-somma"
           type="number"
           step="0.01"
           placeholder="Somma"
@@ -194,6 +197,7 @@ const DeterminationsPage: React.FC = () => {
         />
         <textarea
           id="det-descrizione"
+          data-testid="det-descrizione"
           placeholder="Descrizione"
           value={descrizione}
           onChange={e => setDescrizione(e.target.value)}
@@ -201,12 +205,13 @@ const DeterminationsPage: React.FC = () => {
         <label htmlFor="det-scadenza">Scadenza</label>
         <input
           id="det-scadenza"
+          data-testid="det-scadenza"
           type="date"
           value={scadenza}
           onChange={e => setScadenza(e.target.value)}
         />
-        <button type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
-        {edit && <button type="button" onClick={reset}>Annulla</button>}
+        <button data-testid="det-submit" type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
+        {edit && <button data-testid="det-cancel" type="button" onClick={reset}>Annulla</button>}
       </form>
       <table className="item-table">
         <thead>
@@ -228,8 +233,12 @@ const DeterminationsPage: React.FC = () => {
               <td>{d.descrizione}</td>
               <td>{new Date(d.scadenza).toLocaleDateString()}</td>
               <td>
-                <button onClick={() => onEdit(d)}>Modifica</button>
-                <button onClick={() => onDelete(d.id)}>Elimina</button>
+                <button data-testid="det-edit" onClick={() => onEdit(d)}>
+                  Modifica
+                </button>
+                <button data-testid="det-delete" onClick={() => onDelete(d.id)}>
+                  Elimina
+                </button>
               </td>
             </tr>
           ))}
