@@ -30,7 +30,7 @@ export default function Dashboard() {
             <h2>Todo list 📝</h2>
             <ul>
               {upcomingTodos.map(t => (
-                <li key={t.id}>To-Do: {t.text} – {new Date(t.due).toLocaleDateString()}</li>
+                <li key={t.id}>{t.text} – {new Date(t.due).toLocaleDateString()}</li>
               ))}
               {!upcomingTodos.length && <li>Nessun todo imminente.</li>}
             </ul>
