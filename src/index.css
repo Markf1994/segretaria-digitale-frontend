@@ -106,6 +106,7 @@ body {
   body,
   .login-page {
     background-attachment: scroll;
+    background-size: contain;
   }
 }
 
