@@ -10,7 +10,7 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  background: url('/Login.png') no-repeat center/contain fixed;
+  background: url('/Login.png') no-repeat center/cover fixed;
   color: #333;
 }
 
@@ -22,7 +22,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex: 1;
-  background: url('/Login.png') no-repeat center/contain fixed;
+  background: url('/Login.png') no-repeat center/cover fixed;
   position: relative;
   padding-left: 12rem;
 }
@@ -108,7 +108,7 @@ body {
   body,
   .login-page {
     background-attachment: scroll;
-    background-size: contain;
+    background-size: cover;
     justify-content: center;
     padding-left: 0;
   }
