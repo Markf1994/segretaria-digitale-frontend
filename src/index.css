@@ -125,6 +125,16 @@ body {
   padding: 1rem;
 }
 
+main.app-container {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.site-header * {
+  text-transform: none;
+  font-weight: normal;
+}
+
 /* Red bold headings for boxes and form labels */
 h2 {
   color: #A52019;
