@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   listTodos,
   createTodo,
@@ -6,6 +6,8 @@ import {
   deleteTodo,
 } from '../api/todos';
 import './ListPages.css';
+import { useAuthStore } from '../store/auth';
+import { getUserStorageKey } from '../utils/auth';
 
 interface TodoItem { id: string; text: string; due: string; }
 
@@ -15,11 +17,16 @@ export default function TodoPage() {
   const [due, setDue] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
   const isMobile = window.innerWidth <= 600;
+  const token = useAuthStore(s => s.token);
+  const storageKey = useMemo(
+    () => getUserStorageKey('todos', token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)),
+    [token]
+  );
 
   const reset = () => { setText(''); setDue(''); setEdit(null); };
 
   const saveLocal = (data: TodoItem[]) => {
-    localStorage.setItem('todos', JSON.stringify(data));
+    localStorage.setItem(storageKey, JSON.stringify(data));
   };
 
   useEffect(() => {
@@ -39,11 +46,11 @@ export default function TodoPage() {
           // use fallback
         }
       }
-      const stored = localStorage.getItem('todos');
+      const stored = localStorage.getItem(storageKey);
       if (stored) setTodos(JSON.parse(stored));
     };
     fetchTodos();
-  }, []);
+  }, [storageKey]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
