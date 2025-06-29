@@ -24,7 +24,7 @@ body {
   flex: 1;
   background: url('/Login.png') no-repeat center/contain fixed;
   position: relative;
-  padding-left: 4rem;
+  padding-left: 8rem;
 }
 .login-page::before {
   content: "";
