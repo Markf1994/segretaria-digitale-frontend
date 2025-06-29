@@ -21,7 +21,7 @@ body {
   justify-content: center;
   align-items: center;
   flex: 1;
-  background: url('/Login.png') no-repeat center/cover fixed;
+  background: url('/Login.png') no-repeat center/contain fixed;
   position: relative;
 }
 .login-page::before {
@@ -106,7 +106,7 @@ body {
   body,
   .login-page {
     background-attachment: scroll;
-    background-size: contain;
+    background-size: 90%;
   }
 }
 
