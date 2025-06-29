@@ -21,7 +21,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex: 1;
-  background: url('/Login.png') no-repeat center/contain fixed;
+  background: url('/Login.png') no-repeat center/90% fixed;
   position: relative;
   padding-left: 2rem;
 }
@@ -107,7 +107,7 @@ body {
   body,
   .login-page {
     background-attachment: scroll;
-    background-size: contain;
+    background-size: 90%;
     justify-content: center;
     padding-left: 0;
   }
