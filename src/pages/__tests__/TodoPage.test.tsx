@@ -42,7 +42,7 @@ describe('TodoPage offline', () => {
       </MemoryRouter>
     );
 
-    await userEvent.type(screen.getByLabelText('Attività'), 'Task 1');
+    await userEvent.type(screen.getByPlaceholderText('Attività'), 'Task 1');
     await userEvent.type(screen.getByLabelText('Scadenza'), '2023-06-01');
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
@@ -66,8 +66,8 @@ describe('TodoPage offline', () => {
     await screen.findByText('Task');
     await userEvent.click(screen.getByRole('button', { name: /modifica/i }));
 
-    await userEvent.clear(screen.getByLabelText('Attività'));
-    await userEvent.type(screen.getByLabelText('Attività'), 'Task edited');
+    await userEvent.clear(screen.getByPlaceholderText('Attività'));
+    await userEvent.type(screen.getByPlaceholderText('Attività'), 'Task edited');
     await userEvent.clear(screen.getByLabelText('Scadenza'));
     await userEvent.type(screen.getByLabelText('Scadenza'), '2023-02-02');
     await userEvent.click(screen.getByRole('button', { name: /salva/i }));
