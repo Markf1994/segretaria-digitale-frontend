@@ -36,7 +36,6 @@ const LoginPage: React.FC = () => {
   return (
     <>
       <div className="login-page">
-        <h1 className="login-title">Segretaria digitale Polizia Locale Castione della Presolana</h1>
       <div className="login-card">
           <img src="/logo.png" alt="Logo" className="login-logo" />
           {loading ? (
