@@ -14,6 +14,10 @@ body {
   color: #333;
 }
 
+body.login-only {
+  background: none;
+}
+
 
 /* LOGIN */
 .login-page {
@@ -21,9 +25,9 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex: 1;
-  background: url('/Login.png') no-repeat center/90% fixed;
+  background: url('/Login.png') no-repeat center/cover fixed;
   position: relative;
-  padding-left: 2rem;
+  padding-left: 4rem;
 }
 .login-page::before {
   content: "";
