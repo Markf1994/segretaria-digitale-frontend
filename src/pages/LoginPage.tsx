@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuthStore } from "../store/auth";
@@ -9,6 +9,13 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const setToken = useAuthStore(s => s.setToken);
+
+  useEffect(() => {
+    document.body.classList.add('login-only');
+    return () => {
+      document.body.classList.remove('login-only');
+    };
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
