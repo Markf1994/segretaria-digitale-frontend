@@ -171,11 +171,11 @@ export default function TodoPage() {
     <div className="list-page">
         <h2>To-Do</h2>
         <form onSubmit={onSubmit} className="item-form">
-        <input id="todo-text" placeholder="Attività" value={text} onChange={e => setText(e.target.value)} />
+        <input id="todo-text" data-testid="todo-text" placeholder="Attività" value={text} onChange={e => setText(e.target.value)} />
         <label htmlFor="todo-due">Scadenza</label>
-        <input id="todo-due" type="date" value={due} onChange={e => setDue(e.target.value)} />
-        <button type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
-        {edit && <button type="button" onClick={reset}>Annulla</button>}
+        <input id="todo-due" data-testid="todo-due" type="date" value={due} onChange={e => setDue(e.target.value)} />
+        <button data-testid="todo-submit" type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
+        {edit && <button data-testid="todo-cancel" type="button" onClick={reset}>Annulla</button>}
       </form>
       <details className="item-dropdown" open={!isMobile}>
         <summary>{isMobile ? 'Lista to-do salvati' : 'Todo salvati'}</summary>
@@ -195,8 +195,12 @@ export default function TodoPage() {
               <td>
                 {!t.readonly && (
                   <>
-                    <button onClick={() => onEdit(t)}>Modifica</button>
-                    <button onClick={() => onDelete(t.id)}>Elimina</button>
+                    <button data-testid="todo-edit" onClick={() => onEdit(t)}>
+                      Modifica
+                    </button>
+                    <button data-testid="todo-delete" onClick={() => onDelete(t.id)}>
+                      Elimina
+                    </button>
                   </>
                 )}
               </td>
