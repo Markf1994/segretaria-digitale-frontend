@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { useAuthStore } from '../store/auth';
+import { getUserStorageKey } from '../utils/auth';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 interface EventItem {
@@ -12,8 +14,13 @@ interface EventItem {
 interface TodoItem { id: string; text: string; due: string; }
 
 export default function Dashboard() {
+  const token = useAuthStore(s => s.token);
+  const todoKey = useMemo(
+    () => getUserStorageKey('todos', token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)),
+    [token]
+  );
   const [events] = useLocalStorage<EventItem[]>('events', []);
-  const [todos] = useLocalStorage<TodoItem[]>('todos', []);
+  const [todos] = useLocalStorage<TodoItem[]>(todoKey, []);
   const CALENDAR_ID = 'plcastionedellapresolana@gmail.com';
 
   const today = new Date();
