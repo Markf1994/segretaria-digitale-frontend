@@ -27,8 +27,13 @@ export default function TodoPage() {
       if (navigator.onLine) {
         try {
           const data = await listTodos();
-          setTodos(data);
-          saveLocal(data);
+          const mapped = data.map(t => ({
+            id: t.id,
+            text: t.descrizione,
+            due: t.scadenza,
+          }));
+          setTodos(mapped);
+          saveLocal(mapped);
           return;
         } catch {
           // use fallback
@@ -47,8 +52,15 @@ export default function TodoPage() {
     if (edit) {
       if (navigator.onLine) {
         try {
-          const res = await updateTodo(edit, { text, due });
-          const updated = todos.map(t => (t.id === edit ? res : t));
+          const res = await updateTodo(edit, {
+            descrizione: text,
+            scadenza: due,
+          });
+          const updated = todos.map(t =>
+            t.id === edit
+              ? { id: res.id, text: res.descrizione, due: res.scadenza }
+              : t
+          );
           setTodos(updated);
           saveLocal(updated);
         } catch {
@@ -68,8 +80,14 @@ export default function TodoPage() {
     } else {
       if (navigator.onLine) {
         try {
-          const res = await createTodo({ text, due });
-          const updated = [...todos, res];
+          const res = await createTodo({
+            descrizione: text,
+            scadenza: due,
+          });
+          const updated = [
+            ...todos,
+            { id: res.id, text: res.descrizione, due: res.scadenza },
+          ];
           setTodos(updated);
           saveLocal(updated);
         } catch {
