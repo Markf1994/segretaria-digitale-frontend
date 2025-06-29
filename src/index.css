@@ -10,7 +10,7 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  background: url('/background.png') no-repeat center/cover fixed;
+  background: url('/background.png') no-repeat center/contain fixed;
   color: #333;
 }
 
@@ -111,7 +111,7 @@ body.login-only {
   body,
   .login-page {
     background-attachment: scroll;
-    background-size: 90%;
+    background-size: contain;
     justify-content: center;
     padding-left: 0;
   }
