@@ -101,6 +101,12 @@ body {
     margin: 0 1rem;
     padding: 1.5rem;
   }
+
+  /* Allow the background to scroll on mobile devices */
+  body,
+  .login-page {
+    background-attachment: scroll;
+  }
 }
 
 
