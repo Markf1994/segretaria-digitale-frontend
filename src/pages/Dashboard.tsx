@@ -28,7 +28,7 @@ export default function Dashboard() {
   const upcomingEvents = events.filter(
     e => differenceInCalendarDays(parseISO(e.dateTime), today) <= 3
   );
-  const upcomingTodos = todos.filter(t => differenceInCalendarDays(parseISO(t.due), today) <= 3);
+  const dashboardTodos = todos;
 
   return (
     <div className="dashboard">
@@ -38,10 +38,10 @@ export default function Dashboard() {
           <div className="notifications dashboard-section">
             <h2>Todo list 📝</h2>
             <ul>
-              {upcomingTodos.map(t => (
+              {dashboardTodos.map(t => (
                 <li key={t.id}>{t.text} – {new Date(t.due).toLocaleDateString()}</li>
               ))}
-              {!upcomingTodos.length && <li>Nessun todo imminente.</li>}
+              {!dashboardTodos.length && <li>Nessun todo.</li>}
             </ul>
           </div>
           <div className="notifications dashboard-section">
