@@ -2,6 +2,7 @@
    https://designers.italia.it/kit/grafica/ */
 @import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Imperial+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
 
 * {
   box-sizing: border-box;
@@ -9,13 +10,14 @@
 
 body {
   margin: 0;
-  font-family: 'Almendra SC', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   color: #333;
   background: url('/Login.png') no-repeat center/cover fixed;
 }
 body.login-bg {
   background-size: contain;
+  font-family: 'Almendra SC', serif;
 }
 
 
