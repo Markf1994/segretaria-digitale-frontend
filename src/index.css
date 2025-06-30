@@ -117,6 +117,10 @@ body.login-bg {
     justify-content: center;
     padding-left: 0;
   }
+  .login-logo {
+    width: 140px;
+    margin-top: -0.5rem;
+  }
 }
 
 
