@@ -4,6 +4,7 @@ import UtilitaPage from '../UtilitaPage';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import * as pdfApi from '../../api/pdfs';
+import * as driveApi from '../../api/googleDrive';
 
 jest.mock('../../api/pdfs', () => ({
   __esModule: true,
@@ -11,7 +12,14 @@ jest.mock('../../api/pdfs', () => ({
   uploadPDF: jest.fn(),
 }));
 
+jest.mock('../../api/googleDrive', () => ({
+  __esModule: true,
+  listFiles: jest.fn(),
+  signIn: jest.fn(),
+}));
+
 const mockedApi = pdfApi as jest.Mocked<typeof pdfApi>;
+const mockedDriveApi = driveApi as jest.Mocked<typeof driveApi>;
 
 beforeEach(() => {
   mockedApi.listPDFs.mockResolvedValue([]);
@@ -20,6 +28,8 @@ beforeEach(() => {
     name: file.name,
     url: '/'+file.name,
   }));
+  mockedDriveApi.listFiles.mockResolvedValue([]);
+  mockedDriveApi.signIn.mockResolvedValue();
 });
 
 describe('UtilitaPage', () => {
@@ -55,5 +65,23 @@ describe('UtilitaPage', () => {
 
     expect(mockedApi.uploadPDF).toHaveBeenCalledWith(file);
     expect(await screen.findByText('new.pdf')).toBeInTheDocument();
+  });
+
+  it('shows Google Drive files', async () => {
+    mockedDriveApi.listFiles.mockResolvedValue([
+      { id: 'g1', name: 'drive.pdf', url: '/view' }
+    ]);
+
+    render(
+      <MemoryRouter initialEntries={["/utilita"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/utilita" element={<UtilitaPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('drive.pdf')).toBeInTheDocument();
   });
 });

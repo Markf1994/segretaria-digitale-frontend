@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { listPDFs, uploadPDF } from '../api/pdfs';
-import type { PDFFile } from '../api/types';
+import { listFiles, signIn as signInDrive } from '../api/googleDrive';
+import type { PDFFile, DriveFile } from '../api/types';
 import './ListPages.css';
 
 export default function UtilitaPage() {
   const [pdfs, setPdfs] = useState<PDFFile[]>([]);
+  const [driveFiles, setDriveFiles] = useState<DriveFile[]>([]);
 
   useEffect(() => {
     const fetchPdfs = async () => {
@@ -16,6 +18,19 @@ export default function UtilitaPage() {
       }
     };
     fetchPdfs();
+  }, []);
+
+  useEffect(() => {
+    const fetchDrive = async () => {
+      try {
+        await signInDrive();
+        const data = await listFiles();
+        setDriveFiles(data);
+      } catch {
+        // ignore errors with Google Drive
+      }
+    };
+    if (navigator.onLine) fetchDrive();
   }, []);
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +66,15 @@ export default function UtilitaPage() {
           </li>
         ))}
       </ul>
+      <div className="drive-files">
+        {driveFiles.map(f => (
+          <div key={f.id}>
+            <a href={f.url} target="_blank" rel="noopener noreferrer">
+              {f.name}
+            </a>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -18,3 +18,9 @@ export interface PDFFile {
   name: string
   url: string
 }
+
+export interface DriveFile {
+  id: string
+  name: string
+  url: string
+}
