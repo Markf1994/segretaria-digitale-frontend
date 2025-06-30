@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe('DeterminationsPage', () => {
   it('creates a new determination', async () => {
-    const { container } = render(
+    render(
       <MemoryRouter initialEntries={["/determinazioni"]}>
         <Routes>
           <Route element={<PageTemplate />}>
@@ -40,7 +40,7 @@ describe('DeterminationsPage', () => {
       JSON.stringify([{ id: '1', capitolo: 'A', numero: '1', somma: 5, scadenza: '2023-01-01', descrizione: 'old' }])
     );
 
-    const { container } = render(
+    render(
       <MemoryRouter initialEntries={["/determinazioni"]}>
         <Routes>
           <Route element={<PageTemplate />}>
