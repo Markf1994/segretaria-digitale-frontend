@@ -11,12 +11,14 @@ export const loadClient = async (): Promise<void> => {
   })
 }
 
-export const signIn = async (): Promise<void> => {
+export const signIn = async (loginHint?: string): Promise<void> => {
   const gapi = (window as any).gapi
   if (!gapi.auth2 || !gapi.auth2.getAuthInstance()) {
     await loadClient()
   }
-  await gapi.auth2.getAuthInstance().signIn()
+  await gapi.auth2
+    .getAuthInstance()
+    .signIn({ prompt: 'select_account', login_hint: loginHint })
 }
 
 export const listDriveFiles = async (): Promise<DriveFile[]> => {
