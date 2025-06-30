@@ -84,8 +84,8 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `GET /determinazioni` – list existing determinations.
 - `POST /determinazioni` – create a new determination.
 
-- `GET /pdf/...` – retrieve PDF exports for supported resources.
-- `POST /pdf/...` – request generation of a PDF.
+- `GET /pdfs` – list uploaded PDF files.
+- `POST /pdfs` – upload a new PDF file.
 
 
 ## Backend Setup
