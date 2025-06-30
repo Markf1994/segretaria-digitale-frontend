@@ -10,6 +10,7 @@ import { differenceInCalendarDays, parseISO } from 'date-fns';
 import './ListPages.css';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
+import { withOffline, withoutResult } from '../utils/offline';
 
 interface TodoItem {
   id: string;
@@ -102,58 +103,28 @@ export default function TodoPage() {
     if (!text || !due) return;
 
     if (edit) {
-      if (navigator.onLine) {
-        try {
-          const res = await updateTodo(edit, {
-            descrizione: text,
-            scadenza: due,
-          });
-          const updated = todos.map(t =>
-            t.id === edit
-              ? { id: res.id, text: res.descrizione, due: res.scadenza }
-              : t
-          );
-          setTodos(updated);
-          saveLocal(updated);
-        } catch {
-          const updated = todos.map(t =>
-            t.id === edit ? { ...t, text, due } : t
-          );
-          setTodos(updated);
-          saveLocal(updated);
-        }
-      } else {
-        const updated = todos.map(t =>
-          t.id === edit ? { ...t, text, due } : t
-        );
-        setTodos(updated);
-        saveLocal(updated);
-      }
+      const res = await withOffline(
+        () => updateTodo(edit, { descrizione: text, scadenza: due }),
+        () => ({ id: edit, descrizione: text, scadenza: due })
+      );
+      const updated = todos.map(t =>
+        t.id === edit
+          ? { id: res.id, text: res.descrizione, due: res.scadenza }
+          : t
+      );
+      setTodos(updated);
+      saveLocal(updated);
     } else {
-      if (navigator.onLine) {
-        try {
-          const res = await createTodo({
-            descrizione: text,
-            scadenza: due,
-          });
-          const updated = [
-            ...todos,
-            { id: res.id, text: res.descrizione, due: res.scadenza },
-          ];
-          setTodos(updated);
-          saveLocal(updated);
-        } catch {
-          const newItem = { id: Date.now().toString(), text, due };
-          const updated = [...todos, newItem];
-          setTodos(updated);
-          saveLocal(updated);
-        }
-      } else {
-        const newItem = { id: Date.now().toString(), text, due };
-        const updated = [...todos, newItem];
-        setTodos(updated);
-        saveLocal(updated);
-      }
+      const res = await withOffline(
+        () => createTodo({ descrizione: text, scadenza: due }),
+        () => ({ id: Date.now().toString(), descrizione: text, scadenza: due })
+      );
+      const updated = [
+        ...todos,
+        { id: res.id, text: res.descrizione, due: res.scadenza },
+      ];
+      setTodos(updated);
+      saveLocal(updated);
     }
 
     reset();
@@ -161,13 +132,7 @@ export default function TodoPage() {
 
   const onEdit = (t: TodoItem) => { setEdit(t.id); setText(t.text); setDue(t.due); };
   const onDelete = async (id: string) => {
-    if (navigator.onLine) {
-      try {
-        await deleteTodo(id);
-      } catch {
-        // ignore
-      }
-    }
+    await withoutResult(() => deleteTodo(id));
     const updated = todos.filter(t => t.id !== id);
     setTodos(updated);
     saveLocal(updated);
