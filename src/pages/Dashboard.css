@@ -5,6 +5,13 @@
   padding: 1rem;
 }
 
+.dashboard-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
 .dashboard h1 {
   text-align: center;
   color: red;

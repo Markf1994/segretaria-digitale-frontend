@@ -45,8 +45,10 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-        <Greeting />
+      <div className="dashboard-header">
         <h1>Dashboard</h1>
+        <Greeting />
+      </div>
         <div className="upcoming-wrapper">
           <div className="notifications dashboard-section">
             <h2>Todo list 📝</h2>
