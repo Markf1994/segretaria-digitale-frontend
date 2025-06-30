@@ -9,6 +9,7 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const setToken = useAuthStore(s => s.setToken);
 
@@ -22,13 +23,14 @@ const LoginPage: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     try {
       const res = await api.post("/login", { email, password });
       setToken(res.data.access_token);
       navigate("/");
     } catch {
-      alert("Credenziali errate");
+      setError("Credenziali errate");
       setLoading(false);
     }
   };
@@ -58,6 +60,7 @@ const LoginPage: React.FC = () => {
                 onChange={e => setPassword(e.target.value)}
                 required
               />
+              {error && <p className="error">{error}</p>}
               <button type="submit">Accedi</button>
             </form>
           )}
