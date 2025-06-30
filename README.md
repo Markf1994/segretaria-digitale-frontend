@@ -24,6 +24,9 @@ Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
 `VITE_GAPI_API_KEY`. Make sure to supply your own Google credentials for the
 `VITE_GAPI_CLIENT_ID` and `VITE_GAPI_API_KEY` variables.
 
+The same credentials are used for both the Google Calendar and Google Drive
+integrations.
+
 The variables are:
 
 - `VITE_API_URL` – https://segretaria-digitale-backend.onrender.com.
@@ -62,7 +65,8 @@ This serves the `dist` directory using Vite's preview mode.
 When the development server is running you can visit `/utilita` for assorted
 administrative tools. The page is available at
 `http://localhost:3000/utilita` and provides quick links to actions such as PDF
-export.
+export. If you sign in with Google, the page also lists files from your Drive
+in addition to the PDFs served by the backend.
 
 ## Testing
 
