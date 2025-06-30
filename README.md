@@ -20,13 +20,14 @@ cp .env.example .env
 ```
 
 Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
-`VITE_GAPI_API_KEY`.
+`VITE_GAPI_API_KEY`. Make sure to supply your own Google credentials for the
+`VITE_GAPI_CLIENT_ID` and `VITE_GAPI_API_KEY` variables.
 
 The variables are:
 
 - `VITE_API_URL` – https://segretaria-digitale-backend.onrender.com.
-- `VITE_GAPI_CLIENT_ID` – 915439779647-54l80fl9mdsu71j6lsn8n1ggao2p5br6.apps.googleusercontent.com.
-- `VITE_GAPI_API_KEY` – AIzaSyAxum50Fxrntu2tewEsDCFOQbE3ortfaMc.
+- `VITE_GAPI_CLIENT_ID` – `your-google-client-id`.
+- `VITE_GAPI_API_KEY` – `your-google-api-key`.
 
 
 ## Development
