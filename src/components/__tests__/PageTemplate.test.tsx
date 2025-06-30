@@ -6,6 +6,10 @@ import PageTemplate from '../PageTemplate';
 const Dummy: React.FC = () => <div>Dummy Page</div>;
 
 describe('PageTemplate', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('shows navigation, sidebar buttons and footer', () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -29,5 +33,24 @@ describe('PageTemplate', () => {
     expect(
       screen.getByText(new RegExp(`© M.Fenaroli ${currentYear}`, 'i'))
     ).toBeInTheDocument();
+  });
+
+  it('displays greeting when user token exists', () => {
+    const payload = btoa(JSON.stringify({ email: 'test@comune.castione.bg.it' }));
+    localStorage.setItem('token', `xx.${payload}.yy`);
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dummy />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const hour = new Date().getHours();
+    const salutation = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+    expect(screen.getByText(new RegExp(`${salutation} test`, 'i'))).toBeInTheDocument();
   });
 });
