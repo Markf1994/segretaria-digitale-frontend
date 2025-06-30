@@ -55,6 +55,13 @@ npm run serve
 
 This serves the `dist` directory using Vite's preview mode.
 
+## Utilità page
+
+When the development server is running you can visit `/utilita` for assorted
+administrative tools. The page is available at
+`http://localhost:3000/utilita` and provides quick links to actions such as PDF
+export.
+
 ## Testing
 
 Run the Jest test suite:
@@ -76,6 +83,9 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `POST /login` – authenticate the user and return an `access_token`.
 - `GET /determinazioni` – list existing determinations.
 - `POST /determinazioni` – create a new determination.
+
+- `GET /pdf/...` – retrieve PDF exports for supported resources.
+- `POST /pdf/...` – request generation of a PDF.
 
 
 ## Backend Setup
