@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
+import { deleteTodo } from '../api/todos';
 import './Dashboard.css';
 import Greeting from '../components/Greeting';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
@@ -21,7 +22,7 @@ export default function Dashboard() {
     [token]
   );
   const [events] = useLocalStorage<EventItem[]>('events', []);
-  const [todos] = useLocalStorage<TodoItem[]>(todoKey, []);
+  const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
   const CALENDAR_ID = 'plcastionedellapresolana@gmail.com';
 
   const today = new Date();
@@ -29,6 +30,18 @@ export default function Dashboard() {
     e => differenceInCalendarDays(parseISO(e.dateTime), today) <= 3
   );
   const dashboardTodos = todos;
+
+  const onDelete = async (id: string): Promise<void> => {
+    if (navigator.onLine) {
+      try {
+        await deleteTodo(id);
+      } catch {
+        // ignore
+      }
+    }
+    const updated = todos.filter(t => t.id !== id);
+    setTodos(updated);
+  };
 
   return (
     <div className="dashboard">
@@ -39,7 +52,15 @@ export default function Dashboard() {
             <h2>Todo list 📝</h2>
             <ul>
               {dashboardTodos.map(t => (
-                <li key={t.id}>{t.text} – {new Date(t.due).toLocaleDateString()}</li>
+                <li key={t.id}>
+                  <span>{t.text} – {new Date(t.due).toLocaleDateString()}</span>
+                  <button
+                    data-testid="dashboard-delete"
+                    onClick={() => onDelete(t.id)}
+                  >
+                    ×
+                  </button>
+                </li>
               ))}
               {!dashboardTodos.length && <li>Nessun todo.</li>}
             </ul>
