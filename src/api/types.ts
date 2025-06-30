@@ -12,3 +12,9 @@ export interface GcEvent {
   }
   visibility?: string
 }
+
+export interface PDFFile {
+  id: string
+  name: string
+  url: string
+}
