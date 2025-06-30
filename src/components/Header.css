@@ -31,13 +31,13 @@
   height: 90px;
   margin-right: 0.5rem;
 }
+.header-center {
+  flex: 1;
+  text-align: center;
+}
 .header-right {
   display: flex;
   align-items: center;
-}
-.header-right .user-greeting {
-  margin-right: 1rem;
-  font-size: 1.1rem;
 }
 .site-header button {
   background: #001f3f;
@@ -59,6 +59,11 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+  }
+  .header-center {
+    width: 100%;
+    margin: 0.5rem 0;
+    text-align: center;
   }
   .site-header nav a,
   .site-header button {
