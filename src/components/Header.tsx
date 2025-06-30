@@ -19,8 +19,10 @@ const Header: React.FC = () => {
         <img src="/logo.png" alt="Logo" className="small-logo" />
         <h1>Polizia Locale - Castione della Presolana</h1>
       </div>
-      <div className="header-right">
+      <div className="header-center">
         <Greeting />
+      </div>
+      <div className="header-right">
         <nav>
           <Link to="/">🏠 Dashboard</Link>
           <Link to="/events">📅 Eventi</Link>
