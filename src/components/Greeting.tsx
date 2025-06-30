@@ -12,7 +12,11 @@ const Greeting: React.FC = () => {
   if (!email) return null;
 
   const username = email.endsWith('@comune.castione.bg.it') ? email.split('@')[0] : email;
-  return <div className="user-greeting">Ciao {username}</div>;
+  const hour = new Date().getHours();
+  let salutation = 'Buonasera';
+  if (hour < 12) salutation = 'Buongiorno';
+  else if (hour < 18) salutation = 'Buon pomeriggio';
+  return <div className="user-greeting">{salutation} {username}</div>;
 };
 
 export default Greeting;
