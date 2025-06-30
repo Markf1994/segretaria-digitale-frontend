@@ -4,7 +4,6 @@ import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
 import { deleteTodo } from '../api/todos';
 import './Dashboard.css';
-import Greeting from '../components/Greeting';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 interface EventItem {
   id: string;
@@ -47,7 +46,6 @@ export default function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <Greeting />
       </div>
         <div className="upcoming-wrapper">
           <div className="notifications dashboard-section">

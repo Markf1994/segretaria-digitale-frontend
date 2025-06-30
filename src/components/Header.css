@@ -22,6 +22,10 @@
   display: flex;
   align-items: center;
 }
+.title-greeting {
+  display: flex;
+  flex-direction: column;
+}
 .site-header h1 {
   font-size: 2rem;
   margin: 0;

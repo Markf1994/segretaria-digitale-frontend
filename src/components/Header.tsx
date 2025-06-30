@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth";
+import Greeting from "./Greeting";
 import "./Header.css";
 
 const Header: React.FC = () => {
@@ -16,7 +17,10 @@ const Header: React.FC = () => {
     <header className="site-header">
       <div className="logo-title">
         <img src="/logo.png" alt="Logo" className="small-logo" />
-        <h1>Polizia Locale - Castione della Presolana</h1>
+        <div className="title-greeting">
+          <h1>Polizia Locale - Castione della Presolana</h1>
+          <Greeting />
+        </div>
       </div>
       <nav>
         <Link to="/">🏠 Dashboard</Link>
