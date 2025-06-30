@@ -151,3 +151,10 @@
   max-width: 120px;
   height: auto;
 }
+
+@media (max-width: 600px) {
+  .meeting-links {
+    flex-direction: column;
+    align-items: center;
+  }
+}
