@@ -8,7 +8,8 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 2. Install dependencies (creates `node_modules/.bin/jest` used by the test suite):
 
 ```bash
-npm install
+# Use a clean, reproducible install
+npm ci
 # or run the helper script
 ./scripts/setup.sh
 ```
@@ -68,12 +69,13 @@ export.
 Before running tests, install dependencies if you haven't already:
 
 ```bash
-npm install
+# Perform a clean install using the lockfile
+npm ci
 # or run the helper script
 ./scripts/setup.sh
 ```
 
-Then run the Jest test suite:
+Then run the Jest test suite (dependencies will be installed from the lockfile in offline mode if missing):
 
 ```bash
 npm test
