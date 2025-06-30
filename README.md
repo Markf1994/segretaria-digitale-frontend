@@ -66,7 +66,9 @@ When the development server is running you can visit `/utilita` for assorted
 administrative tools. The page is available at
 `http://localhost:3000/utilita` and provides quick links to actions such as PDF
 export. If you sign in with Google, the page also lists files from your Drive
-in addition to the PDFs served by the backend.
+in addition to the PDFs served by the backend. The Google Drive integration
+uses an optional login hint to suggest an account when opening the sign in
+dialog.
 
 ## Testing
 
