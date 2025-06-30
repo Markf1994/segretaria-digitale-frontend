@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import EventsPage from "./pages/EventsPage";
 import TodoPage from "./pages/TodoPage";
 import DeterminationsPage from "./pages/DeterminationsPage";
+import UtilitaPage from "./pages/UtilitaPage";
 
 
 const App: React.FC = () => {
@@ -36,6 +37,7 @@ const App: React.FC = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/todo" element={<TodoPage />} />
           <Route path="/determinazioni" element={<DeterminationsPage />} />
+          <Route path="/utilita" element={<UtilitaPage />} />
         </Route>
 
         {/* Qualunque altra rotta redirige alla dashboard */}
