@@ -1,7 +1,7 @@
 export function decodeToken(token: string): any | null {
   try {
     const payload = token.split('.')[1];
-    const json = Buffer.from(payload, 'base64').toString('utf8');
+    const json = atob(payload);
     return JSON.parse(json);
   } catch {
     return null;
