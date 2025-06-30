@@ -10,5 +10,17 @@ export default function useLocalStorage<T>(key: string, initial: T) {
     localStorage.setItem(key, JSON.stringify(value));
   }, [key, value]);
 
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === key) {
+        setValue(e.newValue ? JSON.parse(e.newValue) : initial);
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => {
+      window.removeEventListener('storage', handler);
+    };
+  }, [key, initial]);
+
   return [value, setValue] as const;
 }
