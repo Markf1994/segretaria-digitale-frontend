@@ -267,9 +267,9 @@ export default function EventsPage() {
       <table className="item-table">
         <thead>
           <tr>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>Titolo</th>
+            <th>Data e ora</th>
+            <th>Descrizione</th>
             <th>Pubblico?</th>
             <th></th>
           </tr>
