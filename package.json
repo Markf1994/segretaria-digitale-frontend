@@ -5,6 +5,7 @@
     "dev": "vite --host --port 3000",
     "build": "vite build",
     "serve": "vite preview",
+    "pretest": "test -x node_modules/.bin/jest || npm install",
     "test": "jest"
   },
   "dependencies": {

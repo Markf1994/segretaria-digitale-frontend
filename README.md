@@ -64,14 +64,19 @@ export.
 
 ## Testing
 
-Run the Jest test suite:
+Before running tests, install dependencies if you haven't already:
+
+```bash
+npm install
+# or run the helper script
+./scripts/setup.sh
+```
+
+Then run the Jest test suite:
 
 ```bash
 npm test
 ```
-
-If Jest is missing, ensure dependencies are installed first using `npm install`
-or `./scripts/setup.sh`.
 
 The tests use Jest together with React Testing Library.
 
