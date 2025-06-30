@@ -28,7 +28,7 @@ const Header: React.FC = () => {
           <Link to="/events">📅 Eventi</Link>
           <Link to="/todo">📝 To-Do</Link>
           <Link to="/determinazioni">📄 Determine</Link>
-          <Link to="/utilita">⚙️ Utilità</Link>
+          <Link to="/utilita">🤝 Riunioni</Link>
           <button onClick={logout}>Esci</button>
         </nav>
       </div>
