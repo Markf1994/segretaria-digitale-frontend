@@ -93,6 +93,12 @@
   background: #8B1B13;
 }
 
+/* Larger text specifically for the Determinazioni table */
+.determinations-table th,
+.determinations-table td {
+  font-size: 1.1rem;
+}
+
 .item-dropdown summary {
   background: #A52019;
   color: #fff;

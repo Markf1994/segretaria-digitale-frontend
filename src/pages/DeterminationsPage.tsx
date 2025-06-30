@@ -213,7 +213,7 @@ const DeterminationsPage: React.FC = () => {
         <button data-testid="det-submit" type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
         {edit && <button data-testid="det-cancel" type="button" onClick={reset}>Annulla</button>}
       </form>
-      <table className="item-table">
+      <table className="item-table determinations-table">
         <thead>
           <tr>
             <th>Capitolo</th>
