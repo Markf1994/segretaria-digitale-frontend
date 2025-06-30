@@ -1,5 +1,5 @@
 // src/App.tsx
-import React from "react";
+import React, { Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,17 +10,20 @@ import {
 import PageTemplate from "./components/PageTemplate";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard";
-import EventsPage from "./pages/EventsPage";
-import TodoPage from "./pages/TodoPage";
-import DeterminationsPage from "./pages/DeterminationsPage";
-import UtilitaPage from "./pages/UtilitaPage";
+import Loader from "./components/Loader";
+
+const LoginPage = React.lazy(() => import("./pages/LoginPage"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const EventsPage = React.lazy(() => import("./pages/EventsPage"));
+const TodoPage = React.lazy(() => import("./pages/TodoPage"));
+const DeterminationsPage = React.lazy(() => import("./pages/DeterminationsPage"));
+const UtilitaPage = React.lazy(() => import("./pages/UtilitaPage"));
 
 
 const App: React.FC = () => {
   return (
     <Router>
+      <Suspense fallback={<Loader />}>
       <Routes>
         {/* Login senza header */}
         <Route path="/login" element={<LoginPage />} />
@@ -43,6 +46,7 @@ const App: React.FC = () => {
         {/* Qualunque altra rotta redirige alla dashboard */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
     </Router>
   );
 };
