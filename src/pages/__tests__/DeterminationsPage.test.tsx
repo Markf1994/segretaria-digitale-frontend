@@ -27,6 +27,9 @@ describe('DeterminationsPage', () => {
     await userEvent.type(screen.getByTestId('det-scadenza'), '2023-06-10');
     await userEvent.click(screen.getByTestId('det-submit'));
 
+    const storedCreate = JSON.parse(localStorage.getItem('determinations') || '[]');
+    expect(storedCreate[0].descrizione).toBe('desc');
+
     expect(await screen.findByText(/C1/)).toBeInTheDocument();
     expect(await screen.findByText(/desc/)).toBeInTheDocument();
   });
@@ -60,6 +63,9 @@ describe('DeterminationsPage', () => {
     await userEvent.clear(screen.getByTestId('det-scadenza'));
     await userEvent.type(screen.getByTestId('det-scadenza'), '2023-02-02');
     await userEvent.click(screen.getByTestId('det-submit'));
+
+    const storedEdit = JSON.parse(localStorage.getItem('determinations') || '[]');
+    expect(storedEdit[0].descrizione).toBe('new');
 
     expect(await screen.findByText(/B/)).toBeInTheDocument();
     expect(await screen.findByText(/new/)).toBeInTheDocument();

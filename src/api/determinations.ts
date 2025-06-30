@@ -23,7 +23,10 @@ export const createDetermination = (
   data: Omit<Determination, 'id'>
 ): Promise<Determination> =>
   api
-    .post<Determination>('/determinazioni', data)
+    .post<Determination>('/determinazioni', {
+      ...data,
+      description: data.descrizione
+    })
     .then(r => ({
       ...r.data,
       descrizione: (r.data as any).descrizione ?? (r.data as any).description ?? ''
@@ -34,7 +37,10 @@ export const updateDetermination = (
   data: Partial<Omit<Determination, 'id'>>
 ): Promise<Determination> =>
   api
-    .put<Determination>(`/determinazioni/${id}`, data)
+    .put<Determination>(`/determinazioni/${id}`, {
+      ...data,
+      description: data.descrizione
+    })
     .then(r => ({
       ...r.data,
       descrizione: (r.data as any).descrizione ?? (r.data as any).description ?? ''
