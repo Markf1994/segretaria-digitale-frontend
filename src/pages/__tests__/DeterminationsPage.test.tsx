@@ -28,6 +28,7 @@ describe('DeterminationsPage', () => {
     await userEvent.click(screen.getByTestId('det-submit'));
 
     expect(await screen.findByText(/C1/)).toBeInTheDocument();
+    expect(await screen.findByText(/desc/)).toBeInTheDocument();
   });
 
   it('edits an existing determination', async () => {
@@ -61,5 +62,6 @@ describe('DeterminationsPage', () => {
     await userEvent.click(screen.getByTestId('det-submit'));
 
     expect(await screen.findByText(/B/)).toBeInTheDocument();
+    expect(await screen.findByText(/new/)).toBeInTheDocument();
   });
 });
