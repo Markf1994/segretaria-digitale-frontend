@@ -6,7 +6,7 @@ export interface Determination {
   numero: string
   somma: number
   scadenza: string
-  descrizione?: string
+  descrizione: string
 }
 
 export const listDeterminations = (): Promise<Determination[]> =>
