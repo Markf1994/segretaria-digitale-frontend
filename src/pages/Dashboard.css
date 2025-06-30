@@ -7,10 +7,7 @@
 
 .dashboard h1 {
   text-align: center;
-  color: #000;
-  -webkit-text-stroke: 1px #A52019;
-  text-shadow: -1px -1px 0 #A52019, 1px -1px 0 #A52019,
-               -1px 1px 0 #A52019, 1px 1px 0 #A52019;
+  color: red;
 }
 .dashboard-section {
   border: 1px solid #ddd;
