@@ -13,7 +13,7 @@ npm install
 ./scripts/setup.sh
 ```
 
-3. Copy `.env.example` to `.env` and replace the placeholder values:
+3. Copy the sample `.env.example` to `.env` and replace the placeholder values:
 
 ```
 cp .env.example .env
