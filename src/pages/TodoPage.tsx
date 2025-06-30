@@ -84,9 +84,15 @@ export default function TodoPage() {
           readonly: true,
         }));
 
+      // remove previous determina reminders to avoid duplicates
+      all = all.filter(t => !t.id.startsWith('det-'));
       all = [...all, ...detTodos];
-      setTodos(all);
-      saveLocal(all);
+
+      // ensure unique ids (in case of duplicates from storage)
+      const map = new Map(all.map(t => [t.id, t]));
+      const unique = Array.from(map.values());
+      setTodos(unique);
+      saveLocal(unique);
     };
     fetchTodos();
   }, [storageKey]);
