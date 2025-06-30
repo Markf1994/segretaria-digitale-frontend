@@ -7,6 +7,7 @@ import {
   Determination,
 } from '../api/determinations';
 import './ListPages.css';
+import { withOffline, withoutResult } from '../utils/offline';
 
 const DeterminationsPage: React.FC = () => {
   const [items, setItems] = useState<Determination[]>([]);
@@ -59,89 +60,49 @@ const DeterminationsPage: React.FC = () => {
     if (!capitolo || !numero || !somma || !scadenza) return;
 
     if (edit) {
-      if (navigator.onLine) {
-        try {
-          const res = await updateDetermination(edit, {
+      const res = await withOffline(
+        () =>
+          updateDetermination(edit, {
             capitolo,
             numero,
             somma: parseFloat(somma),
             scadenza,
             descrizione,
-          });
-          const updated = items.map(d => (d.id === edit ? res : d));
-          setItems(updated);
-          saveLocal(updated);
-        } catch {
-          const updated = items.map(d =>
-            d.id === edit
-              ? {
-                  id: edit,
-                  capitolo,
-                  numero,
-                  somma: parseFloat(somma),
-                  scadenza,
-                  descrizione,
-                }
-              : d
-          );
-          setItems(updated);
-          saveLocal(updated);
-        }
-      } else {
-        const updated = items.map(d =>
-          d.id === edit
-            ? {
-                id: edit,
-                capitolo,
-                numero,
-                somma: parseFloat(somma),
-                scadenza,
-                descrizione,
-              }
-            : d
-        );
-        setItems(updated);
-        saveLocal(updated);
-      }
+          }),
+        () => ({
+          id: edit,
+          capitolo,
+          numero,
+          somma: parseFloat(somma),
+          scadenza,
+          descrizione,
+        })
+      );
+      const updated = items.map(d => (d.id === edit ? res : d));
+      setItems(updated);
+      saveLocal(updated);
     } else {
-      if (navigator.onLine) {
-        try {
-          const res = await createDetermination({
+      const res = await withOffline(
+        () =>
+          createDetermination({
             capitolo,
             numero,
             somma: parseFloat(somma),
             scadenza,
             descrizione,
-          });
-          const updated = [...items, res];
-          setItems(updated);
-          saveLocal(updated);
-        } catch {
-          const newItem: Determination = {
-            id: Date.now().toString(),
-            capitolo,
-            numero,
-            somma: parseFloat(somma),
-            scadenza,
-            descrizione,
-          };
-          const updated = [...items, newItem];
-          setItems(updated);
-          saveLocal(updated);
-        }
-      } else {
-        const newItem: Determination = {
+          }),
+        () => ({
           id: Date.now().toString(),
           capitolo,
           numero,
           somma: parseFloat(somma),
           scadenza,
           descrizione,
-        };
-        const updated = [...items, newItem];
-        setItems(updated);
-        saveLocal(updated);
-      }
+        })
+      );
+      const updated = [...items, res];
+      setItems(updated);
+      saveLocal(updated);
     }
 
     reset();
@@ -156,13 +117,7 @@ const DeterminationsPage: React.FC = () => {
     setScadenza(d.scadenza);
   };
   const onDelete = async (id: string) => {
-    if (navigator.onLine) {
-      try {
-        await deleteDetermination(id);
-      } catch {
-        // ignore
-      }
-    }
+    await withoutResult(() => deleteDetermination(id));
     const updated = items.filter(d => d.id !== id);
     setItems(updated);
     saveLocal(updated);
