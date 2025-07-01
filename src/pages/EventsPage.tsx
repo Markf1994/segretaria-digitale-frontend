@@ -15,7 +15,7 @@ import {
 } from '../api/events';
 import './ListPages.css';
 import { useAuthStore } from '../store/auth';
-import { getUserStorageKey, getUserId } from '../utils/auth';
+import { getUserStorageKey, getUserId, decodeToken } from '../utils/auth';
 
 interface UnifiedEvent {
   id: string;
@@ -68,10 +68,11 @@ export default function EventsPage() {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const userId = getUserId(
-        token ||
-          (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
-      );
+      const rawToken =
+        token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null);
+      const decoded = rawToken ? decodeToken(rawToken) : null;
+      const currentUserId =
+        decoded?.sub || decoded?.user_id || decoded?.id || decoded?.email || null;
       if (navigator.onLine) {
         try {
           await signIn();
@@ -83,19 +84,24 @@ export default function EventsPage() {
             dateTime: ev.start?.dateTime || ev.start?.date || '',
             endDateTime: ev.end?.dateTime || ev.end?.date || '',
             isPublic: ev.visibility === 'public',
-            owner_id: userId || undefined,
+            owner_id: currentUserId || undefined,
             source: 'gc',
           }));
-          const dbEvents: UnifiedEvent[] = db.map((ev: DbEvent) => ({
-            id: ev.id,
-            title: ev.titolo,
-            description: ev.descrizione || '',
-            dateTime: ev.data_ora,
-            endDateTime: ev.data_ora,
-            isPublic: !!ev.is_public,
-            owner_id: userId || undefined,
-            source: 'db',
-          }));
+          const dbEvents: UnifiedEvent[] = db
+            .filter(ev =>
+              ev.is_public === true ||
+              (currentUserId ? ev.owner_id === currentUserId : false)
+            )
+            .map((ev: DbEvent) => ({
+              id: ev.id,
+              title: ev.titolo,
+              description: ev.descrizione || '',
+              dateTime: ev.data_ora,
+              endDateTime: ev.data_ora,
+              isPublic: !!ev.is_public,
+              owner_id: ev.owner_id || undefined,
+              source: 'db',
+            }));
           const all = [...gcEvents, ...dbEvents];
           setEvents(all);
           saveLocal(all);
@@ -109,7 +115,7 @@ export default function EventsPage() {
         try {
           const parsed = JSON.parse(stored) as UnifiedEvent[];
           const filtered = parsed.filter(ev =>
-            ev.isPublic || (userId ? ev.owner_id === userId : false)
+            ev.isPublic || (currentUserId ? ev.owner_id === currentUserId : false)
           );
           setEvents(filtered);
         } catch {
