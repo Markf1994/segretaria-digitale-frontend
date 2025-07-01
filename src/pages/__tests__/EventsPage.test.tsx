@@ -4,6 +4,7 @@ import EventsPage from '../EventsPage';
 import api from '../../api/axios';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { getUserStorageKey } from '../../utils/auth';
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -25,7 +26,7 @@ beforeEach(() => {
 describe('EventsPage', () => {
   it('loads events from localStorage', async () => {
     localStorage.setItem(
-      'events',
+      getUserStorageKey('events', null),
       JSON.stringify([
         {
           id: '1',
