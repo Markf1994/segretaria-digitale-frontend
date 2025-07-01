@@ -161,8 +161,8 @@ export default function TodoPage() {
         <tbody>
           {todos.map(t => (
             <tr key={t.id}>
-              <td>{t.text}</td>
-              <td>{new Date(t.due).toLocaleDateString()}</td>
+              <td className="desc-cell">{t.text}</td>
+              <td className="digit-font">{new Date(t.due).toLocaleDateString()}</td>
               <td>
                 {!t.readonly && (
                   <>

@@ -312,8 +312,8 @@ export default function EventsPage() {
           {events.map(ev => (
             <tr key={`${ev.source}-${ev.id}`}>
               <td>{ev.title}</td>
-              <td>{new Date(ev.dateTime).toLocaleString()}</td>
-              <td>{ev.description}</td>
+              <td className="digit-font">{new Date(ev.dateTime).toLocaleString()}</td>
+              <td className="desc-cell">{ev.description}</td>
               <td>{ev.isPublic ? 'Sì' : 'No'}</td>
               <td>
                 <button onClick={() => onEdit(ev)}>Modifica</button>

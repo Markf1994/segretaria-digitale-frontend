@@ -75,6 +75,7 @@
 .item-table th {
   background: #a8a3a3;
   text-align: left;
+  font-weight: bold;
 }
 .item-table td:last-child {
   white-space: nowrap;
