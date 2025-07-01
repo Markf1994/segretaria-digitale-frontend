@@ -28,6 +28,10 @@ beforeEach(() => {
   mockedDetApi.listDeterminations.mockResolvedValue([] as any);
 });
 
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 describe('TodoPage offline', () => {
   it('adds new todo offline', async () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
