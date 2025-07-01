@@ -11,7 +11,7 @@ export interface Determination {
 
 export const listDeterminations = (): Promise<Determination[]> =>
   api
-    .get<Determination[]>('/determinazioni')
+    .get<Determination[]>('/determinazioni/')
     .then(r =>
       r.data.map(d => ({
         ...d,
@@ -23,7 +23,7 @@ export const createDetermination = (
   data: Omit<Determination, 'id'>
 ): Promise<Determination> =>
   api
-    .post<Determination>('/determinazioni', {
+    .post<Determination>('/determinazioni/', {
       ...data,
       descrizione: data.descrizione
     })
@@ -37,7 +37,7 @@ export const updateDetermination = (
   data: Partial<Omit<Determination, 'id'>>
 ): Promise<Determination> =>
   api
-    .put<Determination>(`/determinazioni/${id}`, {
+      .put<Determination>(`/determinazioni/${id}/`, {
       ...data,
       descrizione: data.descrizione
     })
@@ -47,4 +47,4 @@ export const updateDetermination = (
     }))
 
 export const deleteDetermination = (id: string): Promise<void> =>
-  api.delete(`/determinazioni/${id}`).then(() => undefined)
+  api.delete(`/determinazioni/${id}/`).then(() => undefined)
