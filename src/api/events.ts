@@ -7,6 +7,7 @@ export interface DbEvent {
   descrizione?: string
   data_ora: string
   is_public?: boolean
+  owner_id?: string
 }
 
 export const listDbEvents = (): Promise<DbEvent[]> =>
