@@ -26,6 +26,9 @@ describe('PageTemplate', () => {
     expect(screen.getByText('📅 Eventi')).toBeInTheDocument();
     expect(screen.getByText('📝 To-Do')).toBeInTheDocument();
     expect(screen.getByText('📄 Determine')).toBeInTheDocument();
+    expect(
+      screen.getByText(/🕑\s*Orari/i)
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /esci/i })).toBeInTheDocument();
 
     // footer
