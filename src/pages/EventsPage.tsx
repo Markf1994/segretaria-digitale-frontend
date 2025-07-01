@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   signIn,
   listEvents as listGcEvents,
@@ -14,6 +14,8 @@ import {
   DbEvent,
 } from '../api/events';
 import './ListPages.css';
+import { useAuthStore } from '../store/auth';
+import { getUserStorageKey } from '../utils/auth';
 
 interface UnifiedEvent {
   id: string;
@@ -44,6 +46,15 @@ export default function EventsPage() {
   });
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
   const isMobile = window.innerWidth <= 600;
+  const token = useAuthStore(s => s.token);
+  const storageKey = useMemo(
+    () =>
+      getUserStorageKey(
+        'events',
+        token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
+      ),
+    [token]
+  );
 
   const resetForm = (): void => {
     setForm({ title: '', description: '', dateTime: '', endDateTime: '', isPublic: false });
@@ -51,7 +62,7 @@ export default function EventsPage() {
   };
 
   const saveLocal = (data: UnifiedEvent[]): void => {
-    localStorage.setItem('events', JSON.stringify(data));
+    localStorage.setItem(storageKey, JSON.stringify(data));
   };
 
   useEffect(() => {
@@ -86,7 +97,7 @@ export default function EventsPage() {
           // ignore and try local storage
         }
       }
-      const stored = localStorage.getItem('events');
+      const stored = localStorage.getItem(storageKey);
       if (stored) {
         try {
           const parsed = JSON.parse(stored) as UnifiedEvent[];
@@ -97,7 +108,7 @@ export default function EventsPage() {
       }
     }
     fetchAll();
-  }, []);
+  }, [storageKey]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
