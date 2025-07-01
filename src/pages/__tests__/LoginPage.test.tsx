@@ -38,9 +38,8 @@ describe('LoginPage', () => {
     expect(await screen.findByText('Home')).toBeInTheDocument();
   });
 
-  it('shows alert on invalid credentials', async () => {
+  it('shows an error message on invalid credentials', async () => {
     mockedApi.post.mockRejectedValue(new Error('invalid'));
-    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
     render(
       <MemoryRouter initialEntries={["/login"]}>
@@ -55,7 +54,6 @@ describe('LoginPage', () => {
     await userEvent.type(screen.getByPlaceholderText(/password/i), 'bad');
     await userEvent.click(screen.getByRole('button', { name: /accedi/i }));
 
-    expect(alertSpy).toHaveBeenCalledWith('Credenziali errate');
-    alertSpy.mockRestore();
+    expect(await screen.findByText('Credenziali errate')).toBeInTheDocument();
   });
 });
