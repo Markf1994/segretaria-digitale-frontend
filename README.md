@@ -1,6 +1,6 @@
 # Segretaria Digitale Frontend
 
-This project contains the React front end of **Segretaria Digitale**, a simple application for managing events, todos and determinations.
+This project contains the React front end of **Segretaria Digitale**, a simple application for managing events, todos, determinations and orari.
 
 ## Setup
 
@@ -29,6 +29,12 @@ The variables are:
 - `VITE_API_URL` – https://segretaria-digitale-backend.onrender.com.
 - `VITE_GAPI_CLIENT_ID` – `your-google-client-id`.
 - `VITE_GAPI_API_KEY` – `your-google-api-key`.
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
 
 
 ## Development
