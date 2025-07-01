@@ -1,39 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SchedulePage from '../SchedulePage';
-import api from '../../api/axios';
-import { useQuery } from '@tanstack/react-query';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
-jest.mock('../../api/axios', () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-  },
-}));
-
-jest.mock('@tanstack/react-query', () => ({
-  __esModule: true,
-  useQuery: jest.fn(),
-}));
-
-const mockedApi = api as jest.Mocked<typeof api>;
-const mockedUseQuery = useQuery as jest.Mock;
-
 beforeEach(() => {
-  jest.resetAllMocks();
-  mockedUseQuery.mockReturnValue({ data: [], isLoading: false });
+  localStorage.clear();
 });
 
 describe('SchedulePage', () => {
-  it('loads shifts from API', async () => {
-    mockedUseQuery.mockReturnValue({
-      data: [
+  it('loads shifts from localStorage', async () => {
+    localStorage.setItem(
+      'shifts',
+      JSON.stringify([
         { id: '1', date: '2023-01-01', start: '08:00', end: '10:00', note: '' },
-      ],
-      isLoading: false,
-    });
+      ])
+    );
 
     render(
       <MemoryRouter initialEntries={["/orari"]}>
@@ -48,7 +30,7 @@ describe('SchedulePage', () => {
     expect(await screen.findByText('08:00')).toBeInTheDocument();
   });
 
-  it('opens modal on "Nuovo turno" click', async () => {
+  it('adds a new shift', async () => {
     render(
       <MemoryRouter initialEntries={["/orari"]}>
         <Routes>
@@ -59,7 +41,15 @@ describe('SchedulePage', () => {
       </MemoryRouter>
     );
 
-    await userEvent.click(screen.getByRole('button', { name: /nuovo turno/i }));
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    await userEvent.type(screen.getByLabelText(/data/i), '2023-06-01');
+    await userEvent.type(screen.getByLabelText(/inizio/i), '09:00');
+    await userEvent.type(screen.getByLabelText(/fine/i), '10:00');
+    await userEvent.type(screen.getByPlaceholderText(/note/i), 'test');
+    await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
+
+    expect(await screen.findByText('09:00')).toBeInTheDocument();
+
+    const stored = JSON.parse(localStorage.getItem('shifts') || '[]');
+    expect(stored[0].start).toBe('09:00');
   });
 });
