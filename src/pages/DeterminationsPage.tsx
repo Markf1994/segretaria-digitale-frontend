@@ -195,11 +195,11 @@ const DeterminationsPage: React.FC = () => {
         <tbody>
           {items.map(d => (
             <tr key={d.id}>
-              <td>{d.capitolo}</td>
-              <td>{d.numero}</td>
-              <td>€{d.somma}</td>
-              <td>{d.descrizione}</td>
-              <td>{new Date(d.scadenza).toLocaleDateString()}</td>
+              <td className="digit-font">{d.capitolo}</td>
+              <td className="digit-font">{d.numero}</td>
+              <td className="digit-font">€{d.somma}</td>
+              <td className="desc-cell">{d.descrizione}</td>
+              <td className="digit-font">{new Date(d.scadenza).toLocaleDateString()}</td>
               <td>
                 <button data-testid="det-edit" onClick={() => onEdit(d)}>
                   Modifica

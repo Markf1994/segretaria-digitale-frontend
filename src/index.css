@@ -168,3 +168,15 @@ label {
   border: 2px solid #A52019;
 }
 
+/* Special font for numeric content */
+.digit-font,
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"] {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.desc-cell {
+  font-weight: bold;
+}
+
