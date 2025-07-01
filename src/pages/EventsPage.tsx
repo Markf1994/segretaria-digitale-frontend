@@ -15,7 +15,7 @@ import {
 } from '../api/events';
 import './ListPages.css';
 import { useAuthStore } from '../store/auth';
-import { getUserStorageKey } from '../utils/auth';
+import { getUserStorageKey, decodeToken } from '../utils/auth';
 
 interface UnifiedEvent {
   id: string;
@@ -80,15 +80,35 @@ export default function EventsPage() {
             isPublic: ev.visibility === 'public',
             source: 'gc',
           }));
-          const dbEvents: UnifiedEvent[] = db.map((ev: DbEvent) => ({
-            id: ev.id,
-            title: ev.titolo,
-            description: ev.descrizione || '',
-            dateTime: ev.data_ora,
-            endDateTime: ev.data_ora,
-            isPublic: !!ev.is_public,
-            source: 'db',
-          }));
+
+          const rawToken =
+            token ||
+            (typeof localStorage !== 'undefined'
+              ? localStorage.getItem('token')
+              : null);
+          const decoded = rawToken ? decodeToken(rawToken) : null;
+          const currentUserId =
+            decoded?.sub ||
+            decoded?.user_id ||
+            decoded?.id ||
+            decoded?.email ||
+            null;
+
+          const dbEvents: UnifiedEvent[] = db
+            .filter(
+              (ev: any) =>
+                ev.is_public === true ||
+                (currentUserId && ev.owner_id === currentUserId)
+            )
+            .map((ev: DbEvent) => ({
+              id: ev.id,
+              title: ev.titolo,
+              description: ev.descrizione || '',
+              dateTime: ev.data_ora,
+              endDateTime: ev.data_ora,
+              isPublic: !!ev.is_public,
+              source: 'db',
+            }));
           const all = [...gcEvents, ...dbEvents];
           setEvents(all);
           saveLocal(all);
