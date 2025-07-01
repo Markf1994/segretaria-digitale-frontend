@@ -4,6 +4,7 @@ import EventsPage from '../EventsPage';
 import api from '../../api/axios';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { getUserStorageKey } from '../../utils/auth';
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -32,7 +33,7 @@ describe('EventsPage', () => {
           title: 'Test',
           description: 'desc',
           dateTime: '2023-01-01T10:00',
-          isPublic: false,
+          isPublic: true,
         },
       ])
     );
@@ -70,5 +71,48 @@ describe('EventsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
     expect(await screen.findByText('My Event')).toBeInTheDocument();
+  });
+
+  it('hides private events of other users', async () => {
+    const header = Buffer.from('{}').toString('base64');
+    const payload = Buffer.from(JSON.stringify({ sub: 'user1' })).toString('base64');
+    const token = `${header}.${payload}.sig`;
+    localStorage.setItem('token', token);
+    const key = getUserStorageKey('events', token);
+    localStorage.setItem(
+      key,
+      JSON.stringify([
+        {
+          id: '1',
+          title: 'Mine',
+          description: '',
+          dateTime: '2023-01-01T10:00',
+          isPublic: false,
+          ownerId: 'user1',
+        },
+        {
+          id: '2',
+          title: 'Other',
+          description: '',
+          dateTime: '2023-01-02T10:00',
+          isPublic: false,
+          ownerId: 'user2',
+        },
+      ])
+    );
+    Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Mine')).toBeInTheDocument();
+    expect(screen.queryByText('Other')).not.toBeInTheDocument();
   });
 });

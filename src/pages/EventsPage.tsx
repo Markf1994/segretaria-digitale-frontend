@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   signIn,
   listEvents as listGcEvents,
@@ -14,6 +14,8 @@ import {
   DbEvent,
 } from '../api/events';
 import './ListPages.css';
+import { useAuthStore } from '../store/auth';
+import { decodeToken, getUserStorageKey } from '../utils/auth';
 
 interface UnifiedEvent {
   id: string;
@@ -23,6 +25,7 @@ interface UnifiedEvent {
   endDateTime: string;
   isPublic: boolean;
   source: 'gc' | 'db';
+  ownerId?: string;
 }
 
 interface FormValues {
@@ -44,6 +47,15 @@ export default function EventsPage() {
   });
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
   const isMobile = window.innerWidth <= 600;
+  const token = useAuthStore(s => s.token);
+  const storageKey = useMemo(
+    () =>
+      getUserStorageKey(
+        'events',
+        token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
+      ),
+    [token]
+  );
 
   const resetForm = (): void => {
     setForm({ title: '', description: '', dateTime: '', endDateTime: '', isPublic: false });
@@ -51,7 +63,7 @@ export default function EventsPage() {
   };
 
   const saveLocal = (data: UnifiedEvent[]): void => {
-    localStorage.setItem('events', JSON.stringify(data));
+    localStorage.setItem(storageKey, JSON.stringify(data));
   };
 
   useEffect(() => {
@@ -60,6 +72,10 @@ export default function EventsPage() {
         try {
           await signIn();
           const [gc, db] = await Promise.all([listGcEvents(), listDbEvents()]);
+          const decoded = decodeToken(
+            token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : '') || ''
+          );
+          const userId = decoded?.sub || decoded?.user_id || decoded?.id || decoded?.email;
           const gcEvents: UnifiedEvent[] = gc.map(ev => ({
             id: ev.id,
             title: ev.summary,
@@ -69,7 +85,10 @@ export default function EventsPage() {
             isPublic: ev.visibility === 'public',
             source: 'gc',
           }));
-          const dbEvents: UnifiedEvent[] = db.map((ev: DbEvent) => ({
+          const filteredDb = db.filter(
+            (ev: DbEvent) => ev.is_public === true || ev.owner_id === userId
+          );
+          const dbEvents: UnifiedEvent[] = filteredDb.map((ev: DbEvent) => ({
             id: ev.id,
             title: ev.titolo,
             description: ev.descrizione || '',
@@ -77,6 +96,7 @@ export default function EventsPage() {
             endDateTime: ev.data_ora,
             isPublic: !!ev.is_public,
             source: 'db',
+            ownerId: ev.owner_id,
           }));
           const all = [...gcEvents, ...dbEvents];
           setEvents(all);
@@ -86,18 +106,25 @@ export default function EventsPage() {
           // ignore and try local storage
         }
       }
-      const stored = localStorage.getItem('events');
+      const stored = localStorage.getItem(storageKey);
       if (stored) {
         try {
           const parsed = JSON.parse(stored) as UnifiedEvent[];
-          setEvents(parsed);
+          const decoded = decodeToken(
+            token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : '') || ''
+          );
+          const userId = decoded?.sub || decoded?.user_id || decoded?.id || decoded?.email;
+          const filtered = parsed.filter(
+            ev => ev.isPublic || ev.ownerId === userId
+          );
+          setEvents(filtered);
         } catch {
           // ignore
         }
       }
     }
     fetchAll();
-  }, []);
+  }, [storageKey]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +156,7 @@ export default function EventsPage() {
       }
       const updated = events.map(ev =>
         ev.id === id && ev.source === source
-          ? { id, title, description, dateTime, endDateTime, isPublic, source }
+          ? { id, title, description, dateTime, endDateTime, isPublic, source, ownerId: ev.ownerId }
           : ev
       )
       setEvents(updated)
@@ -172,6 +199,7 @@ export default function EventsPage() {
             endDateTime: res.data_ora,
             isPublic: !!res.is_public,
             source: 'db',
+            ownerId: res.owner_id,
           }
           } catch {
           // ignore
