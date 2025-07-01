@@ -19,7 +19,15 @@ const DeterminationsPage: React.FC = () => {
   const [edit, setEdit] = useState<string | null>(null);
 
   const saveLocal = (data: Determination[]): void => {
-    localStorage.setItem('determinations', JSON.stringify(data));
+    const trimmed = data.map(d => ({
+      id: d.id,
+      capitolo: d.capitolo,
+      numero: d.numero,
+      somma: d.somma,
+      scadenza: d.scadenza,
+      descrizione: d.descrizione,
+    }));
+    localStorage.setItem('determinations', JSON.stringify(trimmed));
   };
 
   useEffect(() => {
@@ -37,7 +45,12 @@ const DeterminationsPage: React.FC = () => {
       const stored = localStorage.getItem('determinations');
       if (stored) {
         try {
-          setItems(JSON.parse(stored) as Determination[]);
+          const parsed = JSON.parse(stored);
+          const mapped = parsed.map((d: any) => ({
+            ...d,
+            descrizione: d.descrizione ?? d.description ?? '',
+          }));
+          setItems(mapped as Determination[]);
         } catch {
           // ignore
         }

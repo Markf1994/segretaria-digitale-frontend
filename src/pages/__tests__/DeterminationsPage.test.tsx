@@ -70,4 +70,32 @@ describe('DeterminationsPage', () => {
     expect(await screen.findByText(/B/)).toBeInTheDocument();
     expect(await screen.findByText(/new/)).toBeInTheDocument();
   });
+
+  it('loads items with description property', async () => {
+    localStorage.setItem(
+      'determinations',
+      JSON.stringify([
+        {
+          id: '1',
+          capitolo: 'A',
+          numero: '1',
+          somma: 5,
+          scadenza: '2023-01-01',
+          description: 'other',
+        },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/determinazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/determinazioni" element={<DeterminationsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText(/other/)).toBeInTheDocument();
+  });
 });
