@@ -15,7 +15,7 @@ import {
 } from '../api/events';
 import './ListPages.css';
 import { useAuthStore } from '../store/auth';
-import { getUserStorageKey } from '../utils/auth';
+import { getUserStorageKey, getUserId } from '../utils/auth';
 
 interface UnifiedEvent {
   id: string;
@@ -24,6 +24,7 @@ interface UnifiedEvent {
   dateTime: string;
   endDateTime: string;
   isPublic: boolean;
+  owner_id?: string;
   source: 'gc' | 'db';
 }
 
@@ -67,6 +68,10 @@ export default function EventsPage() {
 
   useEffect(() => {
     const fetchAll = async () => {
+      const userId = getUserId(
+        token ||
+          (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
+      );
       if (navigator.onLine) {
         try {
           await signIn();
@@ -78,6 +83,7 @@ export default function EventsPage() {
             dateTime: ev.start?.dateTime || ev.start?.date || '',
             endDateTime: ev.end?.dateTime || ev.end?.date || '',
             isPublic: ev.visibility === 'public',
+            owner_id: userId || undefined,
             source: 'gc',
           }));
           const dbEvents: UnifiedEvent[] = db.map((ev: DbEvent) => ({
@@ -87,6 +93,7 @@ export default function EventsPage() {
             dateTime: ev.data_ora,
             endDateTime: ev.data_ora,
             isPublic: !!ev.is_public,
+            owner_id: userId || undefined,
             source: 'db',
           }));
           const all = [...gcEvents, ...dbEvents];
@@ -101,7 +108,10 @@ export default function EventsPage() {
       if (stored) {
         try {
           const parsed = JSON.parse(stored) as UnifiedEvent[];
-          setEvents(parsed);
+          const filtered = parsed.filter(ev =>
+            ev.isPublic || (userId ? ev.owner_id === userId : false)
+          );
+          setEvents(filtered);
         } catch {
           // ignore
         }
@@ -114,6 +124,10 @@ export default function EventsPage() {
     e.preventDefault();
     const { title, description, dateTime, endDateTime, isPublic } = form;
     if (!title || !dateTime) return;
+
+    const userId = getUserId(
+      token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
+    );
 
     if (editing) {
       const { id, source } = editing;
@@ -140,7 +154,7 @@ export default function EventsPage() {
       }
       const updated = events.map(ev =>
         ev.id === id && ev.source === source
-          ? { id, title, description, dateTime, endDateTime, isPublic, source }
+          ? { ...ev, title, description, dateTime, endDateTime, isPublic }
           : ev
       )
       setEvents(updated)
@@ -163,6 +177,7 @@ export default function EventsPage() {
             dateTime,
             endDateTime: endDateTime || dateTime,
             isPublic,
+            owner_id: userId || undefined,
             source: 'gc',
           }
         } catch {
@@ -182,6 +197,7 @@ export default function EventsPage() {
             dateTime: res.data_ora,
             endDateTime: res.data_ora,
             isPublic: !!res.is_public,
+            owner_id: userId || undefined,
             source: 'db',
           }
           } catch {
@@ -196,6 +212,7 @@ export default function EventsPage() {
           dateTime,
           endDateTime: endDateTime || dateTime,
           isPublic,
+          owner_id: userId || undefined,
           source: 'gc',
         }
       }

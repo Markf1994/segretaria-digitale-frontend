@@ -33,7 +33,7 @@ describe('EventsPage', () => {
           title: 'Test',
           description: 'desc',
           dateTime: '2023-01-01T10:00',
-          isPublic: false,
+          isPublic: true,
         },
       ])
     );
@@ -49,6 +49,35 @@ describe('EventsPage', () => {
     );
 
     expect(await screen.findByText('Test')).toBeInTheDocument();
+  });
+
+  it('filters events by owner and visibility from localStorage', async () => {
+    const header = Buffer.from('{}').toString('base64');
+    const payload = Buffer.from(JSON.stringify({ sub: '123' })).toString('base64');
+    const token = `${header}.${payload}.sig`;
+    localStorage.setItem('token', token);
+    localStorage.setItem(
+      getUserStorageKey('events', token),
+      JSON.stringify([
+        { id: '1', title: 'Mine', description: '', dateTime: '2023-01-01T10:00', isPublic: false, owner_id: '123' },
+        { id: '2', title: 'Other', description: '', dateTime: '2023-01-02T10:00', isPublic: false, owner_id: '456' },
+        { id: '3', title: 'Public', description: '', dateTime: '2023-01-03T10:00', isPublic: true, owner_id: '456' },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Mine')).toBeInTheDocument();
+    expect(await screen.findByText('Public')).toBeInTheDocument();
+    expect(screen.queryByText('Other')).not.toBeInTheDocument();
   });
 
   it('adds new event offline', async () => {
