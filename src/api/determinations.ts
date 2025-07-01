@@ -25,7 +25,7 @@ export const createDetermination = (
   api
     .post<Determination>('/determinazioni', {
       ...data,
-      description: data.descrizione
+      descrizione: data.descrizione
     })
     .then(r => ({
       ...r.data,
@@ -39,7 +39,7 @@ export const updateDetermination = (
   api
     .put<Determination>(`/determinazioni/${id}`, {
       ...data,
-      description: data.descrizione
+      descrizione: data.descrizione
     })
     .then(r => ({
       ...r.data,
