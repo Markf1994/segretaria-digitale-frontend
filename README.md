@@ -1,6 +1,6 @@
 # Segretaria Digitale Frontend
 
-This project contains the React front end of **Segretaria Digitale**, a simple application for managing events, todos and determinations.
+This project contains the React front end of **Segretaria Digitale**, a simple application for managing events, todos, determinations and orari.
 
 ## Setup
 
@@ -31,6 +31,12 @@ The variables are:
 - `VITE_GAPI_API_KEY` – `your-google-api-key`.
 - `VITE_SCHEDULE_CALENDAR_IDS` – comma-separated list of Google Calendar IDs used by the schedule page.
 - `VITE_SCHEDULE_PUBLIC_API_KEY` – public API key for retrieving events from those calendars.
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
 
 
 ## Development
