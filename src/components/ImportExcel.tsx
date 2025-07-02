@@ -30,6 +30,7 @@ export default function ImportExcel({ onComplete }: ImportExcelProps) {
       const pdfBlob: Blob = response.data;
       const pdfURL = URL.createObjectURL(pdfBlob);
       window.open(pdfURL, '_blank');
+      URL.revokeObjectURL(pdfURL);
       setMessage('File importato correttamente.');
       onComplete?.(true);
     } catch (error) {
