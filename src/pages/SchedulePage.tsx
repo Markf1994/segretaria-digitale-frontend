@@ -16,7 +16,7 @@ interface Turno {
   slot1: Slot;
   slot2?: Slot;
   slot3?: Slot;
-  tipo: 'NORMALE' | 'STRAORD' | 'FERIE';
+  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO';
   note?: string;
   user_id: string;
 }
@@ -40,7 +40,7 @@ export default function SchedulePage() {
   const [s2End,   setS2End]   = useState('');
   const [s3Start, setS3Start] = useState('');
   const [s3End,   setS3End]   = useState('');
-  const [tipo, setTipo] = useState<'NORMALE' | 'STRAORD' | 'FERIE'>('NORMALE');
+  const [tipo, setTipo] = useState<'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'>('NORMALE');
   const [note, setNote] = useState('');
 
   const [calendarId, setCalendarId] = useState<string>(CALENDAR_IDS[0]);
@@ -224,6 +224,8 @@ export default function SchedulePage() {
           <option value="NORMALE">Normale</option>
           <option value="STRAORD">Straordinario</option>
           <option value="FERIE">Ferie</option>
+          <option value="RIPOSO">Riposo</option>
+          <option value="FESTIVO">Festivo</option>
         </select>
 
         <input placeholder="Note" value={note} onChange={e => setNote(e.target.value)} />
