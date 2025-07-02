@@ -60,7 +60,7 @@ export default function SchedulePage() {
 
   const CALENDAR_ID =
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
-    'plcastionedellapresolana@gmail.com';
+    '9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com';
 
   return (
     <div className="list-page">
