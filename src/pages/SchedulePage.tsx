@@ -22,7 +22,7 @@ interface Turno {
 }
 
 /* ---------- COSTANTI ---------- */
-const CALENDAR_IDS =
+const SCHEDULE_CALENDAR_IDS =
   import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',') || [DEFAULT_CALENDAR_ID];
 
 /* ---------- HELPER ---------- */
@@ -43,7 +43,7 @@ export default function SchedulePage() {
   const [tipo, setTipo] = useState<'NORMALE' | 'STRAORD' | 'FERIE'>('NORMALE');
   const [note, setNote] = useState('');
 
-  const [calendarId, setCalendarId] = useState<string>(CALENDAR_IDS[0]);
+  const [calendarId, setCalendarId] = useState<string>(SCHEDULE_CALENDAR_IDS[0]);
 
   /* -- stato dati -- */
   const [utenti, setUtenti] = useState<Utente[]>([]);
@@ -161,7 +161,7 @@ export default function SchedulePage() {
           onChange={e => setCalendarId(e.target.value)}
           style={{ marginLeft: '0.5rem' }}
         >
-          {CALENDAR_IDS.map(id => (
+          {SCHEDULE_CALENDAR_IDS.map(id => (
             <option key={id} value={id}>{id}</option>
           ))}
         </select>
