@@ -58,7 +58,7 @@ const renderPage = () =>
 describe('SchedulePage', () => {
   it('loads turni from API', async () => {
     mockedApi.get.mockImplementation(url => {
-      if (url === '/users/') return Promise.resolve({ data: [{ id: 'u', email: 'u@e' }] })
+      if (url === '/users/') return Promise.resolve({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
       if (url === '/orari/') return Promise.resolve({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' }] })
       return Promise.resolve({ data: [] })
     })
@@ -71,7 +71,7 @@ describe('SchedulePage', () => {
   })
 
   it('adds a new turno', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.post.mockResolvedValueOnce({
       data: {
@@ -108,7 +108,7 @@ describe('SchedulePage', () => {
   })
 
   it('adds a new turno with tipo RIPOSO', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.post.mockResolvedValueOnce({
       data: {
@@ -144,7 +144,7 @@ describe('SchedulePage', () => {
   })
 
   it('adds a new turno with tipo FESTIVO', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.post.mockResolvedValueOnce({
       data: {
@@ -180,7 +180,7 @@ describe('SchedulePage', () => {
   })
 
   it('deletes a turno', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '07:00', fine: '09:00' }, tipo: 'NORMALE', user_id: 'u' }] })
     mockedApi.delete.mockResolvedValueOnce({})
 
@@ -194,7 +194,7 @@ describe('SchedulePage', () => {
   })
 
   it('creates events after import', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.get.mockResolvedValueOnce({
       data: [
@@ -211,7 +211,7 @@ describe('SchedulePage', () => {
   })
 
   it('shows imported shifts in table after import', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.get.mockResolvedValueOnce({
       data: [
@@ -230,7 +230,7 @@ describe('SchedulePage', () => {
 
   it('downloads weekly PDF', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-05-01T00:00:00Z'))
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'Uno' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
 
     renderPage()
