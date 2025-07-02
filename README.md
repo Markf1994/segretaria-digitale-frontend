@@ -73,7 +73,8 @@ This serves the `dist` directory using Vite's preview mode.
 When the development server is running you can visit `/utilita` for assorted
 administrative tools. The page is available at
 `http://localhost:3000/utilita` and provides quick links to actions such as PDF
-export.
+export. The schedule page also includes a **PDF settimana** button that calls
+`/orari/pdf?week=YYYY-WW` and opens the generated file.
 
 ## Testing
 
