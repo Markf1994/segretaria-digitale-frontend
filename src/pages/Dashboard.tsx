@@ -5,6 +5,7 @@ import { getUserStorageKey } from '../utils/auth';
 import { deleteTodo } from '../api/todos';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { DEFAULT_CALENDAR_ID } from '../constants';
 interface EventItem {
   id: string;
   title: string;
@@ -24,7 +25,7 @@ export default function Dashboard() {
   const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
   const CALENDAR_ID =
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
-    'plcastionedellapresolana@gmail.com';
+    DEFAULT_CALENDAR_ID;
 
   const today = new Date();
   const upcomingEvents = events.filter(
