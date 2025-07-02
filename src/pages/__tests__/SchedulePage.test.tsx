@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import SchedulePage from '../SchedulePage'
 import PageTemplate from '../../components/PageTemplate'
@@ -136,6 +136,24 @@ describe('SchedulePage', () => {
 
     expect(await screen.findByText('08:00–10:00')).toBeInTheDocument()
     expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ giorno: '2023-06-01' }))
+  })
+
+  it('shows imported shifts in table after import', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.get.mockResolvedValueOnce({
+      data: [
+        { id: '1', giorno: '2023-06-02', slot1: { inizio: '09:00', fine: '11:00' }, tipo: 'NORMALE', user_id: 'u' },
+      ],
+    })
+
+    renderPage()
+
+    await userEvent.click(screen.getByRole('button', { name: /importa/i }))
+
+    const tables = await screen.findAllByRole('table')
+    expect(tables).toHaveLength(2)
+    expect(within(tables[1]).getByText('2023-06-02')).toBeInTheDocument()
   })
 
   it('downloads weekly PDF', async () => {

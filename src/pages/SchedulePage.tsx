@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { listUtenti, Utente } from '../api/users';
 import { getSchedulePdf } from '../api/pdfs';
-import { format } from 'date-fns';
+import { format, startOfISOWeek, addDays } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
 import { createShiftEvents, ShiftData } from '../api/googleCalendar';
@@ -48,6 +48,7 @@ export default function SchedulePage() {
   /* -- stato dati -- */
   const [utenti, setUtenti] = useState<Utente[]>([]);
   const [turni, setTurni] = useState<Turno[]>([]);
+  const [importedTurni, setImportedTurni] = useState<Turno[]>([]);
   const [refreshCal, setRefreshCal] = useState(false);
 
   const fetchTurni = async () => {
@@ -59,22 +60,34 @@ export default function SchedulePage() {
   const handleImportComplete = async (success: boolean) => {
     if (success) {
       const data = await fetchTurni();
-      for (const t of data) {
-        try {
-          const email = utenti.find(u => u.id === t.user_id)?.email || '';
-          await createShiftEvents(calendarId, {
-            userEmail: email,
-            giorno: t.giorno,
-            slot1: t.slot1,
-            slot2: t.slot2,
-            slot3: t.slot3,
-            note: t.note,
-          } as ShiftData);
-        } catch {
-          // ignore calendar errors
+      if (data.length) {
+        const maxDate = new Date(
+          Math.max(...data.map(t => new Date(t.giorno).getTime()))
+        );
+        const start = startOfISOWeek(maxDate);
+        const end = addDays(start, 6);
+        const imported = data.filter(t => {
+          const d = new Date(t.giorno);
+          return d >= start && d <= end;
+        });
+        setImportedTurni(imported);
+        for (const t of imported) {
+          try {
+            const email = utenti.find(u => u.id === t.user_id)?.email || '';
+            await createShiftEvents(calendarId, {
+              userEmail: email,
+              giorno: t.giorno,
+              slot1: t.slot1,
+              slot2: t.slot2,
+              slot3: t.slot3,
+              note: t.note,
+            } as ShiftData);
+          } catch {
+            // ignore calendar errors
+          }
         }
+        setRefreshCal(prev => !prev);
       }
-      setRefreshCal(prev => !prev);
     }
   };
 
@@ -261,6 +274,52 @@ export default function SchedulePage() {
           PDF settimana
         </button>
       </div>
+
+      {importedTurni.length > 0 && (
+        <table className="item-table" style={{ marginTop: '1rem' }}>
+          <thead>
+            <tr>
+              <th>Nome agente</th>
+              <th>Giorno</th>
+              <th>Tipo</th>
+              <th>Slot 1</th>
+              <th>Slot 2</th>
+              <th>Slot 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            {importedTurni.map(t => {
+              const nome = stripDomain(
+                utenti.find(u => u.id === t.user_id)?.email || ''
+              );
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              const slot1 = ferieLike
+                ? t.tipo
+                : `${t.slot1.inizio}–${t.slot1.fine}`;
+              const slot2 = ferieLike
+                ? '—'
+                : t.slot2
+                ? `${t.slot2.inizio}–${t.slot2.fine}`
+                : '—';
+              const slot3Text = ferieLike
+                ? '—'
+                : t.slot3
+                ? `${t.slot3.inizio}–${t.slot3.fine}`
+                : '—';
+              return (
+                <tr key={t.id}>
+                  <td>{nome}</td>
+                  <td>{t.giorno}</td>
+                  <td>{t.tipo}</td>
+                  <td>{slot1}</td>
+                  <td>{slot2}</td>
+                  <td style={{ color: 'red' }}>{slot3Text}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
