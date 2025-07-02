@@ -40,7 +40,7 @@ describe('PageTemplate', () => {
   });
 
   it('displays greeting when user token exists', () => {
-    const payload = btoa(JSON.stringify({ email: 'test@comune.castione.bg.it' }));
+    const payload = btoa(JSON.stringify({ nome: 'test' }));
     localStorage.setItem('token', `xx.${payload}.yy`);
 
     render(

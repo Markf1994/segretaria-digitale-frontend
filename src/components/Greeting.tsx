@@ -8,10 +8,19 @@ const Greeting: React.FC = () => {
   if (!token) return null;
 
   const decoded = decodeToken(token);
-  const email: string | undefined = decoded?.email || decoded?.sub || decoded?.user_id || decoded?.id;
-  if (!email) return null;
+  const name: string | undefined = decoded?.nome || decoded?.name;
+  let username: string | undefined = name;
 
-  const username = email.endsWith('@comune.castione.bg.it') ? email.split('@')[0] : email;
+  if (!username) {
+    const email: string | undefined =
+      decoded?.email || decoded?.sub || decoded?.user_id || decoded?.id;
+    if (email)
+      username = email.endsWith('@comune.castione.bg.it')
+        ? email.split('@')[0]
+        : email;
+  }
+
+  if (!username) return null;
   const hour = new Date().getHours();
   let salutation = 'Buonasera';
   if (hour < 12) salutation = 'Buongiorno';
