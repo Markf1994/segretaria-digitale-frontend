@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { listUtenti, Utente } from '../api/users';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
+import { signIn, createShiftEvent } from '../api/googleCalendar';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
@@ -19,9 +20,8 @@ interface Turno {
 }
 
 /* ---------- COSTANTI ---------- */
-const CALENDAR_ID =
-  import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
-  DEFAULT_CALENDAR_ID;
+const CALENDAR_IDS =
+  import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',') || [DEFAULT_CALENDAR_ID]
 
 /* ---------- HELPER ---------- */
 const stripDomain = (email: string) =>
@@ -45,6 +45,7 @@ export default function SchedulePage() {
   const [utenti, setUtenti] = useState<Utente[]>([]);
   const [turni, setTurni] = useState<Turno[]>([]);
   const [refreshCal, setRefreshCal] = useState(false);
+  const [calendarId, setCalendarId] = useState<string>(CALENDAR_IDS[0]);
 
   /* --- caricamento iniziale --- */
   useEffect(() => {
@@ -53,6 +54,9 @@ export default function SchedulePage() {
       setUtenteSel(r.data[0]?.id ?? '');
     });
     api.get<Turno[]>('/orari/').then(r => setTurni(r.data));
+    if (navigator.onLine) {
+      signIn().catch(() => {});
+    }
   }, []);
 
   /* --- helper --- */
@@ -83,6 +87,21 @@ export default function SchedulePage() {
     setTurni(prev =>
       prev.some(t => t.id === data.id) ? prev.map(t => t.id === data.id ? data : t) : [...prev, data]
     );
+    if (navigator.onLine) {
+      try {
+        await createShiftEvent({
+          calendarId,
+          summary: stripDomain(utenti.find(u => u.id === data.user_id)?.email || ''),
+          date: data.giorno,
+          note: data.note,
+          slot1: data.slot1,
+          slot2: data.slot2,
+          slot3: data.slot3,
+        });
+      } catch {
+        // ignore failures
+      }
+    }
     resetForm();
   };
 
@@ -92,12 +111,42 @@ export default function SchedulePage() {
     setTurni(prev => prev.filter(t => t.id !== id));
   };
 
+  const handleImport = async (list: Turno[]) => {
+    const existing = new Set(turni.map(t => t.id));
+    setTurni(list);
+    const added = list.filter(t => !existing.has(t.id));
+    if (navigator.onLine) {
+      for (const t of added) {
+        try {
+          await createShiftEvent({
+            calendarId,
+            summary: stripDomain(utenti.find(u => u.id === t.user_id)?.email || ''),
+            date: t.giorno,
+            note: t.note,
+            slot1: t.slot1,
+            slot2: t.slot2,
+            slot3: t.slot3,
+          });
+        } catch {
+          // ignore
+        }
+      }
+    }
+  };
+
   /* --- render --- */
   return (
     <div className="list-page">
       <h2>Turni di servizio</h2>
 
-      <ImportExcel />
+      <ImportExcel onImported={handleImport} />
+
+      <label>Calendario</label>
+      <select value={calendarId} onChange={e => setCalendarId(e.target.value)}>
+        {CALENDAR_IDS.map(id => (
+          <option key={id} value={id}>{id}</option>
+        ))}
+      </select>
 
       {/* -------- FORM -------- */}
       <form className="item-form" onSubmit={handleAdd}>
@@ -180,7 +229,7 @@ export default function SchedulePage() {
       <div style={{ marginTop: '1.5rem' }}>
         <iframe
           key={String(refreshCal)}
-          src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
+          src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendarId)}&mode=WEEK&ctz=Europe/Rome`}
           title="Calendario Turni"
           style={{ border: 0, width: '100%', height: '600px' }}
           frameBorder={0}

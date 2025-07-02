@@ -4,6 +4,7 @@ import SchedulePage from '../SchedulePage'
 import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import api from '../../api/axios'
+import * as gc from '../../api/googleCalendar'
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -14,11 +15,21 @@ jest.mock('../../api/axios', () => ({
   },
 }))
 
+jest.mock('../../api/googleCalendar', () => ({
+  __esModule: true,
+  signIn: jest.fn(),
+  createShiftEvent: jest.fn(),
+}))
+
+const mockedGc = gc as jest.Mocked<typeof gc>
+
 const mockedApi = api as jest.Mocked<typeof api>
 
 beforeEach(() => {
   jest.resetAllMocks()
   mockedApi.get.mockResolvedValue({ data: [] })
+  mockedGc.signIn.mockResolvedValue()
+  mockedGc.createShiftEvent.mockResolvedValue([] as any)
 })
 
 const renderPage = () =>
@@ -78,6 +89,7 @@ describe('SchedulePage', () => {
       note: undefined,
     })
     expect((inputs[0] as HTMLInputElement).value).toBe('')
+    expect(mockedGc.createShiftEvent).toHaveBeenCalled()
   })
 
   it('deletes a turno', async () => {

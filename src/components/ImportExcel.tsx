@@ -1,7 +1,11 @@
-import React, { useRef, useState } from 'react';
-import api from '../api/axios';
+import React, { useRef, useState } from 'react'
+import api from '../api/axios'
 
-export default function ImportExcel() {
+interface Props {
+  onImported?: (turni: any[]) => void
+}
+
+export default function ImportExcel({ onImported }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
 
@@ -18,9 +22,15 @@ export default function ImportExcel() {
     try {
       const res = await api.post('/import/xlsx', form, {
         responseType: 'blob',
-      });
-      const url = URL.createObjectURL(res.data);
-      window.open(url, '_blank');
+      })
+      const url = URL.createObjectURL(res.data)
+      window.open(url, '_blank')
+      try {
+        const list = await api.get('/orari/')
+        onImported?.(list.data)
+      } catch {
+        // ignore errors
+      }
     } finally {
       setBusy(false);
     }

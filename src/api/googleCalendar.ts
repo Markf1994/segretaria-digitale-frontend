@@ -68,3 +68,41 @@ export const deleteEvent = async (id: string): Promise<void> => {
   })
 }
 
+export interface ShiftSlot {
+  inizio: string
+  fine: string
+}
+
+export interface ShiftEventData {
+  calendarId: string
+  summary: string
+  date: string
+  note?: string
+  slot1: ShiftSlot
+  slot2?: ShiftSlot
+  slot3?: ShiftSlot
+}
+
+export const createShiftEvent = async (
+  data: ShiftEventData
+): Promise<GcEvent[]> => {
+  const gapi = (window as any).gapi
+  const slots = [data.slot1, data.slot2, data.slot3].filter(
+    Boolean
+  ) as ShiftSlot[]
+  const results: GcEvent[] = []
+  for (const slot of slots) {
+    const res = await gapi.client.calendar.events.insert({
+      calendarId: data.calendarId,
+      resource: {
+        summary: data.summary,
+        description: data.note,
+        start: { dateTime: `${data.date}T${slot.inizio}` },
+        end: { dateTime: `${data.date}T${slot.fine}` },
+      },
+    })
+    results.push(res.result)
+  }
+  return results
+}
+
