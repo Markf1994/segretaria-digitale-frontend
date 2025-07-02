@@ -17,6 +17,7 @@ const DeterminationsPage: React.FC = () => {
   const [descrizione, setDescrizione] = useState('');
   const [scadenza, setScadenza] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
+  const isMobile = window.innerWidth <= 600;
 
   const saveLocal = (data: Determination[]): void => {
     const trimmed = data.map(d => ({
@@ -181,6 +182,8 @@ const DeterminationsPage: React.FC = () => {
         <button data-testid="det-submit" type="submit">{edit ? 'Salva' : 'Aggiungi'}</button>
         {edit && <button data-testid="det-cancel" type="button" onClick={reset}>Annulla</button>}
       </form>
+      <details className="item-dropdown" open={!isMobile}>
+        <summary>{isMobile ? 'Lista Determine salvate' : 'Determine salvate'}</summary>
       <table className="item-table determinations-table">
         <thead>
           <tr>
@@ -212,6 +215,7 @@ const DeterminationsPage: React.FC = () => {
           ))}
         </tbody>
       </table>
+      </details>
       </div>
   );
 };
