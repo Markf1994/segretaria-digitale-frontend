@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
@@ -31,6 +31,8 @@ export default function Dashboard() {
     e => differenceInCalendarDays(parseISO(e.dateTime), today) <= 3
   );
   const dashboardTodos = todos;
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const onDelete = async (id: string): Promise<void> => {
     if (navigator.onLine) {
@@ -79,6 +81,7 @@ export default function Dashboard() {
         <div className="top-wrapper">
           <div className="calendar-container dashboard-section">
            <iframe
+               ref={iframeRef}
                title="calendar"
                 src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
                 style={{ border: 0 }}
@@ -87,8 +90,7 @@ export default function Dashboard() {
                 scrolling="no"
              ></iframe>
             <button onClick={() => {
-  const el = document.querySelector<HTMLIFrameElement>('iframe[title="calendar"]');
-  if (el) el.src = el.src;        // forza reload
+  if (iframeRef.current) iframeRef.current.src = iframeRef.current.src;        // forza reload
 }}>
   Aggiorna calendario
 </button>
