@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { listUtenti, Utente } from '../api/users';
+import { getSchedulePdf } from '../api/pdfs';
+import { format } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
 import './ListPages.css';
@@ -90,6 +92,17 @@ export default function SchedulePage() {
   const handleDelete = async (id: string) => {
     await api.delete(`/orari/${id}`);
     setTurni(prev => prev.filter(t => t.id !== id));
+  };
+
+  const handleDownloadPdf = async () => {
+    const week = format(new Date(), "RRRR-'W'II");
+    try {
+      const blob = await getSchedulePdf(week);
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch {
+      // ignore download errors
+    }
   };
 
   /* --- render --- */
@@ -188,6 +201,9 @@ export default function SchedulePage() {
         />
         <button onClick={() => setRefreshCal(prev => !prev)}>
           Aggiorna calendario
+        </button>
+        <button onClick={handleDownloadPdf} style={{ marginLeft: '0.5rem' }}>
+          PDF settimana
         </button>
       </div>
     </div>

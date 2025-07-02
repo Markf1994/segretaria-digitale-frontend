@@ -4,6 +4,7 @@ import SchedulePage from '../SchedulePage'
 import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import api from '../../api/axios'
+import * as pdfApi from '../../api/pdfs'
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -14,11 +15,18 @@ jest.mock('../../api/axios', () => ({
   },
 }))
 
+jest.mock('../../api/pdfs', () => ({
+  __esModule: true,
+  getSchedulePdf: jest.fn(),
+}))
+
 const mockedApi = api as jest.Mocked<typeof api>
+const mockedPdfApi = pdfApi as jest.Mocked<typeof pdfApi>
 
 beforeEach(() => {
   jest.resetAllMocks()
   mockedApi.get.mockResolvedValue({ data: [] })
+  mockedPdfApi.getSchedulePdf.mockResolvedValue(new Blob())
 })
 
 const renderPage = () =>
@@ -92,5 +100,25 @@ describe('SchedulePage', () => {
 
     expect(screen.queryByText('07:00–09:00')).not.toBeInTheDocument()
     expect(mockedApi.delete).toHaveBeenCalledWith('/orari/1')
+  })
+
+  it('downloads weekly PDF', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-05-01T00:00:00Z'))
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+
+    renderPage()
+    await screen.findByRole('button', { name: /pdf settimana/i })
+
+    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
+    const urlSpy = jest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:1')
+
+    await userEvent.click(screen.getByRole('button', { name: /pdf settimana/i }))
+
+    expect(mockedPdfApi.getSchedulePdf).toHaveBeenCalledWith('2023-W18')
+    expect(openSpy).toHaveBeenCalledWith('blob:1', '_blank')
+
+    openSpy.mockRestore()
+    urlSpy.mockRestore()
   })
 })
