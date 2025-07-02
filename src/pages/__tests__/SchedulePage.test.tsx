@@ -107,6 +107,78 @@ describe('SchedulePage', () => {
     }))
   })
 
+  it('adds a new turno with tipo RIPOSO', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '3',
+        giorno: '2023-05-03',
+        slot1: { inizio: '10:00', fine: '12:00' },
+        tipo: 'RIPOSO',
+        user_id: 'u',
+      },
+    })
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-03')
+    await userEvent.type(inputs[1], '10:00')
+    await userEvent.type(inputs[2], '12:00')
+
+    const selects = screen.getAllByRole('combobox')
+    await userEvent.selectOptions(selects[2], 'RIPOSO')
+
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    expect(await screen.findByText('RIPOSO')).toBeInTheDocument()
+    expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
+      user_id: 'u',
+      giorno: '2023-05-03',
+      slot1: { inizio: '10:00', fine: '12:00' },
+      tipo: 'RIPOSO',
+      note: undefined,
+    })
+  })
+
+  it('adds a new turno with tipo FESTIVO', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '4',
+        giorno: '2023-05-04',
+        slot1: { inizio: '11:00', fine: '13:00' },
+        tipo: 'FESTIVO',
+        user_id: 'u',
+      },
+    })
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-04')
+    await userEvent.type(inputs[1], '11:00')
+    await userEvent.type(inputs[2], '13:00')
+
+    const selects = screen.getAllByRole('combobox')
+    await userEvent.selectOptions(selects[2], 'FESTIVO')
+
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    expect(await screen.findByText('FESTIVO')).toBeInTheDocument()
+    expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
+      user_id: 'u',
+      giorno: '2023-05-04',
+      slot1: { inizio: '11:00', fine: '13:00' },
+      tipo: 'FESTIVO',
+      note: undefined,
+    })
+  })
+
   it('deletes a turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '07:00', fine: '09:00' }, tipo: 'NORMALE', user_id: 'u' }] })
