@@ -180,3 +180,8 @@ input[type="datetime-local"] {
   font-weight: bold;
 }
 
+.success-message {
+  color: #00703c;
+  margin-bottom: 1rem;
+}
+
