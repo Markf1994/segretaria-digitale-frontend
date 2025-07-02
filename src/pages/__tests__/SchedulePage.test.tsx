@@ -131,7 +131,7 @@ describe('SchedulePage', () => {
     await userEvent.type(inputs[2], '12:00')
 
     const selects = screen.getAllByRole('combobox')
-    await userEvent.selectOptions(selects[2], 'RIPOSO')
+    await userEvent.selectOptions(selects[1], 'RIPOSO')
 
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
@@ -167,7 +167,7 @@ describe('SchedulePage', () => {
     await userEvent.type(inputs[2], '13:00')
 
     const selects = screen.getAllByRole('combobox')
-    await userEvent.selectOptions(selects[2], 'FESTIVO')
+    await userEvent.selectOptions(selects[1], 'FESTIVO')
 
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
