@@ -8,7 +8,7 @@
 body {
   margin: 0;
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
+  font-weight: bold;
   color: #333;
   background: url('/Login.png') no-repeat center/cover fixed;
 }
@@ -142,7 +142,7 @@ main.app-container {
 
 .site-header * {
   text-transform: none;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 /* Red bold headings for boxes and form labels */
