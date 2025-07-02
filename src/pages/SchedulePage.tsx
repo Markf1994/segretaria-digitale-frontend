@@ -53,7 +53,7 @@ export default function SchedulePage() {
   const [tipo, setTipo] = useState<'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'>('NORMALE');
   const [note, setNote] = useState('');
 
-  const [calendarId, setCalendarId] = useState<string>(SCHEDULE_CALENDAR_IDS[0]);
+  const calendarId = SCHEDULE_CALENDAR_IDS[0];
 
   /* -- stato dati -- */
   const [utenti, setUtenti] = useState<Utente[]>([]);
@@ -177,18 +177,6 @@ export default function SchedulePage() {
       <h2>Turni di servizio</h2>
 
       <ImportExcel onComplete={handleImportComplete} />
-      <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-        Calendario
-        <select
-          value={calendarId}
-          onChange={e => setCalendarId(e.target.value)}
-          style={{ marginLeft: '0.5rem' }}
-        >
-          {SCHEDULE_CALENDAR_IDS.map(id => (
-            <option key={id} value={id}>{id}</option>
-          ))}
-        </select>
-      </label>
 
       {/* -------- FORM -------- */}
       <form className="item-form" onSubmit={handleAdd}>
