@@ -18,3 +18,9 @@ export const createTurno = (
 
 export const deleteTurno = (id: string): Promise<void> =>
   api.delete(`/orari/${id}`).then(() => undefined)
+
+export const importTurniExcel = (file: File): Promise<Blob> => {
+  const form = new FormData()
+  form.append('file', file)
+  return api.post('/import/xlsx', form, { responseType: 'blob' }).then(res => res.data)
+}
