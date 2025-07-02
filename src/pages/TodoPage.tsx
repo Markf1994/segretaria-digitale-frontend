@@ -153,8 +153,8 @@ export default function TodoPage() {
       <table className="item-table">
         <thead>
           <tr>
-            <th>Attività</th>
-            <th>Scadenza</th>
+            <th><strong>Attività</strong></th>
+            <th><strong>Scadenza</strong></th>
             <th></th>
           </tr>
         </thead>
