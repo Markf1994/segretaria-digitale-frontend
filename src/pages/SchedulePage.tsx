@@ -46,13 +46,25 @@ export default function SchedulePage() {
   const [turni, setTurni] = useState<Turno[]>([]);
   const [refreshCal, setRefreshCal] = useState(false);
 
+  const fetchTurni = async () => {
+    const { data } = await api.get<Turno[]>('/orari/');
+    setTurni(data);
+  };
+
+  const handleImportComplete = async (success: boolean) => {
+    if (success) {
+      await fetchTurni();
+      setRefreshCal(prev => !prev);
+    }
+  };
+
   /* --- caricamento iniziale --- */
   useEffect(() => {
     listUtenti().then(r => {
       setUtenti(r.data);
       setUtenteSel(r.data[0]?.id ?? '');
     });
-    api.get<Turno[]>('/orari/').then(r => setTurni(r.data));
+    fetchTurni();
   }, []);
 
   /* --- helper --- */
@@ -97,7 +109,7 @@ export default function SchedulePage() {
     <div className="list-page">
       <h2>Turni di servizio</h2>
 
-      <ImportExcel />
+      <ImportExcel onComplete={handleImportComplete} />
 
       {/* -------- FORM -------- */}
       <form className="item-form" onSubmit={handleAdd}>

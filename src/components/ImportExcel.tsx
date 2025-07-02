@@ -1,9 +1,14 @@
 import React, { useRef, useState } from 'react';
 import api from '../api/axios';
 
-export default function ImportExcel() {
+export default function ImportExcel({
+  onComplete,
+}: {
+  onComplete?: (success: boolean) => void;
+}) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
 
   const onChoose = () => fileInput.current?.click();
 
@@ -12,6 +17,7 @@ export default function ImportExcel() {
     if (!file) return;
 
     setBusy(true);
+    setMessage('');
     const form = new FormData();
     form.append('file', file);
 
@@ -21,6 +27,12 @@ export default function ImportExcel() {
       });
       const url = URL.createObjectURL(res.data);
       window.open(url, '_blank');
+      setMessage('File importato correttamente');
+      onComplete?.(true);
+    } catch (err) {
+      console.error(err);
+      setMessage('Errore durante l\'import');
+      onComplete?.(false);
     } finally {
       setBusy(false);
     }
@@ -31,6 +43,11 @@ export default function ImportExcel() {
       <button type="button" onClick={onChoose} disabled={busy} style={{ marginBottom: '1rem' }}>
         {busy ? 'Caricamento…' : 'Importa Excel'}
       </button>
+      {message && (
+        <p className={message.startsWith('Errore') ? 'error' : 'success-message'}>
+          {message}
+        </p>
+      )}
       <input
         ref={fileInput}
         type="file"
