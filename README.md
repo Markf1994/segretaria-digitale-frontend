@@ -28,7 +28,7 @@ Google Calendar integration.
 
 The variables are:
 
-- `VITE_API_URL` – https://segretaria-digitale-backend.onrender.com.
+- `VITE_API_URL` – https://<your-backend>.onrender.com.
 - `VITE_GAPI_CLIENT_ID` – `your-google-client-id`.
 - `VITE_GAPI_API_KEY` – `your-google-api-key`.
 - `VITE_SCHEDULE_CALENDAR_IDS` – comma-separated list of Google Calendar IDs.
