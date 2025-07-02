@@ -1,82 +1,87 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useAuthStore } from '../store/auth';
-import { getUserStorageKey } from '../utils/auth';
-import './ListPages.css';
-
-interface Shift {
-  id: string;
-  date: string;
-  start: string;
-  end: string;
-  note: string;
-}
+import React, { useEffect, useState } from 'react'
+import { useAuthStore } from '../store/auth'
+import { getUserId } from '../utils/auth'
+import { listTurni, createTurno, deleteTurno, Turno } from '../api/schedule'
+import './ListPages.css'
 
 export default function SchedulePage() {
-  const [shifts, setShifts] = useState<Shift[]>([]);
-  const [date, setDate] = useState('');
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
-  const [note, setNote] = useState('');
+  const [slot1, setSlot1] = useState('')
+  const [slot2, setSlot2] = useState('')
+  const [slot3, setSlot3] = useState('')
+  const [turni, setTurni] = useState<Turno[]>([])
+  const token = useAuthStore(s => s.token)
 
-  const token = useAuthStore(s => s.token);
-  const storageKey = useMemo(
-    () => getUserStorageKey('shifts', token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)),
-    [token]
-  );
+  const userId = getUserId(
+    token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
+  )
 
   useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
-    if (stored) {
+    const fetch = async () => {
       try {
-        setShifts(JSON.parse(stored) as Shift[]);
+        const data = await listTurni()
+        setTurni(data)
       } catch {
-        /* ignore */
+        // ignore
       }
     }
-  }, [storageKey]);
+    fetch()
+  }, [])
 
-  const saveLocal = (data: Shift[]) => {
-    localStorage.setItem(storageKey, JSON.stringify(data));
-  };
+  const reset = () => {
+    setSlot1('')
+    setSlot2('')
+    setSlot3('')
+  }
 
-  const addShift = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!date || !start || !end) return;
-    const newShift: Shift = { id: Date.now().toString(), date, start, end, note };
-    const updated = [...shifts, newShift];
-    setShifts(updated);
-    saveLocal(updated);
-    setDate('');
-    setStart('');
-    setEnd('');
-    setNote('');
-  };
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!slot1) return
+    try {
+      const res = await createTurno({
+        user_id: userId || '',
+        slot1,
+        slot2: slot2 || null,
+        slot3: slot3 || null,
+      })
+      setTurni([...turni, res])
+    } catch {
+      // ignore
+    }
+    reset()
+  }
 
-  const deleteShift = (id: string) => {
-    const updated = shifts.filter(s => s.id !== id);
-    setShifts(updated);
-    saveLocal(updated);
-  };
+  const onDelete = async (id: string) => {
+    try {
+      await deleteTurno(id)
+    } catch {
+      // ignore
+    }
+    setTurni(turni.filter(t => t.id !== id))
+  }
 
   const CALENDAR_ID =
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
-    '9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com';
+    '9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com'
 
   return (
     <div className="list-page">
       <h2>Turni</h2>
-      <form className="item-form" onSubmit={addShift}>
-        <label htmlFor="shift-date">Data</label>
-        <input id="shift-date" type="date" value={date} onChange={e => setDate(e.target.value)} />
-        <label htmlFor="shift-start">Inizio</label>
-        <input id="shift-start" type="time" value={start} onChange={e => setStart(e.target.value)} />
-        <label htmlFor="shift-end">Fine</label>
-        <input id="shift-end" type="time" value={end} onChange={e => setEnd(e.target.value)} />
+      <form className="item-form" onSubmit={onSubmit}>
         <input
-          id="shift-note"
-          placeholder="Note"
-          value={note}
-          onChange={e => setNote(e.target.value)}
+          placeholder="Slot 1"
+          value={slot1}
+          onChange={e => setSlot1(e.target.value)}
+          required
+        />
+        <input
+          placeholder="Slot 2"
+          value={slot2}
+          onChange={e => setSlot2(e.target.value)}
+        />
+        <input
+          placeholder="Slot 3"
+          value={slot3}
+          onChange={e => setSlot3(e.target.value)}
         />
         <button type="submit">Aggiungi</button>
       </form>
@@ -85,22 +90,20 @@ export default function SchedulePage() {
         <table className="item-table">
           <thead>
             <tr>
-              <th>Data</th>
-              <th>Inizio</th>
-              <th>Fine</th>
-              <th>Note</th>
+              <th>Slot 1</th>
+              <th>Slot 2</th>
+              <th>Slot 3</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {shifts.map(s => (
-              <tr key={s.id}>
-                <td className="digit-font">{new Date(s.date).toLocaleDateString()}</td>
-                <td className="digit-font">{s.start}</td>
-                <td className="digit-font">{s.end}</td>
-                <td className="desc-cell">{s.note}</td>
+            {turni.map(t => (
+              <tr key={t.id}>
+                <td className="digit-font">{t.slot1}</td>
+                <td className="digit-font">{t.slot2 || ''}</td>
+                <td className="digit-font">{t.slot3 || ''}</td>
                 <td>
-                  <button onClick={() => deleteShift(s.id)}>Elimina</button>
+                  <button onClick={() => onDelete(t.id)}>Elimina</button>
                 </td>
               </tr>
             ))}
@@ -110,7 +113,9 @@ export default function SchedulePage() {
       <div className="calendar-container" style={{ marginTop: '1rem' }}>
         <iframe
           title="calendar"
-          src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
+          src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(
+            CALENDAR_ID
+          )}&mode=WEEK&ctz=Europe/Rome`}
           style={{ border: 0 }}
           width="100%"
           height="600"
@@ -118,5 +123,5 @@ export default function SchedulePage() {
         ></iframe>
       </div>
     </div>
-  );
+  )
 }
