@@ -21,6 +21,16 @@ interface Turno {
   user_id: string;
 }
 
+interface NewTurnoPayload {
+  user_id: string;
+  giorno: string;
+  slot1: Slot;
+  slot2?: Slot;
+  slot3?: Slot;
+  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO';
+  note?: string;
+}
+
 /* ---------- COSTANTI ---------- */
 const SCHEDULE_CALENDAR_IDS =
   import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',') || [DEFAULT_CALENDAR_ID];
@@ -114,7 +124,7 @@ export default function SchedulePage() {
     e.preventDefault();
     if (!giorno || !s1Start || !s1End || !utenteSel) return;
 
-    const payload: any = {
+    const payload: NewTurnoPayload = {
       user_id: utenteSel,
       giorno,
       slot1: { inizio: s1Start, fine: s1End },
