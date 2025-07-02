@@ -34,51 +34,63 @@ const renderPage = () =>
 
 describe('SchedulePage', () => {
   it('loads turni from API', async () => {
-    mockedApi.get.mockResolvedValueOnce({
-      data: [{ id: '1', slot1: '08-10', user_id: 'u' }],
+    mockedApi.get.mockImplementation(url => {
+      if (url === '/users/') return Promise.resolve({ data: [{ id: 'u', email: 'u@e' }] })
+      if (url === '/orari/') return Promise.resolve({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' }] })
+      return Promise.resolve({ data: [] })
     })
 
     renderPage()
 
-    expect(await screen.findByText('08-10')).toBeInTheDocument()
+    expect(await screen.findByText('08:00–10:00')).toBeInTheDocument()
+    expect(mockedApi.get).toHaveBeenCalledWith('/users/')
     expect(mockedApi.get).toHaveBeenCalledWith('/orari/')
   })
 
   it('adds a new turno', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.post.mockResolvedValueOnce({
-      data: { id: '2', slot1: '09-11', user_id: '123' },
+      data: {
+        id: '2',
+        giorno: '2023-05-02',
+        slot1: { inizio: '09:00', fine: '11:00' },
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
     })
 
     renderPage()
-    await screen.findByRole('button', { name: /aggiungi/i })
+    await screen.findByRole('button', { name: /salva turno/i })
 
-    await userEvent.type(screen.getByPlaceholderText(/slot 1/i), '09-11')
-    await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }))
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-02')
+    await userEvent.type(inputs[1], '09:00')
+    await userEvent.type(inputs[2], '11:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
-    expect(await screen.findByText('09-11')).toBeInTheDocument()
+    expect(await screen.findByText('09:00–11:00')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
-      user_id: '',
-      slot1: '09-11',
-      slot2: null,
-      slot3: null,
+      user_id: 'u',
+      giorno: '2023-05-02',
+      slot1: { inizio: '09:00', fine: '11:00' },
+      tipo: 'NORMALE',
+      note: undefined,
     })
-    expect(
-      (screen.getByPlaceholderText(/slot 1/i) as HTMLInputElement).value
-    ).toBe('')
+    expect((inputs[0] as HTMLInputElement).value).toBe('')
   })
 
   it('deletes a turno', async () => {
-    mockedApi.get.mockResolvedValueOnce({
-      data: [{ id: '1', slot1: '07-09', user_id: 'u' }],
-    })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '07:00', fine: '09:00' }, tipo: 'NORMALE', user_id: 'u' }] })
     mockedApi.delete.mockResolvedValueOnce({})
 
     renderPage()
 
-    await screen.findByText('07-09')
-    await userEvent.click(screen.getByRole('button', { name: /elimina/i }))
+    await screen.findByText('07:00–09:00')
+    await userEvent.click(screen.getByRole('button', { name: '🗑️' }))
 
-    expect(screen.queryByText('07-09')).not.toBeInTheDocument()
+    expect(screen.queryByText('07:00–09:00')).not.toBeInTheDocument()
     expect(mockedApi.delete).toHaveBeenCalledWith('/orari/1')
   })
 })
