@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { listUtenti, Utente } from '../api/users';
+import { DEFAULT_CALENDAR_ID } from '../constants';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
@@ -19,7 +20,7 @@ interface Turno {
 /* ---------- COSTANTI ---------- */
 const CALENDAR_ID =
   import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
-  '9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com';
+  DEFAULT_CALENDAR_ID;
 
 /* ---------- HELPER ---------- */
 const stripDomain = (email: string) =>
