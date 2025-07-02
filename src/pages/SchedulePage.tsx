@@ -190,7 +190,7 @@ export default function SchedulePage() {
         >
           {utenti.map(u => (
             <option key={u.id} value={u.id}>
-              {stripDomain(u.email)}
+              {u.nome || stripDomain(u.email)}
             </option>
           ))}
         </select>
@@ -243,18 +243,23 @@ export default function SchedulePage() {
             </tr>
           </thead>
           <tbody>
-            {turni.map(t => (
-              <tr key={t.id}>
-                <td>{stripDomain(utenti.find(u => u.id === t.user_id)?.email || '')}</td>
-                <td>{t.giorno}</td>
+            {turni.map(t => {
+              const nome =
+                utenti.find(u => u.id === t.user_id)?.nome ||
+                stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
+              return (
+                <tr key={t.id}>
+                  <td>{nome}</td>
+                  <td>{t.giorno}</td>
                 <td>{`${t.slot1.inizio}–${t.slot1.fine}`}</td>
                 <td>{t.slot2 ? `${t.slot2.inizio}–${t.slot2.fine}` : '—'}</td>
                 <td>{t.slot3 ? `${t.slot3.inizio}–${t.slot3.fine}` : '—'}</td>
                 <td>{t.tipo}</td>
                 <td>{t.note || '—'}</td>
-                <td><button onClick={() => handleDelete(t.id)}>🗑️</button></td>
-              </tr>
-            ))}
+                  <td><button onClick={() => handleDelete(t.id)}>🗑️</button></td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </details>
@@ -293,9 +298,9 @@ export default function SchedulePage() {
             </thead>
             <tbody>
               {importedTurni.map(t => {
-                const nome = stripDomain(
-                  utenti.find(u => u.id === t.user_id)?.email || ''
-                );
+                const nome =
+                  utenti.find(u => u.id === t.user_id)?.nome ||
+                  stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo

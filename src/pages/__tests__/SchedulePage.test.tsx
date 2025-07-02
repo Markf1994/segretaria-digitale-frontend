@@ -65,7 +65,8 @@ describe('SchedulePage', () => {
 
     renderPage()
 
-    expect(await screen.findByText('08:00–10:00')).toBeInTheDocument()
+    const row = await screen.findByRole('row', { name: /u\s+2023-01-01/i })
+    expect(row).toBeInTheDocument()
     expect(mockedApi.get).toHaveBeenCalledWith('/users/')
     expect(mockedApi.get).toHaveBeenCalledWith('/orari/')
   })
@@ -85,6 +86,7 @@ describe('SchedulePage', () => {
 
     renderPage()
     await screen.findByRole('button', { name: /salva turno/i })
+    expect(screen.getByRole('option', { name: 'u' })).toBeInTheDocument()
 
     const inputs = screen.getAllByRole('textbox')
     await userEvent.type(inputs[0], '2023-05-02')
@@ -225,6 +227,7 @@ describe('SchedulePage', () => {
 
     const tables = await screen.findAllByRole('table')
     expect(tables).toHaveLength(2)
+    expect(within(tables[1]).getByText('u')).toBeInTheDocument()
     expect(within(tables[1]).getByText('2023-06-02')).toBeInTheDocument()
   })
 
