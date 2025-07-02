@@ -9,7 +9,7 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 
 ```bash
 npm install
-# This repository doesn't include a lockfile
+# Dependencies are locked via `package-lock.json`
 # If you see 404 errors for `@tanstack/react-query`,
 # update the dependency to a recent release (>=4.36.1).
 # You can also run the helper script
