@@ -278,22 +278,24 @@ export default function SchedulePage() {
       </div>
 
       {importedTurni.length > 0 && (
-        <table className="item-table" style={{ marginTop: '1rem' }}>
-          <thead>
-            <tr>
-              <th>Nome agente</th>
-              <th>Giorno</th>
-              <th>Tipo</th>
-              <th>Slot 1</th>
-              <th>Slot 2</th>
-              <th>Slot 3</th>
-            </tr>
-          </thead>
-          <tbody>
-            {importedTurni.map(t => {
-              const nome = stripDomain(
-                utenti.find(u => u.id === t.user_id)?.email || ''
-              );
+        <section className="imported-turni-section">
+          <h3>Turni importati</h3>
+          <table className="item-table" style={{ marginTop: '1rem' }}>
+            <thead>
+              <tr>
+                <th>Nome agente</th>
+                <th>Giorno</th>
+                <th>Tipo</th>
+                <th>Slot 1</th>
+                <th>Slot 2</th>
+                <th>Slot 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              {importedTurni.map(t => {
+                const nome = stripDomain(
+                  utenti.find(u => u.id === t.user_id)?.email || ''
+                );
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo
@@ -318,9 +320,10 @@ export default function SchedulePage() {
                   <td style={{ color: 'red' }}>{slot3Text}</td>
                 </tr>
               );
-            })}
-          </tbody>
-        </table>
+              })}
+            </tbody>
+          </table>
+        </section>
       )}
     </div>
   );
