@@ -42,6 +42,7 @@ export default function SchedulePage() {
   /* -- stato dati -- */
   const [utenti, setUtenti] = useState<Utente[]>([]);
   const [turni, setTurni] = useState<Turno[]>([]);
+  const [refreshCal, setRefreshCal] = useState(false);
 
   /* --- caricamento iniziale --- */
   useEffect(() => {
@@ -174,12 +175,16 @@ export default function SchedulePage() {
       {/* -------- CALENDAR -------- */}
       <div style={{ marginTop: '1.5rem' }}>
         <iframe
+          key={String(refreshCal)}
           src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
           title="Calendario Turni"
           style={{ border: 0, width: '100%', height: '600px' }}
           frameBorder={0}
           scrolling="no"
         />
+        <button onClick={() => setRefreshCal(prev => !prev)}>
+          Aggiorna calendario
+        </button>
       </div>
     </div>
   );
