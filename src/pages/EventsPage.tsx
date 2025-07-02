@@ -301,10 +301,10 @@ export default function EventsPage() {
       <table className="item-table">
         <thead>
           <tr>
-            <th>Titolo</th>
-            <th>Data e ora</th>
-            <th>Descrizione</th>
-            <th>Pubblico?</th>
+            <th><strong>Titolo</strong></th>
+            <th><strong>Data e ora</strong></th>
+            <th><strong>Descrizione</strong></th>
+            <th><strong>Pubblico?</strong></th>
             <th></th>
           </tr>
         </thead>
