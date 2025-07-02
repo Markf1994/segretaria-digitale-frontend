@@ -5,6 +5,14 @@ import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import api from '../../api/axios'
 import * as pdfApi from '../../api/pdfs'
+import * as gcApi from '../../api/googleCalendar'
+
+jest.mock('../../components/ImportExcel', () => ({
+  __esModule: true,
+  default: ({ onComplete }: any) => (
+    <button onClick={() => onComplete(true)}>Importa</button>
+  ),
+}))
 
 jest.mock('../../api/axios', () => ({
   __esModule: true,
@@ -20,13 +28,20 @@ jest.mock('../../api/pdfs', () => ({
   getSchedulePdf: jest.fn(),
 }))
 
+jest.mock('../../api/googleCalendar', () => ({
+  __esModule: true,
+  createShiftEvents: jest.fn(),
+}))
+
 const mockedApi = api as jest.Mocked<typeof api>
 const mockedPdfApi = pdfApi as jest.Mocked<typeof pdfApi>
+const mockedGcApi = gcApi as jest.Mocked<typeof gcApi>
 
 beforeEach(() => {
   jest.resetAllMocks()
   mockedApi.get.mockResolvedValue({ data: [] })
   mockedPdfApi.getSchedulePdf.mockResolvedValue(new Blob())
+  mockedGcApi.createShiftEvents.mockResolvedValue()
 })
 
 const renderPage = () =>
@@ -86,6 +101,10 @@ describe('SchedulePage', () => {
       note: undefined,
     })
     expect((inputs[0] as HTMLInputElement).value).toBe('')
+    expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+      userEmail: 'u@e',
+      giorno: '2023-05-02',
+    }))
   })
 
   it('deletes a turno', async () => {
@@ -100,6 +119,23 @@ describe('SchedulePage', () => {
 
     expect(screen.queryByText('07:00–09:00')).not.toBeInTheDocument()
     expect(mockedApi.delete).toHaveBeenCalledWith('/orari/1')
+  })
+
+  it('creates events after import', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.get.mockResolvedValueOnce({
+      data: [
+        { id: '1', giorno: '2023-06-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' },
+      ],
+    })
+
+    renderPage()
+
+    await userEvent.click(screen.getByRole('button', { name: /importa/i }))
+
+    expect(await screen.findByText('08:00–10:00')).toBeInTheDocument()
+    expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ giorno: '2023-06-01' }))
   })
 
   it('downloads weekly PDF', async () => {
