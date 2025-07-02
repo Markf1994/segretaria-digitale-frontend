@@ -58,7 +58,9 @@ export default function SchedulePage() {
     saveLocal(updated);
   };
 
-  const CALENDAR_ID = 'plcastionedellapresolana@gmail.com';
+  const CALENDAR_ID =
+    import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
+    'plcastionedellapresolana@gmail.com';
 
   return (
     <div className="list-page">

@@ -32,7 +32,9 @@ The variables are:
 - `VITE_API_URL` – https://segretaria-digitale-backend.onrender.com.
 - `VITE_GAPI_CLIENT_ID` – `your-google-client-id`.
 - `VITE_GAPI_API_KEY` – `your-google-api-key`.
-- `VITE_SCHEDULE_CALENDAR_IDS` – comma-separated list of Google Calendar IDs used by the schedule page.
+- `VITE_SCHEDULE_CALENDAR_IDS` – comma-separated list of Google Calendar IDs.
+  The schedule page shows the first ID and falls back to
+  `plcastionedellapresolana@gmail.com` when unset.
 - `VITE_SCHEDULE_PUBLIC_API_KEY` – public API key for retrieving events from those calendars.
 
 4. Start the development server:
