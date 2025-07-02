@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { listUtenti, Utente } from '../api/users';
 import { DEFAULT_CALENDAR_ID } from '../constants';
+import ImportExcel from '../components/ImportExcel';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
@@ -95,6 +96,8 @@ export default function SchedulePage() {
   return (
     <div className="list-page">
       <h2>Turni di servizio</h2>
+
+      <ImportExcel />
 
       {/* -------- FORM -------- */}
       <form className="item-form" onSubmit={handleAdd}>
