@@ -1,5 +1,5 @@
 import React, { useRef, useState, ChangeEvent } from 'react';
-import api from '../api/axios';
+import { importTurniExcel } from '../api/schedule';
 
 interface ImportExcelProps {
   onComplete?: (success: boolean) => void;
@@ -20,14 +20,8 @@ export default function ImportExcel({ onComplete }: ImportExcelProps) {
     setBusy(true);
     setMessage('');
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const response = await api.post('/import/xlsx', formData, {
-        responseType: 'blob',
-      });
-      const pdfBlob: Blob = response.data;
+      const pdfBlob = await importTurniExcel(file);
       const pdfURL = URL.createObjectURL(pdfBlob);
       window.open(pdfURL, '_blank');
       URL.revokeObjectURL(pdfURL);
