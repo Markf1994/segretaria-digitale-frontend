@@ -1,59 +1,82 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, ChangeEvent } from 'react';
 import api from '../api/axios';
 
-export default function ImportExcel({
-  onComplete,
-}: {
+interface ImportExcelProps {
   onComplete?: (success: boolean) => void;
-}) {
-  const fileInput = useRef<HTMLInputElement>(null);
+}
+
+export default function ImportExcel({ onComplete }: ImportExcelProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
-  const onChoose = () => fileInput.current?.click();
+  const chooseFile = () => {
+    if (!busy) fileInputRef.current?.click();
+  };
 
-  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setBusy(true);
     setMessage('');
-    const form = new FormData();
-    form.append('file', file);
+
+    const formData = new FormData();
+    formData.append('file', file);
 
     try {
-      const res = await api.post('/import/xlsx', form, {
+      const response = await api.post('/import/xlsx', formData, {
         responseType: 'blob',
       });
-      const url = URL.createObjectURL(res.data);
-      window.open(url, '_blank');
-      setMessage('File importato correttamente');
+      const pdfBlob: Blob = response.data;
+      const pdfURL = URL.createObjectURL(pdfBlob);
+      window.open(pdfURL, '_blank');
+      setMessage('File importato correttamente.');
       onComplete?.(true);
-    } catch (err) {
-      console.error(err);
-      setMessage('Errore durante l\'import');
+    } catch (error) {
+      console.error('ImportExcel error:', error);
+      setMessage("Errore durante l'importazione del file");
       onComplete?.(false);
     } finally {
       setBusy(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
   return (
     <>
-      <button type="button" onClick={onChoose} disabled={busy} style={{ marginBottom: '1rem' }}>
+      <button
+        type="button"
+        onClick={chooseFile}
+        disabled={busy}
+        style={{
+          position: 'fixed',
+          bottom: '1rem',
+          right: '1rem',
+          backgroundColor: '#A52019',
+          color: '#fff',
+          padding: '0.75rem 1rem',
+          borderRadius: '9999px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          zIndex: 1000,
+        }}
+      >
         {busy ? 'Caricamento…' : 'Importa Excel'}
       </button>
+
       {message && (
         <p className={message.startsWith('Errore') ? 'error' : 'success-message'}>
           {message}
         </p>
       )}
+
       <input
-        ref={fileInput}
+        ref={fileInputRef}
         type="file"
-        accept=".xlsx,.xls"
+        accept=".xlsx, .xls"
         style={{ display: 'none' }}
-        onChange={onFile}
+        onChange={handleFileChange}
       />
     </>
   );
