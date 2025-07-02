@@ -22,7 +22,9 @@ export default function Dashboard() {
   );
   const [events] = useLocalStorage<EventItem[]>('events', []);
   const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
-  const CALENDAR_ID = 'plcastionedellapresolana@gmail.com';
+  const CALENDAR_ID =
+    import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
+    'plcastionedellapresolana@gmail.com';
 
   const today = new Date();
   const upcomingEvents = events.filter(
