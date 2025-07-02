@@ -10,6 +10,9 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 ```bash
 # Use a clean, reproducible install
 npm ci
+# If you see 404 errors for `@tanstack/react-query`,
+# update the dependency to a recent release (>=4.36.1)
+# and regenerate the lockfile with `npm install`.
 # or run the helper script
 ./scripts/setup.sh
 ```
