@@ -3,21 +3,22 @@ import userEvent from '@testing-library/user-event'
 import SchedulePage from '../SchedulePage'
 import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
-import * as api from '../../api/schedule'
+import api from '../../api/axios'
 
-jest.mock('../../api/schedule', () => ({
+jest.mock('../../api/axios', () => ({
   __esModule: true,
-  listTurni: jest.fn(),
-  createTurno: jest.fn(),
-  deleteTurno: jest.fn(),
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    delete: jest.fn(),
+  },
 }))
 
 const mockedApi = api as jest.Mocked<typeof api>
 
 beforeEach(() => {
   jest.resetAllMocks()
-  localStorage.clear()
-  mockedApi.listTurni.mockResolvedValue([])
+  mockedApi.get.mockResolvedValue({ data: [] })
 })
 
 const renderPage = () =>
@@ -33,26 +34,20 @@ const renderPage = () =>
 
 describe('SchedulePage', () => {
   it('loads turni from API', async () => {
-    mockedApi.listTurni.mockResolvedValue([
-      { id: '1', slot1: '08-10', user_id: 'u' },
-    ] as any)
+    mockedApi.get.mockResolvedValueOnce({
+      data: [{ id: '1', slot1: '08-10', user_id: 'u' }],
+    })
 
     renderPage()
 
     expect(await screen.findByText('08-10')).toBeInTheDocument()
+    expect(mockedApi.get).toHaveBeenCalledWith('/orari/')
   })
 
   it('adds a new turno', async () => {
-    mockedApi.createTurno.mockResolvedValue({
-      id: '2',
-      slot1: '09-11',
-      user_id: '123',
-    } as any)
-
-    const header = Buffer.from('{}').toString('base64')
-    const payload = Buffer.from(JSON.stringify({ sub: '123' })).toString('base64')
-    const token = `${header}.${payload}.sig`
-    localStorage.setItem('token', token)
+    mockedApi.post.mockResolvedValueOnce({
+      data: { id: '2', slot1: '09-11', user_id: '123' },
+    })
 
     renderPage()
     await screen.findByRole('button', { name: /aggiungi/i })
@@ -61,17 +56,22 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }))
 
     expect(await screen.findByText('09-11')).toBeInTheDocument()
-    expect(mockedApi.createTurno).toHaveBeenCalled()
+    expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
+      user_id: '',
+      slot1: '09-11',
+      slot2: null,
+      slot3: null,
+    })
     expect(
       (screen.getByPlaceholderText(/slot 1/i) as HTMLInputElement).value
     ).toBe('')
   })
 
   it('deletes a turno', async () => {
-    mockedApi.listTurni.mockResolvedValue([
-      { id: '1', slot1: '07-09', user_id: 'u' },
-    ] as any)
-    mockedApi.deleteTurno.mockResolvedValue()
+    mockedApi.get.mockResolvedValueOnce({
+      data: [{ id: '1', slot1: '07-09', user_id: 'u' }],
+    })
+    mockedApi.delete.mockResolvedValueOnce({})
 
     renderPage()
 
@@ -79,6 +79,6 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: /elimina/i }))
 
     expect(screen.queryByText('07-09')).not.toBeInTheDocument()
-    expect(mockedApi.deleteTurno).toHaveBeenCalledWith('1')
+    expect(mockedApi.delete).toHaveBeenCalledWith('/orari/1')
   })
 })
