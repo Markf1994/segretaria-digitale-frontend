@@ -19,6 +19,7 @@ const TodoPage = React.lazy(() => import("./pages/TodoPage"));
 const DeterminationsPage = React.lazy(() => import("./pages/DeterminationsPage"));
 const UtilitaPage = React.lazy(() => import("./pages/UtilitaPage"));
 const SchedulePage = React.lazy(() => import("./pages/SchedulePage"));
+const PdfFilesPage = React.lazy(() => import("./pages/PdfFilesPage"));
 
 
 const App: React.FC = () => {
@@ -41,6 +42,7 @@ const App: React.FC = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/todo" element={<TodoPage />} />
           <Route path="/utilita" element={<UtilitaPage />} />
+          <Route path="/pdfs" element={<PdfFilesPage />} />
           <Route path="/orari" element={<SchedulePage />} />
           <Route path="/determinazioni" element={<DeterminationsPage />} />
         </Route>
