@@ -1,24 +1,11 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import UtilitaPage from '../UtilitaPage';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import * as pdfApi from '../../api/pdfs';
-
-jest.mock('../../api/pdfs', () => ({
-  __esModule: true,
-  listPdfs: jest.fn(),
-}));
-
-const mockedApi = pdfApi as jest.Mocked<typeof pdfApi>;
-
-beforeEach(() => {
-  mockedApi.listPdfs.mockResolvedValue([]);
-});
 
 describe('UtilitaPage', () => {
-  it('shows PDFs from API', async () => {
-    mockedApi.listPdfs.mockResolvedValue([{ id: '1', name: 'doc.pdf', url: '/doc.pdf' }]);
-
+  it('switches meeting iframe when selecting tabs', async () => {
     render(
       <MemoryRouter initialEntries={["/utilita"]}>
         <Routes>
@@ -29,8 +16,9 @@ describe('UtilitaPage', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('doc.pdf')).toBeInTheDocument();
+    expect(screen.getByTitle('Google Meet')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByTestId('tab-teams'));
+    expect(screen.getByTitle('Microsoft Teams')).toBeInTheDocument();
   });
-
-
 });

@@ -1,56 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { listPdfs } from '../api/pdfs';
-import type { PDFFile } from '../api/types';
+import React, { useState } from 'react';
 import './ListPages.css';
 import { TEAMS_URL } from '../constants';
 
 export default function UtilitaPage() {
-  const [pdfs, setPdfs] = useState<PDFFile[]>([]);
+  const [active, setActive] = useState<'meet' | 'teams' | 'zoom'>('meet');
 
-  useEffect(() => {
-    const fetchPdfs = async () => {
-      try {
-        const data = await listPdfs();
-        setPdfs(data);
-      } catch {
-        // ignore errors fetching PDFs
-      }
-    };
-    fetchPdfs();
-  }, []);
 
+  const meetUrl = 'https://meet.google.com/landing?pli=1';
+  const teamsUrl = TEAMS_URL;
+  const zoomUrl = 'https://zoom.us/it/signin#/login';
 
   return (
     <div className="list-page">
       <h2>Utilità</h2>
-      <div className="meeting-links">
-        <a
-          href="https://meet.google.com/landing?pli=1"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div className="tabs">
+        <button
+          data-testid="tab-meet"
+          className={`tab-button ${active === 'meet' ? 'active' : ''}`}
+          onClick={() => setActive('meet')}
         >
-          <img src="/meet.png" alt="Google Meet" />
-        </a>
-        <a href={TEAMS_URL} target="_blank" rel="noopener noreferrer">
-          <img src="/teams.png" alt="Microsoft Teams" />
-        </a>
-        <a
-          href="https://zoom.us/it/signin#/login"
-          target="_blank"
-          rel="noopener noreferrer"
+          <img src="/meet.png" alt="Google Meet" className="tab-icon" />
+          <span>Meet</span>
+        </button>
+        <button
+          data-testid="tab-teams"
+          className={`tab-button ${active === 'teams' ? 'active' : ''}`}
+          onClick={() => setActive('teams')}
         >
-          <img src="/zoom.png" alt="Zoom" />
-        </a>
+          <img src="/teams.png" alt="Microsoft Teams" className="tab-icon" />
+          <span>Teams</span>
+        </button>
+        <button
+          data-testid="tab-zoom"
+          className={`tab-button ${active === 'zoom' ? 'active' : ''}`}
+          onClick={() => setActive('zoom')}
+        >
+          <img src="/zoom.png" alt="Zoom" className="tab-icon" />
+          <span>Zoom</span>
+        </button>
       </div>
-      <ul className="item-list">
-        {pdfs.map(p => (
-          <li key={p.id}>
-            <a href={p.url} target="_blank" rel="noopener noreferrer">
-              {p.name}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="iframe-container">
+        {active === 'meet' && (
+          <iframe
+            title="Google Meet"
+            src={meetUrl}
+            allow="camera; microphone; fullscreen"
+          />
+        )}
+        {active === 'teams' && (
+          <iframe
+            title="Microsoft Teams"
+            src={teamsUrl}
+            allow="camera; microphone; fullscreen"
+          />
+        )}
+        {active === 'zoom' && (
+          <iframe
+            title="Zoom"
+            src={zoomUrl}
+            allow="camera; microphone; fullscreen"
+          />
+        )}
+      </div>
     </div>
   );
 }
