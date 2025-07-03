@@ -71,4 +71,25 @@ describe('PageTemplate', () => {
     const salutation = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
     expect(await screen.findByText(new RegExp(`${salutation} test`, 'i'))).toBeInTheDocument();
   });
+
+  it('shows placeholder greeting when fetching profile fails', async () => {
+    useAuthStore.getState().setToken('tok');
+    mockedApi.get.mockRejectedValueOnce(new Error('fail'));
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dummy />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(mockedApi.get).toHaveBeenCalledWith('/users/me');
+
+    const hour = new Date().getHours();
+    const salutation = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+    expect(await screen.findByText(new RegExp(`^${salutation}$`, 'i'))).toBeInTheDocument();
+  });
 });
