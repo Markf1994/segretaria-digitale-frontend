@@ -1,6 +1,8 @@
 export function decodeToken(token: string): any | null {
   try {
-    const payload = token.split('.')[1];
+    let payload = token.split('.')[1];
+    payload = payload.replace(/-/g, '+').replace(/_/g, '/');
+    while (payload.length % 4) payload += '=';
     const json = atob(payload);
     return JSON.parse(json);
   } catch {
