@@ -17,6 +17,7 @@ import './ListPages.css';
 import useIsMobile from '../hooks/useIsMobile';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey, getUserId, decodeToken } from '../utils/auth';
+import { DEFAULT_CALENDAR_ID } from '../constants';
 
 interface UnifiedEvent {
   id: string;
@@ -49,6 +50,9 @@ export default function EventsPage() {
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
   const isMobile = useIsMobile();
   const token = useAuthStore(s => s.token);
+  const CALENDAR_ID =
+    import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
+    DEFAULT_CALENDAR_ID;
   const storageKey = useMemo(
     () =>
       getUserStorageKey(
@@ -77,7 +81,10 @@ export default function EventsPage() {
       if (navigator.onLine) {
         try {
           await signIn();
-          const [gc, db] = await Promise.all([listGcEvents(), listDbEvents()]);
+          const [gc, db] = await Promise.all([
+            listGcEvents(CALENDAR_ID),
+            listDbEvents(),
+          ]);
           const gcEvents: UnifiedEvent[] = gc.map(ev => ({
             id: ev.id,
             title: ev.summary,
@@ -141,7 +148,7 @@ export default function EventsPage() {
       if (navigator.onLine) {
         try {
           if (source === 'gc') {
-            await updateGcEvent(id, {
+            await updateGcEvent(CALENDAR_ID, id, {
               summary: title,
               description,
               start: { dateTime },
@@ -171,7 +178,7 @@ export default function EventsPage() {
       let dbEvent: UnifiedEvent | null = null
       if (navigator.onLine) {
         try {
-          const res = await createGcEvent({
+          const res = await createGcEvent(CALENDAR_ID, {
             summary: title,
             description,
             start: { dateTime },
@@ -247,7 +254,7 @@ export default function EventsPage() {
   const onDelete = async (id: string, source: 'gc' | 'db'): Promise<void> => {
     if (navigator.onLine) {
       try {
-        if (source === 'gc') await deleteGcEvent(id);
+        if (source === 'gc') await deleteGcEvent(CALENDAR_ID, id);
         else await deleteDbEvent(id);
       } catch {
         // ignore
