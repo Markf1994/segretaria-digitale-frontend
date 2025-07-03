@@ -11,4 +11,17 @@ describe('getUserStorageKey', () => {
     const token = `${header}.${payload}.sig`;
     expect(getUserStorageKey('todos', token)).toBe('todos_123');
   });
+
+  it('handles base64url tokens', () => {
+    const base64Url = (b: Buffer) =>
+      b
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+    const header = base64Url(Buffer.from('{}'));
+    const payload = base64Url(Buffer.from(JSON.stringify({ sub: 'xyz' })));
+    const token = `${header}.${payload}.sig`;
+    expect(getUserStorageKey('todos', token)).toBe('todos_xyz');
+  });
 });
