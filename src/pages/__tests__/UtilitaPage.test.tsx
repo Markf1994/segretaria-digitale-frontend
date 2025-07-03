@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import UtilitaPage from '../UtilitaPage';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 describe('UtilitaPage', () => {
-  it('switches meeting iframe when selecting tabs', async () => {
+  it('renders meeting service links', () => {
     render(
       <MemoryRouter initialEntries={["/utilita"]}>
         <Routes>
@@ -16,9 +15,8 @@ describe('UtilitaPage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByTitle('Google Meet')).toBeInTheDocument();
-
-    await userEvent.click(screen.getByTestId('tab-teams'));
-    expect(screen.getByTitle('Microsoft Teams')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /google meet/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /microsoft teams/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /zoom/i })).toBeInTheDocument();
   });
 });
