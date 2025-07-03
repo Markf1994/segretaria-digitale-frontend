@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listPDFs } from '../api/pdfs';
+import { listPdfs } from '../api/pdfs';
 import type { PDFFile } from '../api/types';
 import './ListPages.css';
 import { TEAMS_URL } from '../constants';
@@ -10,7 +10,7 @@ export default function UtilitaPage() {
   useEffect(() => {
     const fetchPdfs = async () => {
       try {
-        const data = await listPDFs();
+        const data = await listPdfs();
         setPdfs(data);
       } catch {
         // ignore errors fetching PDFs
