@@ -1,12 +1,7 @@
 import api from './axios'
+import { User } from '../types/user'
 
-export interface Utente {
-  id: string
-  email: string
-  nome: string
-}
-
-export const listUtenti = () => api.get<Utente[]>('/users/')
+export const listUsers = () => api.get<User[]>('/users/')
 
 export const getUtente = (id: string) =>
-  api.get<Utente>('/users', { params: { email: id } })
+  api.get<User>('/users', { params: { email: id } })

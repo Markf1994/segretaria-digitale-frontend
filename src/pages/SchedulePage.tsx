@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
-import { listUtenti, Utente } from '../api/users';
+import { listUsers } from '../api/users';
+import { User } from '../types/user';
 import { getSchedulePdf } from '../api/pdfs';
 import { format, startOfISOWeek, addDays } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
@@ -56,7 +57,7 @@ export default function SchedulePage() {
   const calendarId = SCHEDULE_CALENDAR_IDS[0];
 
   /* -- stato dati -- */
-  const [utenti, setUtenti] = useState<Utente[]>([]);
+  const [utenti, setUtenti] = useState<User[]>([]);
   const [turni, setTurni] = useState<Turno[]>([]);
   const [importedTurni, setImportedTurni] = useState<Turno[]>([]);
   const [refreshCal, setRefreshCal] = useState(false);
@@ -114,7 +115,7 @@ export default function SchedulePage() {
 
   /* --- caricamento iniziale --- */
   useEffect(() => {
-    listUtenti().then(r => {
+    listUsers().then(r => {
       setUtenti(r.data);
       setUtenteSel(r.data[0]?.id ?? '');
     });
