@@ -1,12 +1,5 @@
 import api from './axios'
-
-export interface Turno {
-  id: string
-  user_id: string
-  slot1: { inizio: string; fine: string }
-  slot2?: { inizio: string; fine: string } | null
-  slot3?: { inizio: string; fine: string } | null
-}
+import { Turno } from '../types/turno'
 
 export const listTurni = (): Promise<Turno[]> =>
   api.get<Turno[]>('/orari/').then(r => r.data)
