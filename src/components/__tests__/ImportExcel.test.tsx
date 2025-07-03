@@ -33,7 +33,9 @@ describe('ImportExcel', () => {
     await waitFor(() => {
       expect(openSpy).toHaveBeenCalledWith('blob:1', '_blank')
     })
-    expect(revokeSpy).toHaveBeenCalledWith('blob:1')
+    await waitFor(() => {
+      expect(revokeSpy).toHaveBeenCalledWith('blob:1')
+    })
 
     openSpy.mockRestore()
     createSpy.mockRestore()
