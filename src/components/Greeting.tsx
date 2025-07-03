@@ -8,17 +8,7 @@ const Greeting: React.FC = () => {
   if (!token) return null;
 
   const decoded = decodeToken(token);
-  const name: string | undefined = decoded?.nome || decoded?.name;
-  let username: string | undefined = name;
-
-  if (!username) {
-    const email: string | undefined =
-      decoded?.email || decoded?.sub || decoded?.user_id || decoded?.id;
-    if (email)
-      username = email.endsWith('@comune.castione.bg.it')
-        ? email.split('@')[0]
-        : email;
-  }
+  const username: string | undefined = decoded?.nome || decoded?.name;
 
   if (!username) return null;
   const hour = new Date().getHours();
