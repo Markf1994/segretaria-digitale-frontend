@@ -10,18 +10,9 @@ import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
-interface Slot { inizio: string; fine: string; }
-import { Turno } from '../types/turno';
+import { Turno, Slot } from '../types/turno';
 
-interface NewTurnoPayload {
-  user_id: string;
-  giorno: string;
-  slot1: Slot;
-  slot2?: Slot;
-  slot3?: Slot;
-  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO';
-  note?: string;
-}
+type NewTurnoPayload = Omit<Turno, 'id'>;
 
 /* ---------- COSTANTI ---------- */
 const SCHEDULE_CALENDAR_IDS =
