@@ -17,6 +17,14 @@ body.login-bg {
   font-family: 'Almendra SC', serif;
 }
 
+/* Use Cormorant Garamond for all input elements */
+input,
+textarea,
+select,
+button {
+  font-family: 'Cormorant Garamond', serif;
+}
+
 
 
 /* LOGIN */
