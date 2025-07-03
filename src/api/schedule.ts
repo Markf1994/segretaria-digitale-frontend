@@ -1,13 +1,8 @@
 import api from './axios'
-import { Turno } from '../types/turno'
+import { Turno } from 'src/types/turno'
 
-export const listTurni = (): Promise<Turno[]> =>
-  api.get<Turno[]>('/orari/').then(r => r.data)
-
-export const createTurno = (
-  data: Omit<Turno, 'id'>
-): Promise<Turno> =>
-  api.post<Turno>('/orari/', data).then(r => r.data)
+export const fetchTurni = () => api.get<Turno[]>('/orari/')
+export const saveTurno = (t: Turno) => api.post<Turno>('/orari/', t)
 
 export const deleteTurno = (id: string): Promise<void> =>
   api.delete(`/orari/${id}`).then(() => undefined)

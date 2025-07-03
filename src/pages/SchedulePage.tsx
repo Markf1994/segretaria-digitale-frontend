@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { fetchTurni, saveTurno } from '../api/schedule';
 import { listUsers } from '../api/users';
 import { User } from '../types/user';
 import { getSchedulePdf } from '../api/pdfs';
@@ -47,9 +48,9 @@ export default function SchedulePage() {
   const [signedIn, setSignedIn] = useState(false);
   const [signInError, setSignInError] = useState('');
 
-  const fetchTurni = async () => {
+  const loadTurni = async () => {
     try {
-      const { data } = await api.get<Turno[]>('/orari/');
+      const { data } = await fetchTurni();
       setTurni(data);
       setLoadError('');
       return data;
@@ -61,7 +62,7 @@ export default function SchedulePage() {
 
   const handleImportComplete = async (success: boolean) => {
     if (success) {
-      const data = await fetchTurni();
+        const data = await loadTurni();
       if (data.length) {
         const maxDate = new Date(
           Math.max(...data.map(t => new Date(t.giorno).getTime()))
@@ -101,7 +102,7 @@ export default function SchedulePage() {
       setUtenti(r.data);
       setUtenteSel(r.data[0]?.id ?? '');
     });
-    void fetchTurni();
+      void loadTurni();
   }, []);
 
   useEffect(() => {
@@ -141,7 +142,7 @@ export default function SchedulePage() {
     if (s2Start && s2End) payload.slot2 = { inizio: s2Start, fine: s2End };
     if (s3Start && s3End) payload.slot3 = { inizio: s3Start, fine: s3End };
 
-    const { data } = await api.post<Turno>('/orari/', payload);
+    const { data } = await saveTurno(payload as Turno);
     setTurni(prev =>
       prev.some(t => t.id === data.id) ? prev.map(t => t.id === data.id ? data : t) : [...prev, data]
     );
