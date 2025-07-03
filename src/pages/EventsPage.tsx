@@ -14,6 +14,7 @@ import {
   DbEvent,
 } from '../api/events';
 import './ListPages.css';
+import useIsMobile from '../hooks/useIsMobile';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey, getUserId, decodeToken } from '../utils/auth';
 
@@ -46,7 +47,7 @@ export default function EventsPage() {
     isPublic: false,
   });
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
-  const isMobile = window.innerWidth <= 600;
+  const isMobile = useIsMobile();
   const token = useAuthStore(s => s.token);
   const storageKey = useMemo(
     () =>
