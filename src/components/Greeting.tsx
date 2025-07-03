@@ -1,16 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/auth';
-import { decodeToken } from '../utils/auth';
+import { decodeToken, getUserId } from '../utils/auth';
+import { getUtente } from '../api/users';
 import './Greeting.css';
 
 const Greeting: React.FC = () => {
   const token = useAuthStore(s => s.token) || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null);
-  if (!token) return null;
+  const [username, setUsername] = useState<string | null>(null);
 
-  const decoded = decodeToken(token);
-  const username: string | undefined = decoded?.nome || decoded?.name;
+  useEffect(() => {
+    if (!token) return;
+    const decoded = decodeToken(token);
+    const initial = decoded?.nome || decoded?.name;
+    if (initial) setUsername(initial);
+    else {
+      const id = getUserId(token);
+      if (id)
+        getUtente(id)
+          .then(r => setUsername(r.data.nome))
+          .catch(() => {});
+    }
+  }, [token]);
 
-  if (!username) return null;
+  if (!token || !username) return null;
   const hour = new Date().getHours();
   let salutation = 'Buonasera';
   if (hour < 12) salutation = 'Buongiorno';
