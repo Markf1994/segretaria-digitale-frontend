@@ -60,11 +60,18 @@ export default function SchedulePage() {
   const [turni, setTurni] = useState<Turno[]>([]);
   const [importedTurni, setImportedTurni] = useState<Turno[]>([]);
   const [refreshCal, setRefreshCal] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   const fetchTurni = async () => {
-    const { data } = await api.get<Turno[]>('/orari/');
-    setTurni(data);
-    return data;
+    try {
+      const { data } = await api.get<Turno[]>('/orari/');
+      setTurni(data);
+      setLoadError('');
+      return data;
+    } catch {
+      setLoadError('Errore nel caricamento dei turni');
+      return [];
+    }
   };
 
   const handleImportComplete = async (success: boolean) => {
@@ -107,7 +114,7 @@ export default function SchedulePage() {
       setUtenti(r.data);
       setUtenteSel(r.data[0]?.id ?? '');
     });
-    fetchTurni();
+    void fetchTurni();
   }, []);
 
   /* --- helper --- */
@@ -175,6 +182,7 @@ export default function SchedulePage() {
   return (
     <div className="list-page">
       <h2>Turni di servizio</h2>
+      {loadError && <p className="error">{loadError}</p>}
 
       <ImportExcel onComplete={handleImportComplete} />
 
