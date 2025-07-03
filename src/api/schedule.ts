@@ -3,9 +3,9 @@ import api from './axios'
 export interface Turno {
   id: string
   user_id: string
-  slot1: string
-  slot2?: string | null
-  slot3?: string | null
+  slot1: { inizio: string; fine: string }
+  slot2?: { inizio: string; fine: string } | null
+  slot3?: { inizio: string; fine: string } | null
 }
 
 export const listTurni = (): Promise<Turno[]> =>
