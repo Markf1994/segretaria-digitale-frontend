@@ -1,67 +1,39 @@
-import React, { useState } from 'react';
-import './ListPages.css';
-import { TEAMS_URL } from '../constants';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Google, Microsoft, Video } from 'lucide-react';
 
-export default function UtilitaPage() {
-  const [active, setActive] = useState<'meet' | 'teams' | 'zoom'>('meet');
-
-
-  const meetUrl = 'https://meet.google.com/landing?pli=1';
-  const teamsUrl = TEAMS_URL;
-  const zoomUrl = 'https://zoom.us/it/signin#/login';
+export default function UtilitaPages() {
+  const links = [
+    {
+      name: 'Google Meet',
+      icon: <Google className="w-6 h-6" />,
+      url: 'https://meet.google.com/xyz-abcq-wvu',
+    },
+    {
+      name: 'Microsoft Teams',
+      icon: <Microsoft className="w-6 h-6" />,
+      url: 'https://teams.microsoft.com/l/meetup-join/…',
+    },
+    {
+      name: 'Zoom',
+      icon: <Video className="w-6 h-6" />,
+      url: 'https://zoom.us/wc/join/123456789?pwd=abcdef',
+    },
+  ];
 
   return (
-    <div className="list-page">
-      <h2>Utilità</h2>
-      <div className="tabs">
-        <button
-          data-testid="tab-meet"
-          className={`tab-button ${active === 'meet' ? 'active' : ''}`}
-          onClick={() => setActive('meet')}
+    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      {links.map((svc) => (
+        <Button
+          key={svc.name}
+          variant="outline"
+          className="flex flex-col items-center p-6 space-y-2"
+          onClick={() => window.open(svc.url, '_blank')}
         >
-          <img src="/meet.png" alt="Google Meet" className="tab-icon" />
-          <span>Meet</span>
-        </button>
-        <button
-          data-testid="tab-teams"
-          className={`tab-button ${active === 'teams' ? 'active' : ''}`}
-          onClick={() => setActive('teams')}
-        >
-          <img src="/teams.png" alt="Microsoft Teams" className="tab-icon" />
-          <span>Teams</span>
-        </button>
-        <button
-          data-testid="tab-zoom"
-          className={`tab-button ${active === 'zoom' ? 'active' : ''}`}
-          onClick={() => setActive('zoom')}
-        >
-          <img src="/zoom.png" alt="Zoom" className="tab-icon" />
-          <span>Zoom</span>
-        </button>
-      </div>
-      <div className="iframe-container">
-        {active === 'meet' && (
-          <iframe
-            title="Google Meet"
-            src={meetUrl}
-            allow="camera; microphone; fullscreen"
-          />
-        )}
-        {active === 'teams' && (
-          <iframe
-            title="Microsoft Teams"
-            src={teamsUrl}
-            allow="camera; microphone; fullscreen"
-          />
-        )}
-        {active === 'zoom' && (
-          <iframe
-            title="Zoom"
-            src={zoomUrl}
-            allow="camera; microphone; fullscreen"
-          />
-        )}
-      </div>
+          {svc.icon}
+          <span className="mt-2 font-semibold">{svc.name}</span>
+        </Button>
+      ))}
     </div>
   );
 }
