@@ -5,7 +5,7 @@ import { getSchedulePdf } from '../api/pdfs';
 import { format, startOfISOWeek, addDays } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
-import { createShiftEvents, ShiftData } from '../api/googleCalendar';
+import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
@@ -61,6 +61,8 @@ export default function SchedulePage() {
   const [importedTurni, setImportedTurni] = useState<Turno[]>([]);
   const [refreshCal, setRefreshCal] = useState(false);
   const [loadError, setLoadError] = useState('');
+  const [signedIn, setSignedIn] = useState(false);
+  const [signInError, setSignInError] = useState('');
 
   const fetchTurni = async () => {
     try {
@@ -88,19 +90,21 @@ export default function SchedulePage() {
           return d >= start && d <= end;
         });
         setImportedTurni(imported);
-        for (const t of imported) {
-          try {
-            const email = utenti.find(u => u.id === t.user_id)?.email || '';
-            await createShiftEvents(calendarId, {
-              userEmail: email,
-              giorno: t.giorno,
-              slot1: t.slot1,
-              slot2: t.slot2,
-              slot3: t.slot3,
-              note: t.note,
-            } as ShiftData);
-          } catch {
-            // ignore calendar errors
+        if (signedIn) {
+          for (const t of imported) {
+            try {
+              const email = utenti.find(u => u.id === t.user_id)?.email || '';
+              await createShiftEvents(calendarId, {
+                userEmail: email,
+                giorno: t.giorno,
+                slot1: t.slot1,
+                slot2: t.slot2,
+                slot3: t.slot3,
+                note: t.note,
+              } as ShiftData);
+            } catch {
+              // ignore calendar errors
+            }
           }
         }
         setRefreshCal(prev => !prev);
@@ -115,6 +119,19 @@ export default function SchedulePage() {
       setUtenteSel(r.data[0]?.id ?? '');
     });
     void fetchTurni();
+  }, []);
+
+  useEffect(() => {
+    const doSignIn = async () => {
+      try {
+        await signIn();
+        setSignedIn(true);
+        setSignInError('');
+      } catch {
+        setSignInError('Errore di accesso al calendario');
+      }
+    };
+    doSignIn();
   }, []);
 
   /* --- helper --- */
@@ -145,18 +162,20 @@ export default function SchedulePage() {
     setTurni(prev =>
       prev.some(t => t.id === data.id) ? prev.map(t => t.id === data.id ? data : t) : [...prev, data]
     );
-    try {
-      const email = utenti.find(u => u.id === data.user_id)?.email || '';
-      await createShiftEvents(calendarId, {
-        userEmail: email,
-        giorno: data.giorno,
-        slot1: data.slot1,
-        slot2: data.slot2,
-        slot3: data.slot3,
-        note: data.note,
-      } as ShiftData);
-    } catch {
-      // ignore calendar errors
+    if (signedIn) {
+      try {
+        const email = utenti.find(u => u.id === data.user_id)?.email || '';
+        await createShiftEvents(calendarId, {
+          userEmail: email,
+          giorno: data.giorno,
+          slot1: data.slot1,
+          slot2: data.slot2,
+          slot3: data.slot3,
+          note: data.note,
+        } as ShiftData);
+      } catch {
+        // ignore calendar errors
+      }
     }
     resetForm();
   };
@@ -183,6 +202,7 @@ export default function SchedulePage() {
     <div className="list-page">
       <h2>Turni di servizio</h2>
       {loadError && <p className="error">{loadError}</p>}
+      {signInError && <p className="error">{signInError}</p>}
 
       <ImportExcel onComplete={handleImportComplete} />
 
