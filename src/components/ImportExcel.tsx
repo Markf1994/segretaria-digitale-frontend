@@ -23,8 +23,14 @@ export default function ImportExcel({ onComplete }: ImportExcelProps) {
     try {
       const pdfBlob = await importTurniExcel(file);
       const pdfURL = URL.createObjectURL(pdfBlob);
-      window.open(pdfURL, '_blank');
-      URL.revokeObjectURL(pdfURL);
+      const newWindow = window.open(pdfURL, '_blank');
+      if (newWindow) {
+        newWindow.addEventListener('load', () => {
+          URL.revokeObjectURL(pdfURL);
+        });
+      } else {
+        setTimeout(() => URL.revokeObjectURL(pdfURL));
+      }
       setMessage('File importato correttamente.');
       onComplete?.(true);
     } catch (error) {
