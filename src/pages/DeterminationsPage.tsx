@@ -7,6 +7,7 @@ import {
   Determination,
 } from '../api/determinations';
 import './ListPages.css';
+import useIsMobile from '../hooks/useIsMobile';
 import { withOffline, withoutResult } from '../utils/offline';
 
 const DeterminationsPage: React.FC = () => {
@@ -17,7 +18,7 @@ const DeterminationsPage: React.FC = () => {
   const [descrizione, setDescrizione] = useState('');
   const [scadenza, setScadenza] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
-  const isMobile = window.innerWidth <= 600;
+  const isMobile = useIsMobile();
 
   const saveLocal = (data: Determination[]): void => {
     const trimmed = data.map(d => ({

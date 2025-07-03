@@ -8,6 +8,7 @@ import {
 import { listDeterminations, Determination } from '../api/determinations';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import './ListPages.css';
+import useIsMobile from '../hooks/useIsMobile';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
 import { withOffline, withoutResult } from '../utils/offline';
@@ -24,7 +25,7 @@ export default function TodoPage() {
   const [text, setText] = useState('');
   const [due, setDue] = useState('');
   const [edit, setEdit] = useState<string | null>(null);
-  const isMobile = window.innerWidth <= 600;
+  const isMobile = useIsMobile();
   const token = useAuthStore(s => s.token);
   const storageKey = useMemo(
     () => getUserStorageKey('todos', token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)),
