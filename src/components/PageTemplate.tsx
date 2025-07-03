@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import api from '../api/axios';
+import { useAuthStore } from '../store/auth';
 
-const PageTemplate: React.FC = () => (
-  <>
-    <Header />
-    <main className="app-container">
-      <Outlet />
-    </main>
-    <Footer />
-  </>
-);
+const PageTemplate: React.FC = () => {
+  const token = useAuthStore(s => s.token);
+  const user = useAuthStore(s => s.user);
+  const setUser = useAuthStore(s => s.setUser);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.get('/users/me');
+        setUser(res.data);
+      } catch {
+        // ignore
+      }
+    };
+    if (token && !user) fetchUser();
+  }, [token, user, setUser]);
+
+  return (
+    <>
+      <Header />
+      <main className="app-container">
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
+};
 
 export default PageTemplate;

@@ -2,12 +2,24 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import PageTemplate from '../PageTemplate';
+import api from '../../api/axios';
+import { useAuthStore } from '../../store/auth';
+
+jest.mock('../../api/axios', () => ({
+  __esModule: true,
+  default: { get: jest.fn() },
+}));
+
+const mockedApi = api as jest.Mocked<typeof api>;
 
 const Dummy: React.FC = () => <div>Dummy Page</div>;
 
 describe('PageTemplate', () => {
   beforeEach(() => {
     localStorage.clear();
+    useAuthStore.getState().setToken(null);
+    useAuthStore.getState().setUser(null);
+    jest.resetAllMocks();
   });
 
   it('shows navigation, sidebar buttons and footer', () => {
@@ -39,9 +51,9 @@ describe('PageTemplate', () => {
     ).toBeInTheDocument();
   });
 
-  it('displays greeting when user token exists', () => {
-    const payload = btoa(JSON.stringify({ nome: 'test' }));
-    localStorage.setItem('token', `xx.${payload}.yy`);
+  it('displays greeting when user profile is fetched', async () => {
+    useAuthStore.getState().setToken('tok');
+    mockedApi.get.mockResolvedValueOnce({ data: { id: '1', nome: 'test', email: 'e' } });
 
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -53,8 +65,10 @@ describe('PageTemplate', () => {
       </MemoryRouter>
     );
 
+    expect(mockedApi.get).toHaveBeenCalledWith('/users/me');
+
     const hour = new Date().getHours();
     const salutation = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
-    expect(screen.getByText(new RegExp(`${salutation} test`, 'i'))).toBeInTheDocument();
+    expect(await screen.findByText(new RegExp(`${salutation} test`, 'i'))).toBeInTheDocument();
   });
 });
