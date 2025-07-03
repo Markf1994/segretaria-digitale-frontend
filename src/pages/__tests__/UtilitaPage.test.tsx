@@ -6,18 +6,18 @@ import * as pdfApi from '../../api/pdfs';
 
 jest.mock('../../api/pdfs', () => ({
   __esModule: true,
-  listPDFs: jest.fn(),
+  listPdfs: jest.fn(),
 }));
 
 const mockedApi = pdfApi as jest.Mocked<typeof pdfApi>;
 
 beforeEach(() => {
-  mockedApi.listPDFs.mockResolvedValue([]);
+  mockedApi.listPdfs.mockResolvedValue([]);
 });
 
 describe('UtilitaPage', () => {
   it('shows PDFs from API', async () => {
-    mockedApi.listPDFs.mockResolvedValue([{ id: '1', name: 'doc.pdf', url: '/doc.pdf' }]);
+    mockedApi.listPdfs.mockResolvedValue([{ id: '1', name: 'doc.pdf', url: '/doc.pdf' }]);
 
     render(
       <MemoryRouter initialEntries={["/utilita"]}>
