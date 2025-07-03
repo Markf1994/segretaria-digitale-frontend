@@ -58,8 +58,21 @@ const renderPage = () =>
 describe('SchedulePage', () => {
   it('loads turni from API', async () => {
     mockedApi.get.mockImplementation(url => {
-      if (url === '/users/') return Promise.resolve({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
-      if (url === '/orari/') return Promise.resolve({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' }] })
+      if (url === '/users/')
+        return Promise.resolve({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+      if (url === '/orari/')
+        return Promise.resolve({
+          data: [
+            {
+              id: '1',
+              giorno: '2023-01-01',
+              inizio_1: '08:00',
+              fine_1: '10:00',
+              tipo: 'NORMALE',
+              user_id: 'u',
+            },
+          ],
+        })
       return Promise.resolve({ data: [] })
     })
 
@@ -72,13 +85,16 @@ describe('SchedulePage', () => {
   })
 
   it('adds a new turno', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({
+      data: [{ id: 'u', email: 'u@e', nome: 'u' }],
+    })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.post.mockResolvedValueOnce({
       data: {
         id: '2',
         giorno: '2023-05-02',
-        slot1: { inizio: '09:00', fine: '11:00' },
+        inizio_1: '09:00',
+        fine_1: '11:00',
         tipo: 'NORMALE',
         user_id: 'u',
       },
@@ -90,15 +106,18 @@ describe('SchedulePage', () => {
 
     const inputs = screen.getAllByRole('textbox')
     await userEvent.type(inputs[0], '2023-05-02')
-    await userEvent.type(inputs[1], '09:00')
-    await userEvent.type(inputs[2], '11:00')
+
+    const selects = screen.getAllByRole('combobox')
+    await userEvent.selectOptions(selects[1], '09:00')
+    await userEvent.selectOptions(selects[2], '11:00')
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
     expect(await screen.findByText('09:00–11:00')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-02',
-      slot1: { inizio: '09:00', fine: '11:00' },
+      inizio_1: '09:00',
+      fine_1: '11:00',
       tipo: 'NORMALE',
       note: undefined,
     })
@@ -116,7 +135,8 @@ describe('SchedulePage', () => {
       data: {
         id: '3',
         giorno: '2023-05-03',
-        slot1: { inizio: '10:00', fine: '12:00' },
+        inizio_1: '10:00',
+        fine_1: '12:00',
         tipo: 'RIPOSO',
         user_id: 'u',
       },
@@ -127,11 +147,11 @@ describe('SchedulePage', () => {
 
     const inputs = screen.getAllByRole('textbox')
     await userEvent.type(inputs[0], '2023-05-03')
-    await userEvent.type(inputs[1], '10:00')
-    await userEvent.type(inputs[2], '12:00')
 
     const selects = screen.getAllByRole('combobox')
-    await userEvent.selectOptions(selects[1], 'RIPOSO')
+    await userEvent.selectOptions(selects[1], '10:00')
+    await userEvent.selectOptions(selects[2], '12:00')
+    await userEvent.selectOptions(selects[7], 'RIPOSO')
 
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
@@ -139,20 +159,24 @@ describe('SchedulePage', () => {
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-03',
-      slot1: { inizio: '10:00', fine: '12:00' },
+      inizio_1: '10:00',
+      fine_1: '12:00',
       tipo: 'RIPOSO',
       note: undefined,
     })
   })
 
   it('adds a new turno with tipo FESTIVO', async () => {
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({
+      data: [{ id: 'u', email: 'u@e', nome: 'u' }],
+    })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.post.mockResolvedValueOnce({
       data: {
         id: '4',
         giorno: '2023-05-04',
-        slot1: { inizio: '11:00', fine: '13:00' },
+        inizio_1: '11:00',
+        fine_1: '13:00',
         tipo: 'FESTIVO',
         user_id: 'u',
       },
@@ -163,11 +187,11 @@ describe('SchedulePage', () => {
 
     const inputs = screen.getAllByRole('textbox')
     await userEvent.type(inputs[0], '2023-05-04')
-    await userEvent.type(inputs[1], '11:00')
-    await userEvent.type(inputs[2], '13:00')
 
     const selects = screen.getAllByRole('combobox')
-    await userEvent.selectOptions(selects[1], 'FESTIVO')
+    await userEvent.selectOptions(selects[1], '11:00')
+    await userEvent.selectOptions(selects[2], '13:00')
+    await userEvent.selectOptions(selects[7], 'FESTIVO')
 
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
@@ -175,7 +199,8 @@ describe('SchedulePage', () => {
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-04',
-      slot1: { inizio: '11:00', fine: '13:00' },
+      inizio_1: '11:00',
+      fine_1: '13:00',
       tipo: 'FESTIVO',
       note: undefined,
     })
@@ -183,7 +208,18 @@ describe('SchedulePage', () => {
 
   it('deletes a turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '07:00', fine: '09:00' }, tipo: 'NORMALE', user_id: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({
+      data: [
+        {
+          id: '1',
+          giorno: '2023-01-01',
+          inizio_1: '07:00',
+          fine_1: '09:00',
+          tipo: 'NORMALE',
+          user_id: 'u',
+        },
+      ],
+    })
     mockedApi.delete.mockResolvedValueOnce({})
 
     renderPage()
@@ -200,7 +236,14 @@ describe('SchedulePage', () => {
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.get.mockResolvedValueOnce({
       data: [
-        { id: '1', giorno: '2023-06-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' },
+        {
+          id: '1',
+          giorno: '2023-06-01',
+          inizio_1: '08:00',
+          fine_1: '10:00',
+          tipo: 'NORMALE',
+          user_id: 'u',
+        },
       ],
     })
 
@@ -217,7 +260,14 @@ describe('SchedulePage', () => {
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.get.mockResolvedValueOnce({
       data: [
-        { id: '1', giorno: '2023-06-02', slot1: { inizio: '09:00', fine: '11:00' }, tipo: 'NORMALE', user_id: 'u' },
+        {
+          id: '1',
+          giorno: '2023-06-02',
+          inizio_1: '09:00',
+          fine_1: '11:00',
+          tipo: 'NORMALE',
+          user_id: 'u',
+        },
       ],
     })
 

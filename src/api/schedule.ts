@@ -3,9 +3,15 @@ import api from './axios'
 export interface Turno {
   id: string
   user_id: string
-  slot1: { inizio: string; fine: string }
-  slot2?: { inizio: string; fine: string } | null
-  slot3?: { inizio: string; fine: string } | null
+  giorno: string
+  inizio_1: string
+  fine_1: string
+  inizio_2?: string | null
+  fine_2?: string | null
+  inizio_3?: string | null
+  fine_3?: string | null
+  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'
+  note?: string | null
 }
 
 export const listTurni = (): Promise<Turno[]> =>

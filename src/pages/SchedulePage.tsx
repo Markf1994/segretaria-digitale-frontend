@@ -9,27 +9,21 @@ import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
-interface Slot { inizio: string; fine: string; }
 interface Turno {
   id: string;
   giorno: string;
-  slot1: Slot;
-  slot2?: Slot;
-  slot3?: Slot;
+  inizio_1: string;
+  fine_1: string;
+  inizio_2?: string | null;
+  fine_2?: string | null;
+  inizio_3?: string | null;
+  fine_3?: string | null;
   tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO';
-  note?: string;
+  note?: string | null;
   user_id: string;
 }
 
-interface NewTurnoPayload {
-  user_id: string;
-  giorno: string;
-  slot1: Slot;
-  slot2?: Slot;
-  slot3?: Slot;
-  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO';
-  note?: string;
-}
+type NewTurnoPayload = Omit<Turno, 'id'>;
 
 /* ---------- COSTANTI ---------- */
 const SCHEDULE_CALENDAR_IDS =
@@ -39,17 +33,23 @@ const SCHEDULE_CALENDAR_IDS =
 const stripDomain = (email: string) =>
   email.replace('@comune.castione.bg.it', '');
 
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  const h = String(Math.floor(i / 2)).padStart(2, '0');
+  const m = i % 2 === 0 ? '00' : '30';
+  return `${h}:${m}`;
+});
+
 /* ---------- COMPONENTE ---------- */
 export default function SchedulePage() {
   /* -- stato form -- */
   const [utenteSel, setUtenteSel] = useState<string>(''); // id utente
   const [giorno, setGiorno] = useState('');
-  const [s1Start, setS1Start] = useState('');
-  const [s1End,   setS1End]   = useState('');
-  const [s2Start, setS2Start] = useState('');
-  const [s2End,   setS2End]   = useState('');
-  const [s3Start, setS3Start] = useState('');
-  const [s3End,   setS3End]   = useState('');
+  const [inizio1, setInizio1] = useState('');
+  const [fine1,   setFine1]   = useState('');
+  const [inizio2, setInizio2] = useState('');
+  const [fine2,   setFine2]   = useState('');
+  const [inizio3, setInizio3] = useState('');
+  const [fine3,   setFine3]   = useState('');
   const [tipo, setTipo] = useState<'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'>('NORMALE');
   const [note, setNote] = useState('');
 
@@ -97,10 +97,16 @@ export default function SchedulePage() {
               await createShiftEvents(calendarId, {
                 userEmail: email,
                 giorno: t.giorno,
-                slot1: t.slot1,
-                slot2: t.slot2,
-                slot3: t.slot3,
-                note: t.note,
+                slot1: { inizio: t.inizio_1, fine: t.fine_1 },
+                slot2:
+                  t.inizio_2 && t.fine_2
+                    ? { inizio: t.inizio_2, fine: t.fine_2 }
+                    : undefined,
+                slot3:
+                  t.inizio_3 && t.fine_3
+                    ? { inizio: t.inizio_3, fine: t.fine_3 }
+                    : undefined,
+                note: t.note || undefined,
               } as ShiftData);
             } catch {
               // ignore calendar errors
@@ -137,26 +143,33 @@ export default function SchedulePage() {
   /* --- helper --- */
   const resetForm = () => {
     setGiorno('');
-    setS1Start(''); setS1End('');
-    setS2Start(''); setS2End('');
-    setS3Start(''); setS3End('');
+    setInizio1(''); setFine1('');
+    setInizio2(''); setFine2('');
+    setInizio3(''); setFine3('');
     setTipo('NORMALE'); setNote('');
   };
 
   /* --- submit --- */
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!giorno || !s1Start || !s1End || !utenteSel) return;
+    if (!giorno || !inizio1 || !fine1 || !utenteSel) return;
 
     const payload: NewTurnoPayload = {
       user_id: utenteSel,
       giorno,
-      slot1: { inizio: s1Start, fine: s1End },
+      inizio_1: inizio1,
+      fine_1: fine1,
       tipo,
       note: note || undefined,
     };
-    if (s2Start && s2End) payload.slot2 = { inizio: s2Start, fine: s2End };
-    if (s3Start && s3End) payload.slot3 = { inizio: s3Start, fine: s3End };
+    if (inizio2 && fine2) {
+      payload.inizio_2 = inizio2;
+      payload.fine_2 = fine2;
+    }
+    if (inizio3 && fine3) {
+      payload.inizio_3 = inizio3;
+      payload.fine_3 = fine3;
+    }
 
     const { data } = await api.post<Turno>('/orari/', payload);
     setTurni(prev =>
@@ -168,10 +181,16 @@ export default function SchedulePage() {
         await createShiftEvents(calendarId, {
           userEmail: email,
           giorno: data.giorno,
-          slot1: data.slot1,
-          slot2: data.slot2,
-          slot3: data.slot3,
-          note: data.note,
+          slot1: { inizio: data.inizio_1, fine: data.fine_1 },
+          slot2:
+            data.inizio_2 && data.fine_2
+              ? { inizio: data.inizio_2, fine: data.fine_2 }
+              : undefined,
+          slot3:
+            data.inizio_3 && data.fine_3
+              ? { inizio: data.inizio_3, fine: data.fine_3 }
+              : undefined,
+          note: data.note || undefined,
         } as ShiftData);
       } catch {
         // ignore calendar errors
@@ -226,23 +245,65 @@ export default function SchedulePage() {
 
         <fieldset>
           <legend>Slot 1 (obbligatorio)</legend>
-          <input type="time" value={s1Start} onChange={e => setS1Start(e.target.value)} required />
+          <select value={inizio1} onChange={e => setInizio1(e.target.value)} required>
+            <option value=""></option>
+            {TIME_OPTIONS.map(t => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
           <span>→</span>
-          <input type="time" value={s1End}   onChange={e => setS1End(e.target.value)}   required />
+          <select value={fine1} onChange={e => setFine1(e.target.value)} required>
+            <option value=""></option>
+            {TIME_OPTIONS.map(t => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
         </fieldset>
 
         <fieldset>
           <legend>Slot 2 (facoltativo)</legend>
-          <input type="time" value={s2Start} onChange={e => setS2Start(e.target.value)} />
+          <select value={inizio2} onChange={e => setInizio2(e.target.value)}>
+            <option value=""></option>
+            {TIME_OPTIONS.map(t => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
           <span>→</span>
-          <input type="time" value={s2End}   onChange={e => setS2End(e.target.value)} />
+          <select value={fine2} onChange={e => setFine2(e.target.value)}>
+            <option value=""></option>
+            {TIME_OPTIONS.map(t => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
         </fieldset>
 
         <fieldset>
           <legend>Slot 3 (facoltativo)</legend>
-          <input type="time" value={s3Start} onChange={e => setS3Start(e.target.value)} />
+          <select value={inizio3} onChange={e => setInizio3(e.target.value)}>
+            <option value=""></option>
+            {TIME_OPTIONS.map(t => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
           <span>→</span>
-          <input type="time" value={s3End}   onChange={e => setS3End(e.target.value)} />
+          <select value={fine3} onChange={e => setFine3(e.target.value)}>
+            <option value=""></option>
+            {TIME_OPTIONS.map(t => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
         </fieldset>
 
         <label>Tipo</label>
@@ -277,9 +338,17 @@ export default function SchedulePage() {
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno}</td>
-                <td>{`${t.slot1.inizio}–${t.slot1.fine}`}</td>
-                <td>{t.slot2 ? `${t.slot2.inizio}–${t.slot2.fine}` : '—'}</td>
-                <td>{t.slot3 ? `${t.slot3.inizio}–${t.slot3.fine}` : '—'}</td>
+                <td>{`${t.inizio_1}–${t.fine_1}`}</td>
+                <td>
+                  {t.inizio_2 && t.fine_2
+                    ? `${t.inizio_2}–${t.fine_2}`
+                    : '—'}
+                </td>
+                <td>
+                  {t.inizio_3 && t.fine_3
+                    ? `${t.inizio_3}–${t.fine_3}`
+                    : '—'}
+                </td>
                 <td>{t.tipo}</td>
                 <td>{t.note || '—'}</td>
                   <td><button onClick={() => handleDelete(t.id)}>🗑️</button></td>
@@ -330,16 +399,16 @@ export default function SchedulePage() {
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo
-                : `${t.slot1.inizio}–${t.slot1.fine}`;
+                : `${t.inizio_1}–${t.fine_1}`;
               const slot2 = ferieLike
                 ? '—'
-                : t.slot2
-                ? `${t.slot2.inizio}–${t.slot2.fine}`
+                : t.inizio_2 && t.fine_2
+                ? `${t.inizio_2}–${t.fine_2}`
                 : '—';
               const slot3Text = ferieLike
                 ? '—'
-                : t.slot3
-                ? `${t.slot3.inizio}–${t.slot3.fine}`
+                : t.inizio_3 && t.fine_3
+                ? `${t.inizio_3}–${t.fine_3}`
                 : '—';
               return (
                 <tr key={t.id}>
