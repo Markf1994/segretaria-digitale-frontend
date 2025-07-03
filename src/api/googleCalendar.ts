@@ -1,7 +1,7 @@
 // src/api/googleCalendar.ts
 import type { GcEvent } from './types'
 
-const CALENDAR_ID = 'primary'
+const DEFAULT_CALENDAR_ID = 'primary'
 
 export const signIn = async (): Promise<void> => {
   const gapi = (window as any).gapi
@@ -15,10 +15,12 @@ export const signIn = async (): Promise<void> => {
   await gapi.auth2.getAuthInstance().signIn()
 }
 
-export const listEvents = async (): Promise<GcEvent[]> => {
+export const listEvents = async (
+  calendarId: string = DEFAULT_CALENDAR_ID,
+): Promise<GcEvent[]> => {
   const gapi = (window as any).gapi
   const res = await gapi.client.calendar.events.list({
-    calendarId: CALENDAR_ID,
+    calendarId,
     singleEvents: true,
     orderBy: 'startTime',
     timeMin: new Date(0).toISOString(),
@@ -26,7 +28,9 @@ export const listEvents = async (): Promise<GcEvent[]> => {
   return res.result.items || []
 }
 
-export const createEvent = async (event: {
+export const createEvent = async (
+  calendarId: string = DEFAULT_CALENDAR_ID,
+  event: {
   summary: string
   description?: string
   start: { dateTime: string }
@@ -34,7 +38,7 @@ export const createEvent = async (event: {
 }): Promise<GcEvent> => {
   const gapi = (window as any).gapi
   const res = await gapi.client.calendar.events.insert({
-    calendarId: CALENDAR_ID,
+    calendarId,
     resource: event,
   })
   return res.result
@@ -43,6 +47,7 @@ export const createEvent = async (event: {
 // ---- Nuove funzioni ----
 
 export const updateEvent = async (
+  calendarId: string = DEFAULT_CALENDAR_ID,
   id: string,
   event: {
     summary?: string
@@ -53,17 +58,20 @@ export const updateEvent = async (
 ): Promise<GcEvent> => {
   const gapi = (window as any).gapi
   const res = await gapi.client.calendar.events.patch({
-    calendarId: CALENDAR_ID,
+    calendarId,
     eventId: id,
     resource: event,
   })
   return res.result
 }
 
-export const deleteEvent = async (id: string): Promise<void> => {
+export const deleteEvent = async (
+  calendarId: string = DEFAULT_CALENDAR_ID,
+  id: string,
+): Promise<void> => {
   const gapi = (window as any).gapi
   await gapi.client.calendar.events.delete({
-    calendarId: CALENDAR_ID,
+    calendarId,
     eventId: id,
   })
 }
@@ -78,7 +86,7 @@ export interface ShiftData {
 }
 
 export const createShiftEvents = async (
-  calendarId: string,
+  calendarId: string = DEFAULT_CALENDAR_ID,
   turno: ShiftData
 ): Promise<void> => {
   const gapi = (window as any).gapi
