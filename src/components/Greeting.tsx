@@ -14,9 +14,9 @@ const Greeting: React.FC = () => {
     const initial = decoded?.nome || decoded?.name;
     if (initial) setUsername(initial);
     else {
-      const id = getUserId(token);
-      if (id)
-        getUtente(id)
+      const identifier = getUserId(token);
+      if (identifier)
+        getUtente(identifier)
           .then(r => setUsername(r.data.nome))
           .catch(() => {});
     }

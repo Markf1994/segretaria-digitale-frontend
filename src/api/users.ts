@@ -8,4 +8,5 @@ export interface Utente {
 
 export const listUtenti = () => api.get<Utente[]>('/users/')
 
-export const getUtente = (id: string) => api.get<Utente>(`/users/${id}`)
+export const getUtente = (id: string) =>
+  api.get<Utente>('/users', { params: { email: id } })
