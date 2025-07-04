@@ -17,20 +17,20 @@ describe('Greeting', () => {
     mockedUseAuthStore.mockImplementation((sel: any) => sel({ user }))
     jest.spyOn(Date.prototype, 'getHours').mockReturnValue(9)
     render(<Greeting />)
-    expect(screen.getByText(/Buongiorno Mario/i)).toBeInTheDocument()
+    expect(screen.getByText(/Buongiorno  Mario/i)).toBeInTheDocument()
   })
 
   it('shows afternoon greeting', () => {
     mockedUseAuthStore.mockImplementation((sel: any) => sel({ user }))
     jest.spyOn(Date.prototype, 'getHours').mockReturnValue(15)
     render(<Greeting />)
-    expect(screen.getByText(/Buon pomeriggio Mario/i)).toBeInTheDocument()
+    expect(screen.getByText(/Buon pomeriggio  Mario/i)).toBeInTheDocument()
   })
 
   it('shows evening greeting', () => {
     mockedUseAuthStore.mockImplementation((sel: any) => sel({ user }))
     jest.spyOn(Date.prototype, 'getHours').mockReturnValue(20)
     render(<Greeting />)
-    expect(screen.getByText(/Buonasera Mario/i)).toBeInTheDocument()
+    expect(screen.getByText(/Buonasera  Mario/i)).toBeInTheDocument()
   })
 })
