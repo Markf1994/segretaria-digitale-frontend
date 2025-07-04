@@ -2,7 +2,7 @@ import api from './axios'
 import { Turno, BackendTurno } from 'src/types/turno'
 
 const fromBackend = (t: BackendTurno): Turno => ({
-  id: t.id,
+  id: t.id!,
   user_id: t.user_id,
   giorno: t.giorno,
   slot1: { inizio: t.slot1_inizio, fine: t.slot1_fine },
@@ -19,7 +19,7 @@ const fromBackend = (t: BackendTurno): Turno => ({
 })
 
 const toBackend = (t: Turno): BackendTurno => ({
-  id: t.id,
+  ...(t.id ? { id: t.id } : {}),
   user_id: t.user_id,
   giorno: t.giorno,
   slot1_inizio: t.slot1.inizio,

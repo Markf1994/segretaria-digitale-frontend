@@ -15,7 +15,7 @@ export interface Turno {
 }
 
 export interface BackendTurno {
-  id: string
+  id?: string
   user_id: string
   giorno: string
   slot1_inizio: string
