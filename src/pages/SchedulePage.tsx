@@ -11,7 +11,7 @@ import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
-import { Turno, Slot } from '../types/turno';
+import { Turno, Slot, TipoTurno } from '../types/turno';
 
 type NewTurnoPayload = Omit<Turno, 'id'>;
 
@@ -34,7 +34,7 @@ export default function SchedulePage() {
   const [s2End,   setS2End]   = useState('');
   const [s3Start, setS3Start] = useState('');
   const [s3End,   setS3End]   = useState('');
-  const [tipo, setTipo] = useState<'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'>('NORMALE');
+  const [tipo, setTipo] = useState<TipoTurno>('NORMALE');
   const [note, setNote] = useState('');
 
   const calendarId = SCHEDULE_CALENDAR_IDS[0];
