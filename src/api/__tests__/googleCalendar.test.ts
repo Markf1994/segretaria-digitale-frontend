@@ -1,4 +1,4 @@
-import { createShiftEvents } from '../googleCalendar'
+import { createShiftEvents, signIn } from '../googleCalendar'
 
 describe('createShiftEvents', () => {
   const insert = jest.fn().mockResolvedValue({})
@@ -30,3 +30,26 @@ describe('createShiftEvents', () => {
     })
   })
 })
+
+describe('signIn', () => {
+  it('waits for gapi.load before initializing client', async () => {
+    const init = jest.fn().mockResolvedValue({})
+    const sign = jest.fn().mockResolvedValue({})
+    const load = jest.fn()
+    ;(window as any).gapi = {
+      load,
+      client: { init },
+      auth2: { getAuthInstance: () => ({ signIn: sign }) },
+    }
+
+    load.mockImplementation((_lib, opts) => {
+      setTimeout(opts.callback, 0)
+    })
+
+    const promise = signIn()
+    expect(init).not.toHaveBeenCalled()
+    await promise
+    expect(init).toHaveBeenCalled()
+  })
+})
+
