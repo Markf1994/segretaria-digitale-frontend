@@ -59,7 +59,19 @@ describe('SchedulePage', () => {
   it('loads turni from API', async () => {
     mockedApi.get.mockImplementation(url => {
       if (url === '/users/') return Promise.resolve({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
-      if (url === '/orari/') return Promise.resolve({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' }] })
+      if (url === '/orari/')
+        return Promise.resolve({
+          data: [
+            {
+              id: '1',
+              giorno: '2023-01-01',
+              slot1_inizio: '08:00',
+              slot1_fine: '10:00',
+              tipo: 'NORMALE',
+              user_id: 'u',
+            },
+          ],
+        })
       return Promise.resolve({ data: [] })
     })
 
@@ -78,7 +90,8 @@ describe('SchedulePage', () => {
       data: {
         id: '2',
         giorno: '2023-05-02',
-        slot1: { inizio: '09:00', fine: '11:00' },
+        slot1_inizio: '09:00',
+        slot1_fine: '11:00',
         tipo: 'NORMALE',
         user_id: 'u',
       },
@@ -100,9 +113,14 @@ describe('SchedulePage', () => {
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-02',
-      slot1: { inizio: '09:00', fine: '11:00' },
+      slot1_inizio: '09:00',
+      slot1_fine: '11:00',
+      slot2_inizio: null,
+      slot2_fine: null,
+      slot3_inizio: null,
+      slot3_fine: null,
       tipo: 'NORMALE',
-      note: undefined,
+      note: null,
     })
     expect((inputs[0] as HTMLInputElement).value).toBe('')
     expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
@@ -118,7 +136,8 @@ describe('SchedulePage', () => {
       data: {
         id: '3',
         giorno: '2023-05-03',
-        slot1: { inizio: '10:00', fine: '12:00' },
+        slot1_inizio: '10:00',
+        slot1_fine: '12:00',
         tipo: 'RIPOSO',
         user_id: 'u',
       },
@@ -143,9 +162,14 @@ describe('SchedulePage', () => {
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-03',
-      slot1: { inizio: '10:00', fine: '12:00' },
+      slot1_inizio: '10:00',
+      slot1_fine: '12:00',
+      slot2_inizio: null,
+      slot2_fine: null,
+      slot3_inizio: null,
+      slot3_fine: null,
       tipo: 'RIPOSO',
-      note: undefined,
+      note: null,
     })
   })
 
@@ -156,7 +180,8 @@ describe('SchedulePage', () => {
       data: {
         id: '4',
         giorno: '2023-05-04',
-        slot1: { inizio: '11:00', fine: '13:00' },
+        slot1_inizio: '11:00',
+        slot1_fine: '13:00',
         tipo: 'FESTIVO',
         user_id: 'u',
       },
@@ -181,15 +206,31 @@ describe('SchedulePage', () => {
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-04',
-      slot1: { inizio: '11:00', fine: '13:00' },
+      slot1_inizio: '11:00',
+      slot1_fine: '13:00',
+      slot2_inizio: null,
+      slot2_fine: null,
+      slot3_inizio: null,
+      slot3_fine: null,
       tipo: 'FESTIVO',
-      note: undefined,
+      note: null,
     })
   })
 
   it('deletes a turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
-    mockedApi.get.mockResolvedValueOnce({ data: [{ id: '1', giorno: '2023-01-01', slot1: { inizio: '07:00', fine: '09:00' }, tipo: 'NORMALE', user_id: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({
+      data: [
+        {
+          id: '1',
+          giorno: '2023-01-01',
+          slot1_inizio: '07:00',
+          slot1_fine: '09:00',
+          tipo: 'NORMALE',
+          user_id: 'u',
+        },
+      ],
+    })
     mockedApi.delete.mockResolvedValueOnce({})
 
     renderPage()
@@ -206,7 +247,14 @@ describe('SchedulePage', () => {
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.get.mockResolvedValueOnce({
       data: [
-        { id: '1', giorno: '2023-06-01', slot1: { inizio: '08:00', fine: '10:00' }, tipo: 'NORMALE', user_id: 'u' },
+        {
+          id: '1',
+          giorno: '2023-06-01',
+          slot1_inizio: '08:00',
+          slot1_fine: '10:00',
+          tipo: 'NORMALE',
+          user_id: 'u',
+        },
       ],
     })
 
@@ -224,7 +272,14 @@ describe('SchedulePage', () => {
     mockedApi.get.mockResolvedValueOnce({ data: [] })
     mockedApi.get.mockResolvedValueOnce({
       data: [
-        { id: '1', giorno: '2023-06-02', slot1: { inizio: '09:00', fine: '11:00' }, tipo: 'NORMALE', user_id: 'u' },
+        {
+          id: '1',
+          giorno: '2023-06-02',
+          slot1_inizio: '09:00',
+          slot1_fine: '11:00',
+          tipo: 'NORMALE',
+          user_id: 'u',
+        },
       ],
     })
 
