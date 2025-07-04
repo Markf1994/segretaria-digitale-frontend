@@ -1,4 +1,5 @@
 import React from 'react';
+import './ListPages.css';
 
 const GoogleIcon = () => (
   <svg
@@ -35,10 +36,10 @@ const ZoomIcon = () => (
 
 export default function UtilitaPage() {
   return (
-    <div className="p-4 flex flex-row justify-around items-center space-x-4">
-      <img src="/teams.png" alt="Microsoft Teams" className="h-32" />
-      <img src="/zoom.png" alt="Zoom" className="h-32" />
-      <img src="/meet.png" alt="Google Meet" className="h-32" />
+    <div className="meeting-links">
+      <img src="/meet.png" alt="Google Teams" />
+      <img src="/zoom.png" alt="Zoom" />
+      <img src="/teams.png" alt="Microsoft Teams" />
     </div>
   );
 }
