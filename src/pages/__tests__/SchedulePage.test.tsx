@@ -94,7 +94,9 @@ describe('SchedulePage', () => {
     await userEvent.type(inputs[2], '11:00')
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
-    expect(await screen.findByText('09:00–11:00')).toBeInTheDocument()
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-02/i })
+    expect(within(row).getByText('09:00')).toBeInTheDocument()
+    expect(within(row).getByText('11:00')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-02',
@@ -135,7 +137,9 @@ describe('SchedulePage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
-    expect(await screen.findByText('RIPOSO')).toBeInTheDocument()
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-03/i })
+    expect(within(row).getByText('10:00')).toBeInTheDocument()
+    expect(within(row).getByText('12:00')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-03',
@@ -171,7 +175,9 @@ describe('SchedulePage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
-    expect(await screen.findByText('FESTIVO')).toBeInTheDocument()
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-04/i })
+    expect(within(row).getByText('11:00')).toBeInTheDocument()
+    expect(within(row).getByText('13:00')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-04',
@@ -188,10 +194,10 @@ describe('SchedulePage', () => {
 
     renderPage()
 
-    await screen.findByText('07:00–09:00')
+    await screen.findByText('07:00')
     await userEvent.click(screen.getByRole('button', { name: '🗑️' }))
 
-    expect(screen.queryByText('07:00–09:00')).not.toBeInTheDocument()
+    expect(screen.queryByText('07:00')).not.toBeInTheDocument()
     expect(mockedApi.delete).toHaveBeenCalledWith('/orari/1')
   })
 
@@ -208,7 +214,8 @@ describe('SchedulePage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /importa/i }))
 
-    expect(await screen.findByText('08:00–10:00')).toBeInTheDocument()
+    expect(await screen.findByText('08:00')).toBeInTheDocument()
+    expect(screen.getByText('10:00')).toBeInTheDocument()
     expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ giorno: '2023-06-01' }))
   })
 

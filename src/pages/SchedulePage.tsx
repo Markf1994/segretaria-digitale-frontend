@@ -248,8 +248,16 @@ export default function SchedulePage() {
         <summary>Turni salvati</summary>
         <table className="item-table">
           <thead>
-            <tr>
-              <th>Utente</th><th>Data</th><th>Slot 1</th><th>Slot 2</th><th>Slot 3</th><th>Tipo</th><th>Note</th><th></th>
+            <tr style={{ fontFamily: 'Cormorant Garamond, serif', color: '#000' }}>
+              <th>Utente</th>
+              <th>Data</th>
+              <th>Mattino (inizio)</th>
+              <th>Mattino (fine)</th>
+              <th>Pomeriggio/serale (inizio)</th>
+              <th>Pomeriggio/serale (fine)</th>
+              <th>Straordinario (inizio)</th>
+              <th>Straordinario (fine)</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -261,11 +269,12 @@ export default function SchedulePage() {
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno}</td>
-                <td>{`${t.slot1.inizio}–${t.slot1.fine}`}</td>
-                <td>{t.slot2 ? `${t.slot2.inizio}–${t.slot2.fine}` : '—'}</td>
-                <td>{t.slot3 ? `${t.slot3.inizio}–${t.slot3.fine}` : '—'}</td>
-                <td>{t.tipo}</td>
-                <td>{t.note || '—'}</td>
+                  <td>{t.slot1.inizio}</td>
+                  <td>{t.slot1.fine}</td>
+                  <td>{t.slot2 ? t.slot2.inizio : '—'}</td>
+                  <td>{t.slot2 ? t.slot2.fine : '—'}</td>
+                  <td>{t.slot3 ? t.slot3.inizio : '—'}</td>
+                  <td>{t.slot3 ? t.slot3.fine : '—'}</td>
                   <td><button onClick={() => handleDelete(t.id)}>🗑️</button></td>
                 </tr>
               );
