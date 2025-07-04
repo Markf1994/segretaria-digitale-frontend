@@ -15,8 +15,8 @@ describe('UtilitaPage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByAltText(/microsoft teams/i)).toBeInTheDocument();
+    expect(screen.getByAltText(/google teams/i)).toBeInTheDocument();
     expect(screen.getByAltText(/zoom/i)).toBeInTheDocument();
-    expect(screen.getByAltText(/google meet/i)).toBeInTheDocument();
+    expect(screen.getByAltText(/microsoft teams/i)).toBeInTheDocument();
   });
 });
