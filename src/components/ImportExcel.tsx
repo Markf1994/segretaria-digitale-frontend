@@ -1,4 +1,5 @@
 import React, { useRef, useState, ChangeEvent } from 'react';
+import axios from 'axios';
 import { importTurniExcel } from '../api/schedule';
 
 interface ImportExcelProps {
@@ -35,7 +36,14 @@ export default function ImportExcel({ onComplete }: ImportExcelProps) {
       onComplete?.(true);
     } catch (error) {
       console.error('ImportExcel error:', error);
-      setMessage("Errore durante l'importazione del file");
+      let errMessage = "Errore durante l'importazione del file";
+      if (axios.isAxiosError(error)) {
+        const detail = (error.response?.data as any)?.message || (error.response?.data as any)?.detail;
+        if (detail) {
+          errMessage += `: ${detail}`;
+        }
+      }
+      setMessage(errMessage);
       onComplete?.(false);
     } finally {
       setBusy(false);
