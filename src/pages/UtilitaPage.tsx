@@ -1,26 +1,30 @@
 import React from 'react';
-import { Google, Microsoft, Video } from 'lucide-react';
+
+const GoogleIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533.5 544.3" className="w-6 h-6">
+    <path fill="#4285f4" d="M533.5 278.4c0-18.5-1.5-36.3-4.4-53.6H272v101.3h146.9"/>
+    {/* completa con i path ufficiali */}
+  </svg>
+);
+
+const TeamsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-6 h-6">
+    <path fill="#6264A7" d="M43 4H5C3.3 4 2 5.3..."/>
+    {/* altri path */}
+  </svg>
+);
+
+const ZoomIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6">
+    <path fill="#2D8CFF" d="M17 11.5V8c0-1.1-..."/>
+  </svg>
+);
 
 export default function UtilitaPage() {
   const links = [
-    {
-      name: 'Google Meet',
-      icon: <Google className="w-6 h-6" />,
-      url: import.meta.env.VITE_MEET_URL ??
-        'https://meet.google.com/xyz-abcq-wvu',
-    },
-    {
-      name: 'Microsoft Teams',
-      icon: <Microsoft className="w-6 h-6" />,
-      url: import.meta.env.VITE_TEAMS_URL ??
-        'https://teams.microsoft.com/l/meetup-join/…',
-    },
-    {
-      name: 'Zoom',
-      icon: <Video className="w-6 h-6" />,
-      url: import.meta.env.VITE_ZOOM_URL ??
-        'https://zoom.us/wc/join/123456789?pwd=abcdef',
-    },
+    { name: 'Google Meet', icon: <GoogleIcon />, url: 'https://meet.google.com/xyz-abcq-wvu' },
+    { name: 'Microsoft Teams', icon: <TeamsIcon />, url: 'https://teams.microsoft.com/l/meetup-join/…' },
+    { name: 'Zoom', icon: <ZoomIcon />, url: 'https://zoom.us/wc/join/123456789?pwd=abcdef' },
   ];
 
   return (
