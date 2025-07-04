@@ -50,7 +50,7 @@ export default function SchedulePage() {
 
   const loadTurni = async () => {
     try {
-      const { data } = await fetchTurni();
+      const data = await fetchTurni();
       setTurni(data);
       setLoadError('');
       return data;
@@ -142,7 +142,7 @@ export default function SchedulePage() {
     if (s2Start && s2End) payload.slot2 = { inizio: s2Start, fine: s2End };
     if (s3Start && s3End) payload.slot3 = { inizio: s3Start, fine: s3End };
 
-    const { data } = await saveTurno(payload as Turno);
+    const data = await saveTurno(payload as Turno);
     setTurni(prev =>
       prev.some(t => t.id === data.id) ? prev.map(t => t.id === data.id ? data : t) : [...prev, data]
     );
