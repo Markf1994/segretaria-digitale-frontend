@@ -7,17 +7,20 @@ export default function UtilitaPages() {
     {
       name: 'Google Meet',
       icon: <Google className="w-6 h-6" />,
-      url: 'https://meet.google.com/xyz-abcq-wvu',
+      url: import.meta.env.VITE_MEET_URL ??
+        'https://meet.google.com/xyz-abcq-wvu',
     },
     {
       name: 'Microsoft Teams',
       icon: <Microsoft className="w-6 h-6" />,
-      url: 'https://teams.microsoft.com/l/meetup-join/…',
+      url: import.meta.env.VITE_TEAMS_URL ??
+        'https://teams.microsoft.com/l/meetup-join/…',
     },
     {
       name: 'Zoom',
       icon: <Video className="w-6 h-6" />,
-      url: 'https://zoom.us/wc/join/123456789?pwd=abcdef',
+      url: import.meta.env.VITE_ZOOM_URL ??
+        'https://zoom.us/wc/join/123456789?pwd=abcdef',
     },
   ];
 
