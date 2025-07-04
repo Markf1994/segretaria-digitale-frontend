@@ -35,9 +35,23 @@ const ZoomIcon = () => (
 
 export default function UtilitaPage() {
   const links = [
-    { name: 'Google Meet', icon: <GoogleIcon />, url: 'https://meet.google.com/xyz-abcq-wvu' },
-    { name: 'Microsoft Teams', icon: <TeamsIcon />, url: 'https://teams.microsoft.com/l/meetup-join/…' },
-    { name: 'Zoom', icon: <ZoomIcon />, url: 'https://zoom.us/wc/join/123456789?pwd=abcdef' },
+    {
+      name: 'Google Meet',
+      icon: <GoogleIcon />,
+      url: import.meta.env.VITE_MEET_URL || 'https://meet.google.com/xyz-abcq-wvu',
+    },
+    {
+      name: 'Microsoft Teams',
+      icon: <TeamsIcon />,
+      url:
+        import.meta.env.VITE_TEAMS_URL ||
+        'https://teams.microsoft.com/l/meetup-join/…',
+    },
+    {
+      name: 'Zoom',
+      icon: <ZoomIcon />,
+      url: import.meta.env.VITE_ZOOM_URL || 'https://zoom.us/wc/join/123456789?pwd=abcdef',
+    },
   ];
 
   return (
