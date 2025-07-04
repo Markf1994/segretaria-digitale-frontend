@@ -8,7 +8,10 @@ const Greeting: React.FC = () => {
   let salutation = 'Buonasera';
   if (hour < 12) salutation = 'Buongiorno';
   else if (hour < 18) salutation = 'Buon pomeriggio';
-  const namePart = user && user.nome ? ` ${user.nome}` : '';
+  const namePart =
+    user && user.nome ? (
+      <span className="greeting-name"> {user.nome}</span>
+    ) : null;
   return <div className="user-greeting">{salutation}{namePart}</div>;
 };
 
