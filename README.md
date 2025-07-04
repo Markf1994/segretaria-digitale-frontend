@@ -121,6 +121,8 @@ server. The backend expects a few environment variables to be configured:
 - `ALGORITHM` – algorithm used for signing JWT access tokens.
 - `SECRET_KEY` – secret key for token generation.
 
+The backend must send an `Access-Control-Allow-Origin` header allowing the frontend's domain (or `*`) so that features like the Excel import work. You can enable a CORS middleware or configure your framework to add this header.
+
 Once the environment variables are set you can run `uvicorn main:app` to launch
 the API.
 
