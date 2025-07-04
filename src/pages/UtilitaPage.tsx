@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Google, Microsoft, Video } from 'lucide-react';
 
-export default function UtilitaPages() {
+export default function UtilitaPage() {
   const links = [
     {
       name: 'Google Meet',
