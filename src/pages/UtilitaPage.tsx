@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { Google, Microsoft, Video } from 'lucide-react';
 
 export default function UtilitaPage() {
@@ -27,15 +26,16 @@ export default function UtilitaPage() {
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       {links.map((svc) => (
-        <Button
+        <a
           key={svc.name}
-          variant="outline"
-          className="flex flex-col items-center p-6 space-y-2"
-          onClick={() => window.open(svc.url, '_blank')}
+          href={svc.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-4 py-2 rounded border border-gray-300 bg-transparent flex flex-col items-center p-6 space-y-2"
         >
           {svc.icon}
           <span className="mt-2 font-semibold">{svc.name}</span>
-        </Button>
+        </a>
       ))}
     </div>
   );
