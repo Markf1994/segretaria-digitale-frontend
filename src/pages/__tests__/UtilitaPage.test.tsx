@@ -4,7 +4,7 @@ import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 describe('UtilitaPage', () => {
-  it('renders meeting service links', () => {
+  it('renders meeting service logos', () => {
     render(
       <MemoryRouter initialEntries={["/utilita"]}>
         <Routes>
@@ -15,8 +15,8 @@ describe('UtilitaPage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('button', { name: /google meet/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /microsoft teams/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /zoom/i })).toBeInTheDocument();
+    expect(screen.getByAltText(/microsoft teams/i)).toBeInTheDocument();
+    expect(screen.getByAltText(/zoom/i)).toBeInTheDocument();
+    expect(screen.getByAltText(/google meet/i)).toBeInTheDocument();
   });
 });

@@ -34,41 +34,11 @@ const ZoomIcon = () => (
 );
 
 export default function UtilitaPage() {
-  const links = [
-    {
-      name: 'Google Meet',
-      icon: <GoogleIcon />,
-      url: import.meta.env.VITE_MEET_URL || 'https://meet.google.com/xyz-abcq-wvu',
-    },
-    {
-      name: 'Microsoft Teams',
-      icon: <TeamsIcon />,
-      url:
-        import.meta.env.VITE_TEAMS_URL ||
-        'https://teams.microsoft.com/l/meetup-join/…',
-    },
-    {
-      name: 'Zoom',
-      icon: <ZoomIcon />,
-      url: import.meta.env.VITE_ZOOM_URL || 'https://zoom.us/wc/join/123456789?pwd=abcdef',
-    },
-  ];
-
   return (
-    <div className="p-2 grid grid-cols-1 md:grid-cols-3 gap-2">
-      {links.map((svc) => (
-        <a
-          key={svc.name}
-          href={svc.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          role="button"
-          className="flex flex-col items-center justify-center border border-gray-300 rounded p-3 space-y-1 text-sm bg-transparent"
-        >
-          {svc.icon}
-          <span className="mt-1 font-semibold">{svc.name}</span>
-        </a>
-      ))}
+    <div className="p-4 flex flex-row justify-around items-center space-x-4">
+      <img src="/teams.png" alt="Microsoft Teams" className="h-32" />
+      <img src="/zoom.png" alt="Zoom" className="h-32" />
+      <img src="/meet.png" alt="Google Meet" className="h-32" />
     </div>
   );
 }
