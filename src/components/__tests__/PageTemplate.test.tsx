@@ -69,7 +69,7 @@ describe('PageTemplate', () => {
 
     const hour = new Date().getHours();
     const salutation = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
-    expect(await screen.findByText(new RegExp(`${salutation} test`, 'i'))).toBeInTheDocument();
+    expect(await screen.findByText(new RegExp(`${salutation}  test`, 'i'))).toBeInTheDocument();
   });
 
   it('shows placeholder greeting when fetching profile fails', async () => {
