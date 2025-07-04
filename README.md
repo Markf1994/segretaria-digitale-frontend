@@ -35,6 +35,9 @@ The variables are:
   by the schedule page. The first ID is selected by default and it falls back to
   `9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com`
   when unset.
+- `VITE_MEET_URL` – Google Meet room URL shown on the Utilità page.
+- `VITE_TEAMS_URL` – Microsoft Teams meeting link used by the Utilità page.
+- `VITE_ZOOM_URL` – Zoom meeting link used by the Utilità page.
 
 4. Start the development server:
 
