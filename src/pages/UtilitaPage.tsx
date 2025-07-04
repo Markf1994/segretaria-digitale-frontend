@@ -29,17 +29,18 @@ export default function UtilitaPage() {
   ];
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="p-2 grid grid-cols-1 md:grid-cols-3 gap-2">
       {links.map((svc) => (
         <a
           key={svc.name}
           href={svc.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-4 py-2 rounded border border-gray-300 bg-transparent flex flex-col items-center p-6 space-y-2"
+          role="button"
+          className="flex flex-col items-center justify-center border border-gray-300 rounded p-3 space-y-1 text-sm bg-transparent"
         >
           {svc.icon}
-          <span className="mt-2 font-semibold">{svc.name}</span>
+          <span className="mt-1 font-semibold">{svc.name}</span>
         </a>
       ))}
     </div>
