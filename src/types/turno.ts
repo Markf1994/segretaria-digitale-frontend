@@ -3,6 +3,13 @@ export interface Slot {
   fine: string
 }
 
+export type TipoTurno =
+  | 'NORMALE'
+  | 'STRAORD'
+  | 'FERIE'
+  | 'RIPOSO'
+  | 'FESTIVO';
+
 export interface Turno {
   id: string
   user_id: string
@@ -10,7 +17,7 @@ export interface Turno {
   slot1: Slot
   slot2?: Slot
   slot3?: Slot
-  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'
+  tipo: TipoTurno
   note?: string
 }
 
@@ -24,6 +31,6 @@ export interface BackendTurno {
   slot2_fine?: string | null
   slot3_inizio?: string | null
   slot3_fine?: string | null
-  tipo: 'NORMALE' | 'STRAORD' | 'FERIE' | 'RIPOSO' | 'FESTIVO'
+  tipo: TipoTurno
   note?: string | null
 }
