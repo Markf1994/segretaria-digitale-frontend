@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
-import { fetchTurni, saveTurno } from '../api/schedule';
+import { fetchTurni, saveTurno, deleteTurno } from '../api/schedule';
 import { listUsers } from '../api/users';
 import { User } from '../types/user';
 import { getSchedulePdf } from '../api/pdfs';
@@ -166,7 +165,7 @@ export default function SchedulePage() {
 
   /* --- delete --- */
   const handleDelete = async (id: string) => {
-    await api.delete(`/orari/${id}`);
+    await deleteTurno(id);
     setTurni(prev => prev.filter(t => t.id !== id));
   };
 

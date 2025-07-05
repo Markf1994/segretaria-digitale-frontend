@@ -6,6 +6,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import api from '../../api/axios'
 import * as pdfApi from '../../api/pdfs'
 import * as gcApi from '../../api/googleCalendar'
+import * as scheduleApi from '../../api/schedule'
 
 jest.mock('../../components/ImportExcel', () => ({
   __esModule: true,
@@ -33,15 +34,26 @@ jest.mock('../../api/googleCalendar', () => ({
   createShiftEvents: jest.fn(),
 }))
 
+jest.mock('../../api/schedule', () => {
+  const actual = jest.requireActual('../../api/schedule')
+  return {
+    __esModule: true,
+    ...actual,
+    deleteTurno: jest.fn(),
+  }
+})
+
 const mockedApi = api as jest.Mocked<typeof api>
 const mockedPdfApi = pdfApi as jest.Mocked<typeof pdfApi>
 const mockedGcApi = gcApi as jest.Mocked<typeof gcApi>
+const mockedScheduleApi = scheduleApi as jest.Mocked<typeof scheduleApi>
 
 beforeEach(() => {
   jest.resetAllMocks()
   mockedApi.get.mockResolvedValue({ data: [] })
   mockedPdfApi.getSchedulePdf.mockResolvedValue(new Blob())
   mockedGcApi.createShiftEvents.mockResolvedValue()
+  mockedScheduleApi.deleteTurno.mockResolvedValue()
 })
 
 const renderPage = () =>
@@ -231,7 +243,7 @@ describe('SchedulePage', () => {
         },
       ],
     })
-    mockedApi.delete.mockResolvedValueOnce({})
+    mockedScheduleApi.deleteTurno.mockResolvedValueOnce()
 
     renderPage()
 
@@ -239,7 +251,7 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: '🗑️' }))
 
     expect(screen.queryByText('07:00')).not.toBeInTheDocument()
-    expect(mockedApi.delete).toHaveBeenCalledWith('/orari/1')
+    expect(mockedScheduleApi.deleteTurno).toHaveBeenCalledWith('1')
   })
 
   it('creates events after import', async () => {
