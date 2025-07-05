@@ -1,6 +1,6 @@
 import React, { useRef, useState, ChangeEvent } from 'react';
-import axios from 'axios';
 import { importTurniExcel } from '../api/schedule';
+import { getErrorDetail } from '../utils/errors';
 
 interface ImportExcelProps {
   onComplete?: (success: boolean) => void;
@@ -35,15 +35,10 @@ export default function ImportExcel({ onComplete }: ImportExcelProps) {
       setMessage('File importato correttamente.');
       onComplete?.(true);
     } catch (error) {
-      console.error('ImportExcel error:', error);
-      let errMessage = "Errore durante l'importazione del file";
-      if (axios.isAxiosError(error)) {
-        const detail = (error.response?.data as any)?.message || (error.response?.data as any)?.detail;
-        if (detail) {
-          errMessage += `: ${detail}`;
-        }
-      }
-      setMessage(errMessage);
+      const detail = await getErrorDetail(error);
+      console.error('ImportExcel error →', detail);
+      const msg = detail ? `Errore durante l'importazione del file: ${detail}` : "Errore durante l'importazione del file";
+      setMessage(msg);
       onComplete?.(false);
     } finally {
       setBusy(false);
