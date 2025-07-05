@@ -1,4 +1,18 @@
-import { getUserStorageKey } from '../auth';
+import { decodeToken, getUserId, getUserStorageKey } from '../auth';
+
+describe('decodeToken', () => {
+  it('parses a jwt payload', () => {
+    const header = Buffer.from('{}').toString('base64');
+    const payload = Buffer.from(JSON.stringify({ sub: 'abc' })).toString('base64');
+    const token = `${header}.${payload}.sig`;
+    const decoded = decodeToken(token);
+    expect(decoded).toEqual({ sub: 'abc' });
+  });
+
+  it('returns null for malformed token', () => {
+    expect(decodeToken('bad')).toBeNull();
+  });
+});
 
 describe('getUserStorageKey', () => {
   it('returns prefix when token missing', () => {
@@ -23,5 +37,18 @@ describe('getUserStorageKey', () => {
     const payload = base64Url(Buffer.from(JSON.stringify({ sub: 'xyz' })));
     const token = `${header}.${payload}.sig`;
     expect(getUserStorageKey('todos', token)).toBe('todos_xyz');
+  });
+});
+
+describe('getUserId', () => {
+  it('returns null when token missing', () => {
+    expect(getUserId(null)).toBeNull();
+  });
+
+  it('extracts id from token', () => {
+    const header = Buffer.from('{}').toString('base64');
+    const payload = Buffer.from(JSON.stringify({ email: 'me@example.com' })).toString('base64');
+    const token = `${header}.${payload}.sig`;
+    expect(getUserId(token)).toBe('me@example.com');
   });
 });
