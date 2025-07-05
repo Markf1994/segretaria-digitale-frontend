@@ -1,6 +1,8 @@
+import type { Dayjs } from 'dayjs'
+
 export interface Slot {
-  inizio: string
-  fine: string
+  inizio: Dayjs
+  fine: Dayjs
 }
 
 export type TipoTurno =
@@ -13,7 +15,7 @@ export type TipoTurno =
 export interface Turno {
   id: string
   user_id: string
-  giorno: string
+  giorno: Dayjs
   slot1: Slot
   slot2?: Slot
   slot3?: Slot
@@ -25,12 +27,12 @@ export interface BackendTurno {
   id?: string
   user_id: string
   giorno: string
-  slot1_inizio: string
-  slot1_fine: string
-  slot2_inizio?: string | null
-  slot2_fine?: string | null
-  slot3_inizio?: string | null
-  slot3_fine?: string | null
+  inizio_1: string
+  fine_1: string
+  inizio_2?: string | null
+  fine_2?: string | null
+  inizio_3?: string | null
+  fine_3?: string | null
   tipo: TipoTurno
   note?: string | null
 }

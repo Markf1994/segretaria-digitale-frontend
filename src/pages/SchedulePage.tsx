@@ -11,6 +11,7 @@ import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
 import './ListPages.css';
 
 /* ---------- TIPI ---------- */
+import dayjs from 'dayjs';
 import { Turno, Slot, TipoTurno } from '../types/turno';
 
 type NewTurnoPayload = Omit<Turno, 'id'>;
@@ -65,12 +66,12 @@ export default function SchedulePage() {
         const data = await loadTurni();
       if (data.length) {
         const maxDate = new Date(
-          Math.max(...data.map(t => new Date(t.giorno).getTime()))
+          Math.max(...data.map(t => t.giorno.toDate().getTime()))
         );
         const start = startOfISOWeek(maxDate);
         const end = addDays(start, 6);
         const imported = data.filter(t => {
-          const d = new Date(t.giorno);
+          const d = t.giorno.toDate();
           return d >= start && d <= end;
         });
         setImportedTurni(imported);
@@ -80,10 +81,23 @@ export default function SchedulePage() {
               const email = utenti.find(u => u.id === t.user_id)?.email || '';
               await createShiftEvents(calendarId, {
                 userEmail: email,
-                giorno: t.giorno,
-                slot1: t.slot1,
-                slot2: t.slot2,
-                slot3: t.slot3,
+                giorno: t.giorno.format('YYYY-MM-DD'),
+                slot1: {
+                  inizio: t.slot1.inizio.format('HH:mm'),
+                  fine: t.slot1.fine.format('HH:mm'),
+                },
+                slot2: t.slot2
+                  ? {
+                      inizio: t.slot2.inizio.format('HH:mm'),
+                      fine: t.slot2.fine.format('HH:mm'),
+                    }
+                  : undefined,
+                slot3: t.slot3
+                  ? {
+                      inizio: t.slot3.inizio.format('HH:mm'),
+                      fine: t.slot3.fine.format('HH:mm'),
+                    }
+                  : undefined,
                 note: t.note,
               } as ShiftData);
             } catch {
@@ -134,13 +148,24 @@ export default function SchedulePage() {
 
     const payload: NewTurnoPayload = {
       user_id: utenteSel,
-      giorno,
-      slot1: { inizio: s1Start, fine: s1End },
+      giorno: dayjs(giorno),
+      slot1: {
+        inizio: dayjs(`${giorno}T${s1Start}`),
+        fine: dayjs(`${giorno}T${s1End}`),
+      },
       tipo,
       note: note || undefined,
     };
-    if (s2Start && s2End) payload.slot2 = { inizio: s2Start, fine: s2End };
-    if (s3Start && s3End) payload.slot3 = { inizio: s3Start, fine: s3End };
+    if (s2Start && s2End)
+      payload.slot2 = {
+        inizio: dayjs(`${giorno}T${s2Start}`),
+        fine: dayjs(`${giorno}T${s2End}`),
+      };
+    if (s3Start && s3End)
+      payload.slot3 = {
+        inizio: dayjs(`${giorno}T${s3Start}`),
+        fine: dayjs(`${giorno}T${s3End}`),
+      };
 
     const data = await saveTurno(payload as Turno);
     setTurni(prev =>
@@ -151,10 +176,23 @@ export default function SchedulePage() {
         const email = utenti.find(u => u.id === data.user_id)?.email || '';
         await createShiftEvents(calendarId, {
           userEmail: email,
-          giorno: data.giorno,
-          slot1: data.slot1,
-          slot2: data.slot2,
-          slot3: data.slot3,
+          giorno: data.giorno.format('YYYY-MM-DD'),
+          slot1: {
+            inizio: data.slot1.inizio.format('HH:mm'),
+            fine: data.slot1.fine.format('HH:mm'),
+          },
+          slot2: data.slot2
+            ? {
+                inizio: data.slot2.inizio.format('HH:mm'),
+                fine: data.slot2.fine.format('HH:mm'),
+              }
+            : undefined,
+          slot3: data.slot3
+            ? {
+                inizio: data.slot3.inizio.format('HH:mm'),
+                fine: data.slot3.fine.format('HH:mm'),
+              }
+            : undefined,
           note: data.note,
         } as ShiftData);
       } catch {
@@ -268,13 +306,13 @@ export default function SchedulePage() {
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
-                  <td>{t.giorno}</td>
-                  <td>{t.slot1.inizio}</td>
-                  <td>{t.slot1.fine}</td>
-                  <td>{t.slot2 ? t.slot2.inizio : '—'}</td>
-                  <td>{t.slot2 ? t.slot2.fine : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.inizio : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.fine : '—'}</td>
+                  <td>{t.giorno.format('YYYY-MM-DD')}</td>
+                  <td>{t.slot1.inizio.format('HH:mm')}</td>
+                  <td>{t.slot1.fine.format('HH:mm')}</td>
+                  <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
+                  <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
+                  <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
+                  <td>{t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
                   <td><button onClick={() => handleDelete(t.id)}>🗑️</button></td>
                 </tr>
               );
@@ -323,21 +361,21 @@ export default function SchedulePage() {
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo
-                : `${t.slot1.inizio}–${t.slot1.fine}`;
+                : `${t.slot1.inizio.format('HH:mm')}–${t.slot1.fine.format('HH:mm')}`;
               const slot2 = ferieLike
                 ? '—'
                 : t.slot2
-                ? `${t.slot2.inizio}–${t.slot2.fine}`
+                ? `${t.slot2.inizio.format('HH:mm')}–${t.slot2.fine.format('HH:mm')}`
                 : '—';
               const slot3Text = ferieLike
                 ? '—'
                 : t.slot3
-                ? `${t.slot3.inizio}–${t.slot3.fine}`
+                ? `${t.slot3.inizio.format('HH:mm')}–${t.slot3.fine.format('HH:mm')}`
                 : '—';
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
-                  <td>{t.giorno}</td>
+                  <td>{t.giorno.format('YYYY-MM-DD')}</td>
                   <td>{t.tipo}</td>
                   <td>{slot1}</td>
                   <td>{slot2}</td>
