@@ -5,7 +5,7 @@ const DEFAULT_CALENDAR_ID = 'primary'
 
 export const signIn = async (): Promise<void> => {
   const gapi = (window as any).gapi
-  await new Promise((resolve, reject) =>
+  await new Promise<void>((resolve, reject) =>
     gapi.load('client:auth2', { callback: resolve, onerror: reject })
   )
   await gapi.client.init({

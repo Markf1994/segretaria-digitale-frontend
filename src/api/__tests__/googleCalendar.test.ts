@@ -47,6 +47,10 @@ describe('signIn', () => {
     })
 
     const promise = signIn()
+    expect(load).toHaveBeenCalledWith(
+      'client:auth2',
+      expect.objectContaining({ callback: expect.any(Function), onerror: expect.any(Function) })
+    )
     expect(init).not.toHaveBeenCalled()
     await promise
     expect(init).toHaveBeenCalled()
