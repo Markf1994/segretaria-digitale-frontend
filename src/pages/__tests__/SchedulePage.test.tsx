@@ -325,3 +325,85 @@ describe('SchedulePage', () => {
     urlSpy.mockRestore()
   })
 })
+
+describe('SchedulePage offline', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true })
+  })
+
+  it('loads turni from storage when offline', async () => {
+    localStorage.setItem(
+      'turni',
+      JSON.stringify([
+        {
+          id: '1',
+          user_id: 'u',
+          giorno: '2023-01-01',
+          inizio_1: '08:00',
+          fine_1: '10:00',
+          inizio_2: null,
+          fine_2: null,
+          inizio_3: null,
+          fine_3: null,
+          tipo: 'NORMALE',
+          note: null,
+        },
+      ])
+    )
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+
+    renderPage()
+
+    expect(await screen.findByRole('row', { name: /u\s+2023-01-01/i })).toBeInTheDocument()
+    expect(mockedApi.get).toHaveBeenCalledWith('/users/')
+    expect(mockedApi.get).not.toHaveBeenCalledWith('/orari/')
+  })
+
+  it('adds a turno offline', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-06-01')
+    await userEvent.type(inputs[1], '09:00')
+    await userEvent.type(inputs[2], '11:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    const row = await screen.findByRole('row', { name: /u\s+2023-06-01/i })
+    expect(within(row).getByText('09:00')).toBeInTheDocument()
+    expect(mockedApi.post).not.toHaveBeenCalled()
+  })
+
+  it('deletes a turno offline', async () => {
+    localStorage.setItem(
+      'turni',
+      JSON.stringify([
+        {
+          id: '1',
+          user_id: 'u',
+          giorno: '2023-06-02',
+          inizio_1: '08:00',
+          fine_1: '10:00',
+          inizio_2: null,
+          fine_2: null,
+          inizio_3: null,
+          fine_3: null,
+          tipo: 'NORMALE',
+          note: null,
+        },
+      ])
+    )
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+
+    renderPage()
+
+    await screen.findByText('08:00')
+    await userEvent.click(screen.getByRole('button', { name: '🗑️' }))
+
+    expect(screen.queryByText('08:00')).not.toBeInTheDocument()
+    expect(mockedScheduleApi.deleteTurno).not.toHaveBeenCalled()
+  })
+})
