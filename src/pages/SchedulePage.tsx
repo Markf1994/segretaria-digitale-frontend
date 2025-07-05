@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { fetchTurni, saveTurno, deleteTurno } from '../api/schedule';
 import { listUsers } from '../api/users';
 import { User } from '../types/user';
@@ -8,6 +8,9 @@ import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
 import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
 import './ListPages.css';
+import { useAuthStore } from '../store/auth';
+import { getUserStorageKey } from '../utils/auth';
+import { withOffline, withoutResult } from '../utils/offline';
 
 /* ---------- TIPI ---------- */
 import dayjs from 'dayjs';
@@ -47,17 +50,76 @@ export default function SchedulePage() {
   const [loadError, setLoadError] = useState('');
   const [signedIn, setSignedIn] = useState(false);
   const [signInError, setSignInError] = useState('');
+  const token = useAuthStore(s => s.token);
+  const storageKey = useMemo(
+    () =>
+      getUserStorageKey(
+        'turni',
+        token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)
+      ),
+    [token]
+  );
+
+  const toPlain = (t: Turno) => ({
+    id: t.id,
+    user_id: t.user_id,
+    giorno: t.giorno.format('YYYY-MM-DD'),
+    inizio_1: t.slot1.inizio.format('HH:mm'),
+    fine_1: t.slot1.fine.format('HH:mm'),
+    inizio_2: t.slot2 ? t.slot2.inizio.format('HH:mm') : null,
+    fine_2: t.slot2 ? t.slot2.fine.format('HH:mm') : null,
+    inizio_3: t.slot3 ? t.slot3.inizio.format('HH:mm') : null,
+    fine_3: t.slot3 ? t.slot3.fine.format('HH:mm') : null,
+    tipo: t.tipo,
+    note: t.note ?? null,
+  });
+
+  const fromPlain = (p: any): Turno => ({
+    id: p.id,
+    user_id: p.user_id,
+    giorno: dayjs(p.giorno),
+    slot1: { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) },
+    slot2:
+      p.inizio_2 && p.fine_2
+        ? { inizio: dayjs(`${p.giorno}T${p.inizio_2}`), fine: dayjs(`${p.giorno}T${p.fine_2}`) }
+        : undefined,
+    slot3:
+      p.inizio_3 && p.fine_3
+        ? { inizio: dayjs(`${p.giorno}T${p.inizio_3}`), fine: dayjs(`${p.giorno}T${p.fine_3}`) }
+        : undefined,
+    tipo: p.tipo,
+    note: p.note ?? undefined,
+  });
+
+  const saveLocal = (data: Turno[]) => {
+    const plain = data.map(toPlain);
+    localStorage.setItem(storageKey, JSON.stringify(plain));
+  };
 
   const loadTurni = async () => {
-    try {
-      const data = await fetchTurni();
-      setTurni(data);
-      setLoadError('');
-      return data;
-    } catch {
-      setLoadError('Errore nel caricamento dei turni');
-      return [];
-    }
+    const data = await withOffline(
+      async () => {
+        const res = await fetchTurni();
+        saveLocal(res);
+        setLoadError('');
+        return res;
+      },
+      () => {
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored) as any[];
+            return parsed.map(fromPlain) as Turno[];
+          } catch {
+            // ignore
+          }
+        }
+        setLoadError('Errore nel caricamento dei turni');
+        return [] as Turno[];
+      }
+    );
+    setTurni(data);
+    return data;
   };
 
   const handleImportComplete = async (success: boolean) => {
@@ -115,8 +177,8 @@ export default function SchedulePage() {
       setUtenti(r.data);
       setUtenteSel(r.data[0]?.id ?? '');
     });
-      void loadTurni();
-  }, []);
+    void loadTurni();
+  }, [storageKey]);
 
   useEffect(() => {
     const doSignIn = async () => {
@@ -166,10 +228,17 @@ export default function SchedulePage() {
         fine: dayjs(`${giorno}T${s3End}`),
       };
 
-    const data = await saveTurno(payload as Turno);
-    setTurni(prev =>
-      prev.some(t => t.id === data.id) ? prev.map(t => t.id === data.id ? data : t) : [...prev, data]
+    const data = await withOffline(
+      () => saveTurno(payload as Turno),
+      () => ({ ...(payload as Turno), id: Date.now().toString() })
     );
+    setTurni(prev => {
+      const updated = prev.some(t => t.id === data.id)
+        ? prev.map(t => (t.id === data.id ? data : t))
+        : [...prev, data];
+      saveLocal(updated);
+      return updated;
+    });
     if (signedIn) {
       try {
         const email = utenti.find(u => u.id === data.user_id)?.email || '';
@@ -203,8 +272,12 @@ export default function SchedulePage() {
 
   /* --- delete --- */
   const handleDelete = async (id: string) => {
-    await deleteTurno(id);
-    setTurni(prev => prev.filter(t => t.id !== id));
+    await withoutResult(() => deleteTurno(id));
+    setTurni(prev => {
+      const updated = prev.filter(t => t.id !== id);
+      saveLocal(updated);
+      return updated;
+    });
   };
 
   const handleDownloadPdf = async () => {
