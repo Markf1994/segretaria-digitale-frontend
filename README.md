@@ -72,6 +72,16 @@ npm run serve
 
 This serves the `dist` directory using Vite's preview mode.
 
+## Linting
+
+Run ESLint to check for style issues:
+
+```bash
+npm run lint
+```
+
+Execute this command locally before committing or in your CI pipeline to keep the codebase consistent.
+
 ## Utilità page
 
 When the development server is running you can visit `/utilita` for assorted
