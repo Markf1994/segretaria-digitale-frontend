@@ -33,28 +33,20 @@ describe('createShiftEvents', () => {
 })
 
 describe('signIn', () => {
-  it('waits for gapi.load before initializing client', async () => {
-    const init = jest.fn().mockResolvedValue({})
-    const sign = jest.fn().mockResolvedValue({})
-    const load = jest.fn()
-    ;(window as any).gapi = {
-      load,
-      client: { init },
-      auth2: { getAuthInstance: () => ({ signIn: sign }) },
+  it('initializes google identity clients', async () => {
+    const initialize = jest.fn()
+    const initTokenClient = jest.fn().mockReturnValue({ requestAccessToken: jest.fn() })
+    ;(window as any).google = {
+      accounts: {
+        id: { initialize },
+        oauth2: { initTokenClient },
+      },
     }
 
-    load.mockImplementation((_lib, opts) => {
-      setTimeout(opts.callback, 0)
-    })
+    await signIn()
 
-    const promise = signIn()
-    expect(load).toHaveBeenCalledWith(
-      'client:auth2',
-      expect.objectContaining({ callback: expect.any(Function), onerror: expect.any(Function) })
-    )
-    expect(init).not.toHaveBeenCalled()
-    await promise
-    expect(init).toHaveBeenCalled()
+    expect(initialize).toHaveBeenCalled()
+    expect(initTokenClient).toHaveBeenCalled()
   })
 })
 
