@@ -52,6 +52,7 @@ export default function EventsPage() {
   const isMobile = useIsMobile();
   const token = useAuthStore(s => s.token);
   const CALENDAR_ID =
+    import.meta.env.VITE_DASHBOARD_CALENDAR_ID ||
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
     DEFAULT_CALENDAR_ID;
   const storageKey = useMemo(

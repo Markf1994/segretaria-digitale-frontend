@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [events] = useLocalStorage<EventItem[]>('events', []);
   const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
   const CALENDAR_ID =
+    import.meta.env.VITE_DASHBOARD_CALENDAR_ID ||
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
     DEFAULT_CALENDAR_ID;
 
