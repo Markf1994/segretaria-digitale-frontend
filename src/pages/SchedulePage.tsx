@@ -431,16 +431,47 @@ export default function SchedulePage() {
               const nome =
                 utenti.find(u => u.id === t.user_id)?.nome ||
                 stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              const s1Start = ferieLike
+                ? t.tipo
+                : t.slot1?.inizio
+                ? t.slot1.inizio.format('HH:mm')
+                : '—';
+              const s1End = ferieLike
+                ? t.tipo
+                : t.slot1?.fine
+                ? t.slot1.fine.format('HH:mm')
+                : '—';
+              const s2Start = ferieLike
+                ? '—'
+                : t.slot2?.inizio
+                ? t.slot2.inizio.format('HH:mm')
+                : '—';
+              const s2End = ferieLike
+                ? '—'
+                : t.slot2?.fine
+                ? t.slot2.fine.format('HH:mm')
+                : '—';
+              const s3Start = ferieLike
+                ? '—'
+                : t.slot3?.inizio
+                ? t.slot3.inizio.format('HH:mm')
+                : '—';
+              const s3End = ferieLike
+                ? '—'
+                : t.slot3?.fine
+                ? t.slot3.fine.format('HH:mm')
+                : '—';
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno.format('YYYY-MM-DD')}</td>
-                  <td>{t.slot1.inizio.format('HH:mm')}</td>
-                  <td>{t.slot1.fine.format('HH:mm')}</td>
-                  <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
-                  <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
+                  <td>{s1Start}</td>
+                  <td>{s1End}</td>
+                  <td>{s2Start}</td>
+                  <td>{s2End}</td>
+                  <td>{s3Start}</td>
+                  <td>{s3End}</td>
                   <td>
                     <button onClick={() => handleEdit(t)}>Modifica</button>
                     <button onClick={() => handleDelete(t.id)}>🗑️</button>
