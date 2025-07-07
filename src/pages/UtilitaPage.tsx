@@ -37,7 +37,7 @@ const ZoomIcon = () => (
 export default function UtilitaPage() {
   return (
     <div className="meeting-links">
-      <img src="/meet.png" alt="Google Teams" />
+      <img src="/meet.png" alt="Google Meet" />
       <img src="/zoom.png" alt="Zoom" />
       <img src="/teams.png" alt="Microsoft Teams" />
     </div>
