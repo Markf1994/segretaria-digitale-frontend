@@ -32,6 +32,9 @@ jest.mock('../../api/pdfs', () => ({
 jest.mock('../../api/googleCalendar', () => ({
   __esModule: true,
   createShiftEvents: jest.fn(),
+  updateEvent: jest.fn(),
+  deleteEvent: jest.fn(),
+  signIn: jest.fn(),
 }))
 
 jest.mock('../../api/schedule', () => {
@@ -52,7 +55,10 @@ beforeEach(() => {
   jest.resetAllMocks()
   mockedApi.get.mockResolvedValue({ data: [] })
   mockedPdfApi.getSchedulePdf.mockResolvedValue(new Blob())
-  mockedGcApi.createShiftEvents.mockResolvedValue()
+  mockedGcApi.createShiftEvents.mockResolvedValue([])
+  mockedGcApi.updateEvent.mockResolvedValue({})
+  mockedGcApi.deleteEvent.mockResolvedValue()
+  mockedGcApi.signIn.mockResolvedValue()
   mockedScheduleApi.deleteTurno.mockResolvedValue()
 })
 
@@ -229,29 +235,82 @@ describe('SchedulePage', () => {
     })
   })
 
+  it('updates event when editing a turno', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '5',
+        giorno: '2023-05-05',
+        inizio_1: '09:00',
+        fine_1: '11:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    mockedGcApi.createShiftEvents.mockResolvedValueOnce(['ev1'])
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-05')
+    await userEvent.type(inputs[1], '09:00')
+    await userEvent.type(inputs[2], '11:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-05/i })
+    await userEvent.click(within(row).getByRole('button', { name: /modifica/i }))
+
+    const editInputs = screen.getAllByRole('textbox')
+    await userEvent.clear(editInputs[1])
+    await userEvent.type(editInputs[1], '10:00')
+    await userEvent.clear(editInputs[2])
+    await userEvent.type(editInputs[2], '12:00')
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '5',
+        giorno: '2023-05-05',
+        inizio_1: '10:00',
+        fine_1: '12:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    expect(mockedGcApi.updateEvent).toHaveBeenCalledWith(expect.any(String), 'ev1', expect.any(Object))
+  })
+
   it('deletes a turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
-    mockedApi.get.mockResolvedValueOnce({
-      data: [
-        {
-          id: '1',
-          giorno: '2023-01-01',
-          inizio_1: '07:00',
-          fine_1: '09:00',
-          tipo: 'NORMALE',
-          user_id: 'u',
-        },
-      ],
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '6',
+        giorno: '2023-05-06',
+        inizio_1: '08:00',
+        fine_1: '10:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
     })
+    mockedGcApi.createShiftEvents.mockResolvedValueOnce(['evDel'])
     mockedScheduleApi.deleteTurno.mockResolvedValueOnce()
 
     renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-06')
+    await userEvent.type(inputs[1], '08:00')
+    await userEvent.type(inputs[2], '10:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
-    await screen.findByText('07:00')
-    await userEvent.click(screen.getByRole('button', { name: '🗑️' }))
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-06/i })
+    await userEvent.click(within(row).getByRole('button', { name: '🗑️' }))
 
-    expect(screen.queryByText('07:00')).not.toBeInTheDocument()
-    expect(mockedScheduleApi.deleteTurno).toHaveBeenCalledWith('1')
+    expect(screen.queryByText('08:00')).not.toBeInTheDocument()
+    expect(mockedScheduleApi.deleteTurno).toHaveBeenCalledWith('6')
+    expect(mockedGcApi.deleteEvent).toHaveBeenCalledWith(expect.any(String), 'evDel')
   })
 
   it('creates events after import', async () => {
