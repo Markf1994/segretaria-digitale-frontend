@@ -69,26 +69,32 @@ export default function SchedulePage() {
     [token]
   );
 
-  const toPlain = (t: Turno) => ({
-    id: t.id,
-    user_id: t.user_id,
-    giorno: t.giorno.format('YYYY-MM-DD'),
-    inizio_1: t.slot1.inizio.format('HH:mm'),
-    fine_1: t.slot1.fine.format('HH:mm'),
-    inizio_2: t.slot2 ? t.slot2.inizio.format('HH:mm') : null,
-    fine_2: t.slot2 ? t.slot2.fine.format('HH:mm') : null,
-    inizio_3: t.slot3 ? t.slot3.inizio.format('HH:mm') : null,
-    fine_3: t.slot3 ? t.slot3.fine.format('HH:mm') : null,
-    tipo: t.tipo,
-    note: t.note ?? null,
-    eventIds: t.eventIds,
-  });
+  const toPlain = (t: Turno) => {
+    const ferieLike = ['RIPOSO', 'FESTIVO'].includes(t.tipo)
+    return {
+      id: t.id,
+      user_id: t.user_id,
+      giorno: t.giorno.format('YYYY-MM-DD'),
+      inizio_1: ferieLike ? null : t.slot1.inizio.format('HH:mm'),
+      fine_1: ferieLike ? null : t.slot1.fine.format('HH:mm'),
+      inizio_2: t.slot2 ? t.slot2.inizio.format('HH:mm') : null,
+      fine_2: t.slot2 ? t.slot2.fine.format('HH:mm') : null,
+      inizio_3: t.slot3 ? t.slot3.inizio.format('HH:mm') : null,
+      fine_3: t.slot3 ? t.slot3.fine.format('HH:mm') : null,
+      tipo: t.tipo,
+      note: t.note ?? null,
+      eventIds: t.eventIds,
+    }
+  }
 
   const fromPlain = (p: any): Turno => ({
     id: p.id,
     user_id: p.user_id,
     giorno: dayjs(p.giorno),
-    slot1: { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) },
+    slot1:
+      p.inizio_1 && p.fine_1
+        ? { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) }
+        : { inizio: dayjs(`${p.giorno}T00:00`), fine: dayjs(`${p.giorno}T00:00`) },
     slot2:
       p.inizio_2 && p.fine_2
         ? { inizio: dayjs(`${p.giorno}T${p.inizio_2}`), fine: dayjs(`${p.giorno}T${p.fine_2}`) }
@@ -218,8 +224,13 @@ export default function SchedulePage() {
     setEditing(t);
     setUtenteSel(t.user_id);
     setGiorno(t.giorno.format('YYYY-MM-DD'));
-    setS1Start(t.slot1.inizio.format('HH:mm'));
-    setS1End(t.slot1.fine.format('HH:mm'));
+    if (['RIPOSO', 'FESTIVO'].includes(t.tipo)) {
+      setS1Start('');
+      setS1End('');
+    } else {
+      setS1Start(t.slot1.inizio.format('HH:mm'));
+      setS1End(t.slot1.fine.format('HH:mm'));
+    }
     setS2Start(t.slot2 ? t.slot2.inizio.format('HH:mm') : '');
     setS2End(t.slot2 ? t.slot2.fine.format('HH:mm') : '');
     setS3Start(t.slot3 ? t.slot3.inizio.format('HH:mm') : '');
@@ -231,16 +242,19 @@ export default function SchedulePage() {
   /* --- submit --- */
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!giorno || !s1Start || !s1End || !utenteSel) return;
+    const ferieLike = ['RIPOSO', 'FESTIVO'].includes(tipo);
+    if (!giorno || (!ferieLike && (!s1Start || !s1End)) || !utenteSel) return;
 
     const payload: NewTurnoPayload & { id?: string } = {
       ...(editing ? { id: editing.id } : {}),
       user_id: utenteSel,
       giorno: dayjs(giorno),
-      slot1: {
-        inizio: dayjs(`${giorno}T${s1Start}`),
-        fine: dayjs(`${giorno}T${s1End}`),
-      },
+      slot1: ferieLike
+        ? { inizio: dayjs(`${giorno}T00:00`), fine: dayjs(`${giorno}T00:00`) }
+        : {
+            inizio: dayjs(`${giorno}T${s1Start}`),
+            fine: dayjs(`${giorno}T${s1End}`),
+          },
       tipo,
       note: note || undefined,
     };
@@ -260,7 +274,7 @@ export default function SchedulePage() {
       () => ({ ...(payload as Turno), id: editing?.id || Date.now().toString() })
     );
     let eventIds = editing?.eventIds;
-    if (signedIn) {
+    if (signedIn && !ferieLike) {
       try {
         const email = utenti.find(u => u.id === data.user_id)?.email || '';
         const shift = {
@@ -431,16 +445,17 @@ export default function SchedulePage() {
               const nome =
                 utenti.find(u => u.id === t.user_id)?.nome ||
                 stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
+              const ferieLike = ['RIPOSO', 'FESTIVO'].includes(t.tipo);
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno.format('YYYY-MM-DD')}</td>
-                  <td>{t.slot1.inizio.format('HH:mm')}</td>
-                  <td>{t.slot1.fine.format('HH:mm')}</td>
-                  <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
-                  <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
+                  <td>{ferieLike ? t.tipo : t.slot1.inizio.format('HH:mm')}</td>
+                  <td>{ferieLike ? '—' : t.slot1.fine.format('HH:mm')}</td>
+                  <td>{ferieLike ? '—' : t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
+                  <td>{ferieLike ? '—' : t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
+                  <td>{ferieLike ? '—' : t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
+                  <td>{ferieLike ? '—' : t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
                   <td>
                     <button onClick={() => handleEdit(t)}>Modifica</button>
                     <button onClick={() => handleDelete(t.id)}>🗑️</button>

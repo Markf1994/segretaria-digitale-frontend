@@ -154,8 +154,8 @@ describe('SchedulePage', () => {
       data: {
         id: '3',
         giorno: '2023-05-03',
-        inizio_1: '10:00',
-        fine_1: '12:00',
+        inizio_1: null,
+        fine_1: null,
         tipo: 'RIPOSO',
         user_id: 'u',
       },
@@ -166,8 +166,6 @@ describe('SchedulePage', () => {
 
     const inputs = screen.getAllByRole('textbox')
     await userEvent.type(inputs[0], '2023-05-03')
-    await userEvent.type(inputs[1], '10:00')
-    await userEvent.type(inputs[2], '12:00')
 
     const selects = screen.getAllByRole('combobox')
     await userEvent.selectOptions(selects[1], 'RIPOSO')
@@ -175,13 +173,12 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
     const row = await screen.findByRole('row', { name: /u\s+2023-05-03/i })
-    expect(within(row).getByText('10:00')).toBeInTheDocument()
-    expect(within(row).getByText('12:00')).toBeInTheDocument()
+    expect(within(row).getByText('RIPOSO')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-03',
-      inizio_1: '10:00',
-      fine_1: '12:00',
+      inizio_1: null,
+      fine_1: null,
       inizio_2: null,
       fine_2: null,
       inizio_3: null,
@@ -198,8 +195,8 @@ describe('SchedulePage', () => {
       data: {
         id: '4',
         giorno: '2023-05-04',
-        inizio_1: '11:00',
-        fine_1: '13:00',
+        inizio_1: null,
+        fine_1: null,
         tipo: 'FESTIVO',
         user_id: 'u',
       },
@@ -210,8 +207,6 @@ describe('SchedulePage', () => {
 
     const inputs = screen.getAllByRole('textbox')
     await userEvent.type(inputs[0], '2023-05-04')
-    await userEvent.type(inputs[1], '11:00')
-    await userEvent.type(inputs[2], '13:00')
 
     const selects = screen.getAllByRole('combobox')
     await userEvent.selectOptions(selects[1], 'FESTIVO')
@@ -219,13 +214,12 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
     const row = await screen.findByRole('row', { name: /u\s+2023-05-04/i })
-    expect(within(row).getByText('11:00')).toBeInTheDocument()
-    expect(within(row).getByText('13:00')).toBeInTheDocument()
+    expect(within(row).getByText('FESTIVO')).toBeInTheDocument()
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-04',
-      inizio_1: '11:00',
-      fine_1: '13:00',
+      inizio_1: null,
+      fine_1: null,
       inizio_2: null,
       fine_2: null,
       inizio_3: null,
