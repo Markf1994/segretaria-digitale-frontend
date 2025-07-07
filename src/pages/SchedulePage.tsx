@@ -454,15 +454,18 @@ export default function SchedulePage() {
                 utenti.find(u => u.id === t.user_id)?.nome ||
                 stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
-              const start = t.slot1 ? t.slot1.inizio.format('HH:mm') : '—';
-              const end = t.slot1 ? t.slot1.fine.format('HH:mm') : '—';
-              const showType = ferieLike && !t.slot1;
+              const start = ferieLike
+                ? t.tipo
+                : t.slot1?.inizio.format('HH:mm') ?? '—';
+              const end = ferieLike
+                ? t.tipo
+                : t.slot1?.fine.format('HH:mm') ?? '—';
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno.format('YYYY-MM-DD')}</td>
-                  <td>{showType ? t.tipo : start}</td>
-                  <td>{showType ? '—' : end}</td>
+                  <td>{start}</td>
+                  <td>{end}</td>
                   <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
                   <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
                   <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
