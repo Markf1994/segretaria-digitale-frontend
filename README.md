@@ -94,6 +94,10 @@ Run ESLint to check for style issues:
 npm run lint
 ```
 
+Ensure you have installed project dependencies first using `npm install` or
+`./scripts/setup.sh`; this installs the TypeScript ESLint plugins required by
+the lint step.
+
 Execute this command locally before committing or in your CI pipeline to keep the codebase consistent.
 
 ## Utilità page
