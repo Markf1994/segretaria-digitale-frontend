@@ -46,7 +46,7 @@ const LoginPage: React.FC = () => {
     <>
       <div className="login-page">
       <div className="login-card">
-          <img src="/logo.png" alt="Logo" className="login-logo" />
+          <img src="/logo.png" alt="Logo" className="login-logo" loading="lazy" />
           {loading ? (
             <Loader />
           ) : (
