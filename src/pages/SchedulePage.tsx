@@ -57,6 +57,7 @@ export default function SchedulePage() {
   const [loadError, setLoadError] = useState('');
   const [signedIn, setSignedIn] = useState(false);
   const [signInError, setSignInError] = useState('');
+  const [calendarError, setCalendarError] = useState('');
   const [pdfWarning, setPdfWarning] = useState('');
   const token = useAuthStore(s => s.token);
   const storageKey = useMemo(
@@ -172,7 +173,7 @@ export default function SchedulePage() {
                 note: t.note,
               } as ShiftData);
             } catch {
-              // ignore calendar errors
+              setCalendarError('Errore di accesso al calendario');
             }
           }
         }
@@ -297,7 +298,7 @@ export default function SchedulePage() {
           eventIds = await createShiftEvents(calendarId, shift);
         }
       } catch {
-        // ignore calendar errors
+        setCalendarError('Errore di accesso al calendario');
       }
     }
     const newData = { ...data, eventIds };
@@ -320,7 +321,7 @@ export default function SchedulePage() {
         try {
           await deleteEvent(calendarId, evId);
         } catch {
-          // ignore calendar errors
+          setCalendarError('Errore di accesso al calendario');
         }
       }
     }
@@ -350,6 +351,7 @@ export default function SchedulePage() {
       <h2>Turni di servizio</h2>
       {loadError && <p className="error">{loadError}</p>}
       {signInError && <p className="error">{signInError}</p>}
+      {calendarError && <p className="error">{calendarError}</p>}
       {pdfWarning && <p className="warning">{pdfWarning}</p>}
 
       <ImportExcel onComplete={handleImportComplete} />

@@ -398,6 +398,98 @@ describe('SchedulePage', () => {
 
     expect(await screen.findByText('GC failed')).toBeInTheDocument()
   })
+
+  it('shows error when creating calendar events fails', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedGcApi.createShiftEvents.mockRejectedValueOnce(new Error('fail'))
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-07')
+    await userEvent.type(inputs[1], '08:00')
+    await userEvent.type(inputs[2], '10:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument()
+  })
+
+  it('shows error when updating calendar events fails', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '7',
+        giorno: '2023-05-08',
+        inizio_1: '08:00',
+        fine_1: '10:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    mockedGcApi.createShiftEvents.mockResolvedValueOnce(['ev7'])
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-08')
+    await userEvent.type(inputs[1], '08:00')
+    await userEvent.type(inputs[2], '10:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-08/i })
+    await userEvent.click(within(row).getByRole('button', { name: /modifica/i }))
+
+    const editInputs = screen.getAllByRole('textbox')
+    await userEvent.type(editInputs[1], '09:00')
+    await userEvent.type(editInputs[2], '11:00')
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '7',
+        giorno: '2023-05-08',
+        inizio_1: '09:00',
+        fine_1: '11:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    mockedGcApi.updateEvent.mockRejectedValueOnce(new Error('fail'))
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument()
+  })
+
+  it('shows error when deleting calendar events fails', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '8',
+        giorno: '2023-05-09',
+        inizio_1: '08:00',
+        fine_1: '10:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    mockedGcApi.createShiftEvents.mockResolvedValueOnce(['evDelErr'])
+    mockedGcApi.deleteEvent.mockRejectedValueOnce(new Error('fail'))
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-09')
+    await userEvent.type(inputs[1], '08:00')
+    await userEvent.type(inputs[2], '10:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-09/i })
+    await userEvent.click(within(row).getByRole('button', { name: '🗑️' }))
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument()
+  })
 })
 
 describe('SchedulePage offline', () => {
