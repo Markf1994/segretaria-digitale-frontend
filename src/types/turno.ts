@@ -16,7 +16,7 @@ export interface Turno {
   id: string
   user_id: string
   giorno: Dayjs
-  slot1: Slot
+  slot1: Slot | null
   slot2?: Slot
   slot3?: Slot
   tipo: TipoTurno
@@ -29,8 +29,8 @@ export interface BackendTurno {
   id?: string
   user_id: string
   giorno: string
-  inizio_1: string
-  fine_1: string
+  inizio_1: string | null
+  fine_1: string | null
   inizio_2?: string | null
   fine_2?: string | null
   inizio_3?: string | null
