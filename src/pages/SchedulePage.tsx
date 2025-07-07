@@ -73,8 +73,8 @@ export default function SchedulePage() {
     id: t.id,
     user_id: t.user_id,
     giorno: t.giorno.format('YYYY-MM-DD'),
-    inizio_1: t.slot1.inizio.format('HH:mm'),
-    fine_1: t.slot1.fine.format('HH:mm'),
+    inizio_1: t.slot1 ? t.slot1.inizio.format('HH:mm') : null,
+    fine_1: t.slot1 ? t.slot1.fine.format('HH:mm') : null,
     inizio_2: t.slot2 ? t.slot2.inizio.format('HH:mm') : null,
     fine_2: t.slot2 ? t.slot2.fine.format('HH:mm') : null,
     inizio_3: t.slot3 ? t.slot3.inizio.format('HH:mm') : null,
@@ -88,7 +88,10 @@ export default function SchedulePage() {
     id: p.id,
     user_id: p.user_id,
     giorno: dayjs(p.giorno),
-    slot1: { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) },
+    slot1:
+      p.inizio_1 && p.fine_1
+        ? { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) }
+        : null,
     slot2:
       p.inizio_2 && p.fine_2
         ? { inizio: dayjs(`${p.giorno}T${p.inizio_2}`), fine: dayjs(`${p.giorno}T${p.fine_2}`) }
@@ -149,14 +152,16 @@ export default function SchedulePage() {
         setImportedTurni(imported);
         if (signedIn) {
           for (const t of imported) {
+            const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+            if (ferieLike) continue;
             try {
               const email = utenti.find(u => u.id === t.user_id)?.email || '';
               await createShiftEvents(calendarId, {
                 userEmail: email,
                 giorno: t.giorno.format('YYYY-MM-DD'),
                 slot1: {
-                  inizio: t.slot1.inizio.format('HH:mm'),
-                  fine: t.slot1.fine.format('HH:mm'),
+                  inizio: t.slot1!.inizio.format('HH:mm'),
+                  fine: t.slot1!.fine.format('HH:mm'),
                 },
                 slot2: t.slot2
                   ? {
@@ -218,8 +223,8 @@ export default function SchedulePage() {
     setEditing(t);
     setUtenteSel(t.user_id);
     setGiorno(t.giorno.format('YYYY-MM-DD'));
-    setS1Start(t.slot1.inizio.format('HH:mm'));
-    setS1End(t.slot1.fine.format('HH:mm'));
+    setS1Start(t.slot1 ? t.slot1.inizio.format('HH:mm') : '');
+    setS1End(t.slot1 ? t.slot1.fine.format('HH:mm') : '');
     setS2Start(t.slot2 ? t.slot2.inizio.format('HH:mm') : '');
     setS2End(t.slot2 ? t.slot2.fine.format('HH:mm') : '');
     setS3Start(t.slot3 ? t.slot3.inizio.format('HH:mm') : '');
@@ -231,25 +236,29 @@ export default function SchedulePage() {
   /* --- submit --- */
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!giorno || !s1Start || !s1End || !utenteSel) return;
+    const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(tipo);
+    if (!giorno || !utenteSel) return;
+    if (!ferieLike && (!s1Start || !s1End)) return;
 
     const payload: NewTurnoPayload & { id?: string } = {
       ...(editing ? { id: editing.id } : {}),
       user_id: utenteSel,
       giorno: dayjs(giorno),
-      slot1: {
-        inizio: dayjs(`${giorno}T${s1Start}`),
-        fine: dayjs(`${giorno}T${s1End}`),
-      },
       tipo,
       note: note || undefined,
+      slot1: ferieLike
+        ? null
+        : {
+            inizio: dayjs(`${giorno}T${s1Start}`),
+            fine: dayjs(`${giorno}T${s1End}`),
+          },
     };
-    if (s2Start && s2End)
+    if (!ferieLike && s2Start && s2End)
       payload.slot2 = {
         inizio: dayjs(`${giorno}T${s2Start}`),
         fine: dayjs(`${giorno}T${s2End}`),
       };
-    if (s3Start && s3End)
+    if (!ferieLike && s3Start && s3End)
       payload.slot3 = {
         inizio: dayjs(`${giorno}T${s3Start}`),
         fine: dayjs(`${giorno}T${s3End}`),
@@ -260,7 +269,7 @@ export default function SchedulePage() {
       () => ({ ...(payload as Turno), id: editing?.id || Date.now().toString() })
     );
     let eventIds = editing?.eventIds;
-    if (signedIn) {
+    if (signedIn && !ferieLike) {
       try {
         const email = utenti.find(u => u.id === data.user_id)?.email || '';
         const shift = {
@@ -376,9 +385,19 @@ export default function SchedulePage() {
 
         <fieldset>
           <legend>Slot 1 (obbligatorio)</legend>
-          <input type="time" value={s1Start} onChange={e => setS1Start(e.target.value)} required />
+          <input
+            type="time"
+            value={s1Start}
+            onChange={e => setS1Start(e.target.value)}
+            required={tipo !== 'FERIE' && tipo !== 'RIPOSO' && tipo !== 'FESTIVO'}
+          />
           <span>→</span>
-          <input type="time" value={s1End}   onChange={e => setS1End(e.target.value)}   required />
+          <input
+            type="time"
+            value={s1End}
+            onChange={e => setS1End(e.target.value)}
+            required={tipo !== 'FERIE' && tipo !== 'RIPOSO' && tipo !== 'FESTIVO'}
+          />
         </fieldset>
 
         <fieldset>
@@ -431,12 +450,15 @@ export default function SchedulePage() {
               const nome =
                 utenti.find(u => u.id === t.user_id)?.nome ||
                 stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              const start = t.slot1 ? t.slot1.inizio.format('HH:mm') : '—';
+              const end = t.slot1 ? t.slot1.fine.format('HH:mm') : '—';
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno.format('YYYY-MM-DD')}</td>
-                  <td>{t.slot1.inizio.format('HH:mm')}</td>
-                  <td>{t.slot1.fine.format('HH:mm')}</td>
+                  <td>{ferieLike ? t.tipo : start}</td>
+                  <td>{ferieLike ? '—' : end}</td>
                   <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
                   <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
                   <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
@@ -492,7 +514,7 @@ export default function SchedulePage() {
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo
-                : `${t.slot1.inizio.format('HH:mm')}–${t.slot1.fine.format('HH:mm')}`;
+                : `${t.slot1!.inizio.format('HH:mm')}–${t.slot1!.fine.format('HH:mm')}`;
               const slot2 = ferieLike
                 ? '—'
                 : t.slot2
