@@ -155,7 +155,7 @@ export default function SchedulePage() {
         setImportedTurni(imported);
           if (signedIn) {
             for (const t of imported) {
-              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO', 'RECUPERO'].includes(t.tipo);
               if (ferieLike) continue;
               try {
                 const email = utenti.find(u => u.id === t.user_id)?.email || '';
@@ -246,7 +246,7 @@ export default function SchedulePage() {
   /* --- submit --- */
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(tipo);
+    const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO', 'RECUPERO'].includes(tipo);
     if (!giorno || !utenteSel) return;
 
     const payload: NewTurnoPayload & { id?: string } = {
@@ -426,6 +426,7 @@ export default function SchedulePage() {
           <option value="FERIE">Ferie</option>
           <option value="RIPOSO">Riposo</option>
           <option value="FESTIVO">Festivo</option>
+          <option value="RECUPERO">Recupero</option>
         </select>
 
         <input placeholder="Note" value={note} onChange={e => setNote(e.target.value)} />
@@ -474,7 +475,7 @@ export default function SchedulePage() {
               const nome =
                 utenti.find(u => u.id === t.user_id)?.nome ||
                 stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
-              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO', 'RECUPERO'].includes(t.tipo);
               const start = ferieLike
                 ? t.tipo
                 : t.slot1?.inizio.format('HH:mm') ?? '—';
@@ -539,7 +540,7 @@ export default function SchedulePage() {
                 const nome =
                   utenti.find(u => u.id === t.user_id)?.nome ||
                   stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
-              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO', 'RECUPERO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo
                 : t.slot1

@@ -284,6 +284,49 @@ describe('SchedulePage', () => {
     })
   })
 
+  it('adds a new turno with tipo RECUPERO', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '5a',
+        giorno: '2023-05-05',
+        inizio_1: null,
+        fine_1: null,
+        tipo: 'RECUPERO',
+        user_id: 'u',
+      },
+    })
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-05')
+
+    const selects = screen.getAllByRole('combobox')
+    await userEvent.selectOptions(selects[1], 'RECUPERO')
+
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-05/i })
+    const cells = within(row).getAllByText('RECUPERO')
+    expect(cells).toHaveLength(2)
+    expect(within(row).getAllByText('—')).toHaveLength(4)
+    expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
+      user_id: 'u',
+      giorno: '2023-05-05',
+      inizio_1: null,
+      fine_1: null,
+      inizio_2: null,
+      fine_2: null,
+      inizio_3: null,
+      fine_3: null,
+      tipo: 'RECUPERO',
+      note: null,
+    })
+  })
+
   it('updates event when editing a turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
