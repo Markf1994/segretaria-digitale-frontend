@@ -305,6 +305,33 @@ describe('SchedulePage', () => {
     expect(within(tables[1]).getByText('2023-06-02')).toBeInTheDocument()
   })
 
+  it('shows an error when calendar sync fails', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '5',
+        giorno: '2023-06-03',
+        inizio_1: '08:00',
+        fine_1: '10:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    mockedGcApi.createShiftEvents.mockRejectedValueOnce(new Error('fail'))
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-06-03')
+    await userEvent.type(inputs[1], '08:00')
+    await userEvent.type(inputs[2], '10:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    expect(await screen.findByText('Errore di sincronizzazione con Google Calendar')).toBeInTheDocument()
+  })
+
   it('downloads weekly PDF', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-05-01T00:00:00Z'))
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })

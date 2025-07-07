@@ -50,6 +50,7 @@ export default function SchedulePage() {
   const [loadError, setLoadError] = useState('');
   const [signedIn, setSignedIn] = useState(false);
   const [signInError, setSignInError] = useState('');
+  const [gcSyncError, setGcSyncError] = useState('');
   const token = useAuthStore(s => s.token);
   const storageKey = useMemo(
     () =>
@@ -161,8 +162,9 @@ export default function SchedulePage() {
                   : undefined,
                 note: t.note,
               } as ShiftData);
+              setGcSyncError('');
             } catch {
-              // ignore calendar errors
+              setGcSyncError('Errore di sincronizzazione con Google Calendar');
             }
           }
         }
@@ -263,8 +265,9 @@ export default function SchedulePage() {
             : undefined,
           note: data.note,
         } as ShiftData);
+        setGcSyncError('');
       } catch {
-        // ignore calendar errors
+        setGcSyncError('Errore di sincronizzazione con Google Calendar');
       }
     }
     resetForm();
@@ -297,6 +300,12 @@ export default function SchedulePage() {
       <h2>Turni di servizio</h2>
       {loadError && <p className="error">{loadError}</p>}
       {signInError && <p className="error">{signInError}</p>}
+      {gcSyncError && (
+        <p className="error">
+          {gcSyncError}{' '}
+          <button onClick={() => setGcSyncError('')}>×</button>
+        </p>
+      )}
 
       <ImportExcel onComplete={handleImportComplete} />
 
