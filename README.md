@@ -49,6 +49,17 @@ npm run dev
 ```
 
 
+## Troubleshooting Google Calendar sign-in
+
+`Error 400 (Bad Request)` usually means the OAuth client is not configured correctly.
+Common fixes include:
+
+- Add local and production domains to **Authorized JavaScript origins**.
+- Register redirect URIs only if using the redirect flow.
+- Ensure the correct client ID and API key are in `.env`.
+- Use HTTPS in production.
+- Enable the "Google Calendar API" in the Google Cloud project.
+
 ## Development
 
 Run a local development server with hot reload:
