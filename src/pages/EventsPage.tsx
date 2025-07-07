@@ -48,6 +48,7 @@ export default function EventsPage() {
     isPublic: false,
   });
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
+  const [calendarError, setCalendarError] = useState('');
   const isMobile = useIsMobile();
   const token = useAuthStore(s => s.token);
   const CALENDAR_ID =
@@ -115,7 +116,7 @@ export default function EventsPage() {
           saveLocal(all);
           return;
         } catch {
-          // ignore and try local storage
+          setCalendarError('Errore di accesso al calendario');
         }
       }
       const stored = localStorage.getItem(storageKey);
@@ -163,7 +164,7 @@ export default function EventsPage() {
             });
           }
         } catch {
-          // ignore failures when offline
+          if (source === 'gc') setCalendarError('Errore di accesso al calendario');
         }
       }
       const updated = events.map(ev =>
@@ -195,7 +196,7 @@ export default function EventsPage() {
             source: 'gc',
           }
         } catch {
-          // ignore
+          setCalendarError('Errore di accesso al calendario');
         }
         try {
           const res = await createDbEvent({
@@ -257,7 +258,7 @@ export default function EventsPage() {
         if (source === 'gc') await deleteGcEvent(CALENDAR_ID, id);
         else await deleteDbEvent(id);
       } catch {
-        // ignore
+        if (source === 'gc') setCalendarError('Errore di accesso al calendario');
       }
     }
     const updated = events.filter(ev => !(ev.id === id && ev.source === source));
@@ -268,6 +269,7 @@ export default function EventsPage() {
   return (
     <div className="list-page">
         <h2>Eventi</h2>
+        {calendarError && <p className="error">{calendarError}</p>}
         <form onSubmit={onSubmit} className="item-form">
         <input
           id="ev-title"

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EventsPage from '../EventsPage';
 import api from '../../api/axios';
+import * as gcApi from '../../api/googleCalendar';
 import PageTemplate from '../../components/PageTemplate';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { getUserStorageKey } from '../../utils/auth';
@@ -16,11 +17,26 @@ jest.mock('../../api/axios', () => ({
   },
 }));
 
+jest.mock('../../api/googleCalendar', () => ({
+  __esModule: true,
+  signIn: jest.fn(),
+  listEvents: jest.fn(),
+  createEvent: jest.fn(),
+  updateEvent: jest.fn(),
+  deleteEvent: jest.fn(),
+}));
+
 const mockedApi = api as jest.Mocked<typeof api>;
+const mockedGcApi = gcApi as jest.Mocked<typeof gcApi>;
 
 beforeEach(() => {
   localStorage.clear();
   mockedApi.get.mockResolvedValue({ data: [] });
+  mockedGcApi.signIn.mockResolvedValue();
+  mockedGcApi.listEvents.mockResolvedValue([] as any);
+  mockedGcApi.createEvent.mockResolvedValue({} as any);
+  mockedGcApi.updateEvent.mockResolvedValue({} as any);
+  mockedGcApi.deleteEvent.mockResolvedValue();
 });
 
 describe('EventsPage', () => {
@@ -100,5 +116,88 @@ describe('EventsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
 
     expect(await screen.findByText('My Event')).toBeInTheDocument();
+  });
+
+  it('shows error when calendar sign-in fails', async () => {
+    mockedGcApi.signIn.mockRejectedValueOnce(new Error('fail'));
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}> 
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument();
+  });
+
+  it('shows error when creating calendar event fails', async () => {
+    mockedGcApi.createEvent.mockRejectedValueOnce(new Error('fail'));
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}> 
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.type(screen.getByTestId('title-input'), 'My Event');
+    await userEvent.type(screen.getByTestId('description-input'), 'Desc');
+    await userEvent.type(screen.getByTestId('date-input'), '2023-05-01T12:00');
+    await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument();
+  });
+
+  it('shows error when updating calendar event fails', async () => {
+    mockedGcApi.listEvents.mockResolvedValueOnce([
+      { id: '1', summary: 'Ev', start: { dateTime: '2023-01-01T10:00' }, end: { dateTime: '2023-01-01T11:00' } } as any,
+    ]);
+    mockedGcApi.updateEvent.mockRejectedValueOnce(new Error('fail'));
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}> 
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await screen.findByText('Ev');
+    await userEvent.click(screen.getByText('Modifica'));
+    await userEvent.type(screen.getByTestId('title-input'), 'x');
+    await userEvent.click(screen.getByRole('button', { name: /salva/i }));
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument();
+  });
+
+  it('shows error when deleting calendar event fails', async () => {
+    mockedGcApi.listEvents.mockResolvedValueOnce([
+      { id: '1', summary: 'Ev', start: { dateTime: '2023-01-01T10:00' }, end: { dateTime: '2023-01-01T11:00' } } as any,
+    ]);
+    mockedGcApi.deleteEvent.mockRejectedValueOnce(new Error('fail'));
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}> 
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await screen.findByText('Ev');
+    await userEvent.click(screen.getByText('Elimina'));
+
+    expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument();
   });
 });
