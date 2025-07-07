@@ -8,7 +8,6 @@ jest.mock('../../api/axios', () => ({
   __esModule: true,
   default: {
     post: jest.fn(),
-    get: jest.fn(),
   },
 }));
 
@@ -22,7 +21,6 @@ beforeEach(() => {
 describe('LoginPage', () => {
   it('navigates to dashboard on valid credentials', async () => {
     mockedApi.post.mockResolvedValue({ data: { access_token: 'tok' } });
-    mockedApi.get.mockResolvedValue({ data: { id: '1', nome: 'test', email: 'e' } });
 
     render(
       <MemoryRouter initialEntries={["/login"]}>
