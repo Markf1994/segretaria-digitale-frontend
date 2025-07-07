@@ -1,3 +1,3 @@
 #!/bin/sh
-# Install project dependencies
+# Install project dependencies (required for linting)
 npm install
