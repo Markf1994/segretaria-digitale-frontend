@@ -47,7 +47,8 @@ export default function SchedulePage() {
   const [tipo, setTipo] = useState<TipoTurno>('NORMALE');
   const [note, setNote] = useState('');
   const [editing, setEditing] = useState<Turno | null>(null);
-  const [filtroAgente, setFiltroAgente] = useState('');
+  const user = useAuthStore(s => s.user);
+  const [filtroAgente, setFiltroAgente] = useState(user?.id || '');
 
   const calendarId = SCHEDULE_CALENDAR_IDS[0];
 
@@ -213,6 +214,10 @@ export default function SchedulePage() {
     };
     doSignIn();
   }, []);
+
+  useEffect(() => {
+    if (user?.id) setFiltroAgente(user.id);
+  }, [user]);
 
   /* --- helper --- */
   const resetForm = () => {
