@@ -1,7 +1,7 @@
 import { createShiftEvents, signIn } from '../googleCalendar'
 
 describe('createShiftEvents', () => {
-  const insert = jest.fn().mockResolvedValue({})
+  const insert = jest.fn().mockResolvedValue({ result: { id: '1' } })
   beforeEach(() => {
     ;(window as any).gapi = {
       client: { calendar: { events: { insert } } },
@@ -10,7 +10,7 @@ describe('createShiftEvents', () => {
   })
 
   it('creates an event for each slot', async () => {
-    await createShiftEvents('cal', {
+    const ids = await createShiftEvents('cal', {
       userEmail: 'u@e',
       giorno: '2023-05-01',
       slot1: { inizio: '08:00', fine: '09:00' },
@@ -28,6 +28,7 @@ describe('createShiftEvents', () => {
         end: { dateTime: '2023-05-01T09:00' },
       },
     })
+    expect(ids).toEqual(['1', '1'])
   })
 })
 

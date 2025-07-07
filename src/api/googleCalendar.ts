@@ -90,15 +90,16 @@ export interface ShiftData {
 export const createShiftEvents = async (
   calendarId: string = DEFAULT_CALENDAR_ID,
   turno: ShiftData
-): Promise<void> => {
+): Promise<string[]> => {
   const gapi = (window as any).gapi
   const slots = [turno.slot1, turno.slot2, turno.slot3].filter(Boolean) as {
     inizio: string
     fine: string
   }[]
+  const ids: string[] = []
 
   for (const slot of slots) {
-    await gapi.client.calendar.events.insert({
+    const res = await gapi.client.calendar.events.insert({
       calendarId,
       resource: {
         summary: turno.userEmail,
@@ -107,6 +108,9 @@ export const createShiftEvents = async (
         end: { dateTime: `${turno.giorno}T${slot.fine}` },
       },
     })
+    if (res.result.id) ids.push(res.result.id)
   }
+
+  return ids
 }
 
