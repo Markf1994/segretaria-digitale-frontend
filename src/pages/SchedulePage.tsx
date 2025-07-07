@@ -6,7 +6,13 @@ import { getSchedulePdf } from '../api/pdfs';
 import { format, startOfISOWeek, addDays } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
-import { createShiftEvents, ShiftData, signIn } from '../api/googleCalendar';
+import {
+  createShiftEvents,
+  updateEvent,
+  deleteEvent,
+  ShiftData,
+  signIn,
+} from '../api/googleCalendar';
 import './ListPages.css';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
@@ -39,6 +45,7 @@ export default function SchedulePage() {
   const [s3End,   setS3End]   = useState('');
   const [tipo, setTipo] = useState<TipoTurno>('NORMALE');
   const [note, setNote] = useState('');
+  const [editing, setEditing] = useState<Turno | null>(null);
 
   const calendarId = SCHEDULE_CALENDAR_IDS[0];
 
@@ -72,6 +79,7 @@ export default function SchedulePage() {
     fine_3: t.slot3 ? t.slot3.fine.format('HH:mm') : null,
     tipo: t.tipo,
     note: t.note ?? null,
+    eventIds: t.eventIds,
   });
 
   const fromPlain = (p: any): Turno => ({
@@ -89,6 +97,7 @@ export default function SchedulePage() {
         : undefined,
     tipo: p.tipo,
     note: p.note ?? undefined,
+    eventIds: p.eventIds,
   });
 
   const saveLocal = (data: Turno[]) => {
@@ -200,6 +209,21 @@ export default function SchedulePage() {
     setS2Start(''); setS2End('');
     setS3Start(''); setS3End('');
     setTipo('NORMALE'); setNote('');
+    setEditing(null);
+  };
+
+  const handleEdit = (t: Turno) => {
+    setEditing(t);
+    setUtenteSel(t.user_id);
+    setGiorno(t.giorno.format('YYYY-MM-DD'));
+    setS1Start(t.slot1.inizio.format('HH:mm'));
+    setS1End(t.slot1.fine.format('HH:mm'));
+    setS2Start(t.slot2 ? t.slot2.inizio.format('HH:mm') : '');
+    setS2End(t.slot2 ? t.slot2.fine.format('HH:mm') : '');
+    setS3Start(t.slot3 ? t.slot3.inizio.format('HH:mm') : '');
+    setS3End(t.slot3 ? t.slot3.fine.format('HH:mm') : '');
+    setTipo(t.tipo);
+    setNote(t.note || '');
   };
 
   /* --- submit --- */
@@ -207,7 +231,8 @@ export default function SchedulePage() {
     e.preventDefault();
     if (!giorno || !s1Start || !s1End || !utenteSel) return;
 
-    const payload: NewTurnoPayload = {
+    const payload: NewTurnoPayload & { id?: string } = {
+      ...(editing ? { id: editing.id } : {}),
       user_id: utenteSel,
       giorno: dayjs(giorno),
       slot1: {
@@ -230,19 +255,13 @@ export default function SchedulePage() {
 
     const data = await withOffline(
       () => saveTurno(payload as Turno),
-      () => ({ ...(payload as Turno), id: Date.now().toString() })
+      () => ({ ...(payload as Turno), id: editing?.id || Date.now().toString() })
     );
-    setTurni(prev => {
-      const updated = prev.some(t => t.id === data.id)
-        ? prev.map(t => (t.id === data.id ? data : t))
-        : [...prev, data];
-      saveLocal(updated);
-      return updated;
-    });
+    let eventIds = editing?.eventIds;
     if (signedIn) {
       try {
         const email = utenti.find(u => u.id === data.user_id)?.email || '';
-        await createShiftEvents(calendarId, {
+        const shift = {
           userEmail: email,
           giorno: data.giorno.format('YYYY-MM-DD'),
           slot1: {
@@ -262,16 +281,48 @@ export default function SchedulePage() {
               }
             : undefined,
           note: data.note,
-        } as ShiftData);
+        } as ShiftData;
+        if (editing && eventIds && eventIds.length) {
+          const slots = [shift.slot1, shift.slot2, shift.slot3].filter(Boolean) as any[];
+          for (let i = 0; i < Math.min(eventIds.length, slots.length); i++) {
+            await updateEvent(calendarId, eventIds[i], {
+              summary: shift.userEmail,
+              description: shift.note,
+              start: { dateTime: `${shift.giorno}T${slots[i].inizio}` },
+              end: { dateTime: `${shift.giorno}T${slots[i].fine}` },
+            });
+          }
+        } else {
+          eventIds = await createShiftEvents(calendarId, shift);
+        }
       } catch {
         // ignore calendar errors
       }
     }
+    const newData = { ...data, eventIds };
+    setTurni(prev => {
+      const updated = prev.some(t => t.id === newData.id)
+        ? prev.map(t => (t.id === newData.id ? newData : t))
+        : [...prev, newData];
+      saveLocal(updated);
+      return updated;
+    });
+    setEditing(null);
     resetForm();
   };
 
   /* --- delete --- */
   const handleDelete = async (id: string) => {
+    const turno = turni.find(t => t.id === id);
+    if (signedIn && turno?.eventIds) {
+      for (const evId of turno.eventIds) {
+        try {
+          await deleteEvent(calendarId, evId);
+        } catch {
+          // ignore calendar errors
+        }
+      }
+    }
     await withoutResult(() => deleteTurno(id));
     setTurni(prev => {
       const updated = prev.filter(t => t.id !== id);
@@ -385,7 +436,10 @@ export default function SchedulePage() {
                   <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
                   <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
                   <td>{t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
-                  <td><button onClick={() => handleDelete(t.id)}>🗑️</button></td>
+                  <td>
+                    <button onClick={() => handleEdit(t)}>Modifica</button>
+                    <button onClick={() => handleDelete(t.id)}>🗑️</button>
+                  </td>
                 </tr>
               );
             })}
