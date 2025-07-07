@@ -101,6 +101,51 @@ describe('SchedulePage', () => {
     expect(mockedApi.get).toHaveBeenCalledWith('/orari/')
   })
 
+  it('filters turni by agent', async () => {
+    mockedApi.get.mockImplementation(url => {
+      if (url === '/users/')
+        return Promise.resolve({
+          data: [
+            { id: 'a', email: 'a@e', nome: 'a' },
+            { id: 'b', email: 'b@e', nome: 'b' },
+          ],
+        })
+      if (url === '/orari/')
+        return Promise.resolve({
+          data: [
+            {
+              id: '1',
+              giorno: '2023-01-01',
+              inizio_1: '08:00',
+              fine_1: '10:00',
+              tipo: 'NORMALE',
+              user_id: 'a',
+            },
+            {
+              id: '2',
+              giorno: '2023-01-02',
+              inizio_1: '09:00',
+              fine_1: '11:00',
+              tipo: 'NORMALE',
+              user_id: 'b',
+            },
+          ],
+        })
+      return Promise.resolve({ data: [] })
+    })
+
+    renderPage()
+
+    await screen.findByRole('row', { name: /a\s+2023-01-01/i })
+    await screen.findByRole('row', { name: /b\s+2023-01-02/i })
+
+    const selects = screen.getAllByRole('combobox')
+    await userEvent.selectOptions(selects[2], 'a')
+
+    expect(screen.getByRole('row', { name: /a\s+2023-01-01/i })).toBeInTheDocument()
+    expect(screen.queryByRole('row', { name: /b\s+2023-01-02/i })).not.toBeInTheDocument()
+  })
+
   it('adds a new turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
