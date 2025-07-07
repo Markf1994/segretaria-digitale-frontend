@@ -435,7 +435,10 @@ export default function SchedulePage() {
 
       {/* -------- LISTA -------- */}
       <details open style={{ marginTop: '1rem' }}>
-        <summary>Turni salvati</summary>
+        <summary className="saved-shifts-summary" style={{ color: '#A52019', fontWeight: 'bold' }}>
+          Turni salvati
+          <span style={{ fontSize: '0.8em', marginLeft: '0.25em' }}>▼</span>
+        </summary>
         <div style={{ margin: '0.5rem 0' }}>
           <label>Filtra per agente </label>
           <select

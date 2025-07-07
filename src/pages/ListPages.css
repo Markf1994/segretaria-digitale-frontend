@@ -128,6 +128,11 @@
   display: none;
 }
 
+/* Hide default arrow for saved shifts summary */
+.saved-shifts-summary::-webkit-details-marker {
+  display: none;
+}
+
 .list-page h2 {
   text-align: center;
 }
