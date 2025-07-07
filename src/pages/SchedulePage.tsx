@@ -47,6 +47,7 @@ export default function SchedulePage() {
   const [tipo, setTipo] = useState<TipoTurno>('NORMALE');
   const [note, setNote] = useState('');
   const [editing, setEditing] = useState<Turno | null>(null);
+  const [filtroAgente, setFiltroAgente] = useState('');
 
   const calendarId = SCHEDULE_CALENDAR_IDS[0];
 
@@ -430,6 +431,20 @@ export default function SchedulePage() {
       {/* -------- LISTA -------- */}
       <details open style={{ marginTop: '1rem' }}>
         <summary>Turni salvati</summary>
+        <div style={{ margin: '0.5rem 0' }}>
+          <label>Filtra per agente </label>
+          <select
+            value={filtroAgente}
+            onChange={e => setFiltroAgente(e.target.value)}
+          >
+            <option value="">Tutti</option>
+            {utenti.map(u => (
+              <option key={u.id} value={u.id}>
+                {u.nome || stripDomain(u.email)}
+              </option>
+            ))}
+          </select>
+        </div>
         <table className="item-table">
           <thead>
             <tr style={{ fontFamily: 'Cormorant Garamond, serif', color: '#000' }}>
@@ -445,7 +460,9 @@ export default function SchedulePage() {
             </tr>
           </thead>
           <tbody>
-            {turni.map(t => {
+            {turni
+              .filter(t => !filtroAgente || t.user_id === filtroAgente)
+              .map(t => {
               const nome =
                 utenti.find(u => u.id === t.user_id)?.nome ||
                 stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
