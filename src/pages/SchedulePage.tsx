@@ -6,6 +6,7 @@ import { getSchedulePdf } from '../api/pdfs';
 import { format, startOfISOWeek, addDays } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import ImportExcel from '../components/ImportExcel';
+import SlotInput from '../components/SlotInput';
 import {
   createShiftEvents,
   updateEvent,
@@ -388,34 +389,29 @@ export default function SchedulePage() {
         <label>Data *</label>
         <input type="date" value={giorno} onChange={e => setGiorno(e.target.value)} required />
 
-        <fieldset>
-          <legend>Slot 1 (facoltativo)</legend>
-          <input
-            type="time"
-            value={s1Start}
-            onChange={e => setS1Start(e.target.value)}
-          />
-          <span>→</span>
-          <input
-            type="time"
-            value={s1End}
-            onChange={e => setS1End(e.target.value)}
-          />
-        </fieldset>
+        <SlotInput
+          label="Slot 1 (facoltativo)"
+          startValue={s1Start}
+          endValue={s1End}
+          onStartChange={e => setS1Start(e.target.value)}
+          onEndChange={e => setS1End(e.target.value)}
+        />
 
-        <fieldset>
-          <legend>Slot 2 (facoltativo)</legend>
-          <input type="time" value={s2Start} onChange={e => setS2Start(e.target.value)} />
-          <span>→</span>
-          <input type="time" value={s2End}   onChange={e => setS2End(e.target.value)} />
-        </fieldset>
+        <SlotInput
+          label="Slot 2 (facoltativo)"
+          startValue={s2Start}
+          endValue={s2End}
+          onStartChange={e => setS2Start(e.target.value)}
+          onEndChange={e => setS2End(e.target.value)}
+        />
 
-        <fieldset>
-          <legend>Slot 3 (facoltativo)</legend>
-          <input type="time" value={s3Start} onChange={e => setS3Start(e.target.value)} />
-          <span>→</span>
-          <input type="time" value={s3End}   onChange={e => setS3End(e.target.value)} />
-        </fieldset>
+        <SlotInput
+          label="Slot 3 (facoltativo)"
+          startValue={s3Start}
+          endValue={s3End}
+          onStartChange={e => setS3Start(e.target.value)}
+          onEndChange={e => setS3End(e.target.value)}
+        />
 
         <label>Tipo</label>
         <select value={tipo} onChange={e => setTipo(e.target.value as any)}>
