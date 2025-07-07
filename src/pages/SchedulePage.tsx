@@ -50,6 +50,7 @@ export default function SchedulePage() {
   const [loadError, setLoadError] = useState('');
   const [signedIn, setSignedIn] = useState(false);
   const [signInError, setSignInError] = useState('');
+  const [pdfWarning, setPdfWarning] = useState('');
   const token = useAuthStore(s => s.token);
   const storageKey = useMemo(
     () =>
@@ -283,9 +284,10 @@ export default function SchedulePage() {
   const handleDownloadPdf = async () => {
     const week = format(new Date(), "RRRR-'W'II");
     try {
-      const blob = await getSchedulePdf(week);
+      const { blob, warning } = await getSchedulePdf(week);
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
+      if (warning) setPdfWarning(warning);
     } catch {
       // ignore download errors
     }
@@ -297,6 +299,7 @@ export default function SchedulePage() {
       <h2>Turni di servizio</h2>
       {loadError && <p className="error">{loadError}</p>}
       {signInError && <p className="error">{signInError}</p>}
+      {pdfWarning && <p className="warning">{pdfWarning}</p>}
 
       <ImportExcel onComplete={handleImportComplete} />
 
