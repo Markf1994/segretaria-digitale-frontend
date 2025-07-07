@@ -21,6 +21,8 @@ export interface Turno {
   slot3?: Slot
   tipo: TipoTurno
   note?: string
+  /** Google Calendar event IDs for each slot */
+  eventIds?: string[]
 }
 
 export interface BackendTurno {
