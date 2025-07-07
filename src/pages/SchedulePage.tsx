@@ -73,8 +73,8 @@ export default function SchedulePage() {
     id: t.id,
     user_id: t.user_id,
     giorno: t.giorno.format('YYYY-MM-DD'),
-    inizio_1: t.slot1.inizio.format('HH:mm'),
-    fine_1: t.slot1.fine.format('HH:mm'),
+    inizio_1: t.slot1 ? t.slot1.inizio.format('HH:mm') : null,
+    fine_1: t.slot1 ? t.slot1.fine.format('HH:mm') : null,
     inizio_2: t.slot2 ? t.slot2.inizio.format('HH:mm') : null,
     fine_2: t.slot2 ? t.slot2.fine.format('HH:mm') : null,
     inizio_3: t.slot3 ? t.slot3.inizio.format('HH:mm') : null,
@@ -88,7 +88,10 @@ export default function SchedulePage() {
     id: p.id,
     user_id: p.user_id,
     giorno: dayjs(p.giorno),
-    slot1: { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) },
+    slot1:
+      p.inizio_1 && p.fine_1
+        ? { inizio: dayjs(`${p.giorno}T${p.inizio_1}`), fine: dayjs(`${p.giorno}T${p.fine_1}`) }
+        : undefined,
     slot2:
       p.inizio_2 && p.fine_2
         ? { inizio: dayjs(`${p.giorno}T${p.inizio_2}`), fine: dayjs(`${p.giorno}T${p.fine_2}`) }
