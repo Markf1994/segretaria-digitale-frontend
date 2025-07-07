@@ -121,7 +121,7 @@ export const deleteEvent = async (
 export interface ShiftData {
   userEmail: string
   giorno: string
-  slot1: { inizio: string; fine: string }
+  slot1?: { inizio: string; fine: string }
   slot2?: { inizio: string; fine: string }
   slot3?: { inizio: string; fine: string }
   note?: string
