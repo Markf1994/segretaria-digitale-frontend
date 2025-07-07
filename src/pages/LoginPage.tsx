@@ -11,6 +11,7 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const token = useAuthStore(s => s.token);
   const setToken = useAuthStore(s => s.setToken);
   const setUser = useAuthStore(s => s.setUser);
 
@@ -20,6 +21,10 @@ const LoginPage: React.FC = () => {
       document.body.classList.remove("login-bg");
     };
   }, []);
+
+  useEffect(() => {
+    if (token) navigate("/");
+  }, [token, navigate]);
 
 
   const onSubmit = async (e: React.FormEvent) => {
