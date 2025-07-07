@@ -12,7 +12,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const setToken = useAuthStore(s => s.setToken);
-  const setUser = useAuthStore(s => s.setUser);
 
   useEffect(() => {
     document.body.classList.add("login-bg");
@@ -29,12 +28,6 @@ const LoginPage: React.FC = () => {
     try {
       const res = await api.post("/login", { email, password });
       setToken(res.data.access_token);
-      try {
-        const me = await api.get("/users/me");
-        setUser(me.data);
-      } catch {
-        // ignore failure
-      }
       navigate("/");
     } catch {
       setError("Credenziali errate");
