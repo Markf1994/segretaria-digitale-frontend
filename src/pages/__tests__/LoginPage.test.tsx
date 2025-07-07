@@ -58,4 +58,19 @@ describe('LoginPage', () => {
 
     expect(await screen.findByText('Credenziali errate')).toBeInTheDocument();
   });
+
+  it('redirects to home when token exists', async () => {
+    localStorage.setItem('token', 'tok');
+
+    render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<div>Home</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Home')).toBeInTheDocument();
+  });
 });
