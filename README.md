@@ -120,6 +120,20 @@ The frontend expects a REST backend exposing at least the following endpoints:
 - `GET /pdfs` – list uploaded PDF files.
 - `POST /pdfs` – upload a new PDF file.
 
+When Google Calendar synchronization fails the backend should include a warning
+message. Endpoints that normally return a PDF can send the message using an
+`X-Warning` response header (or include a `warning` field in a JSON payload).
+The frontend reads this value and shows it to the user.
+
+Example JSON response:
+
+```json
+{
+  "url": "/orari/pdf/2023-W18",
+  "warning": "Unable to sync with Google Calendar"
+}
+```
+
 
 ## Backend Setup
 

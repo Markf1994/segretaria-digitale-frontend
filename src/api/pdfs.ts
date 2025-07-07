@@ -13,8 +13,19 @@ export const downloadPdf = (id: string): void => {
   window.open(url, '_blank')
 }
 
-export const getSchedulePdf = (week: string): Promise<Blob> =>
-  api
-    .get('/orari/pdf', { params: { week }, responseType: 'blob' })
-    .then(r => r.data)
+export interface SchedulePdfResult {
+  blob: Blob
+  warning?: string
+}
+
+export const getSchedulePdf = async (
+  week: string,
+): Promise<SchedulePdfResult> => {
+  const res = await api.get('/orari/pdf', {
+    params: { week },
+    responseType: 'blob',
+  })
+  const warning = res.headers['x-warning'] as string | undefined
+  return { blob: res.data, warning }
+}
 

@@ -310,6 +310,8 @@ describe('SchedulePage', () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
 
+    mockedPdfApi.getSchedulePdf.mockResolvedValueOnce({ blob: new Blob(), warning: undefined })
+
     renderPage()
     await screen.findByRole('button', { name: /pdf settimana/i })
 
@@ -323,6 +325,19 @@ describe('SchedulePage', () => {
 
     openSpy.mockRestore()
     urlSpy.mockRestore()
+  })
+
+  it('shows warning when PDF API returns it', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-05-01T00:00:00Z'))
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedPdfApi.getSchedulePdf.mockResolvedValueOnce({ blob: new Blob(), warning: 'GC failed' })
+
+    renderPage()
+    await screen.findByRole('button', { name: /pdf settimana/i })
+    await userEvent.click(screen.getByRole('button', { name: /pdf settimana/i }))
+
+    expect(await screen.findByText('GC failed')).toBeInTheDocument()
   })
 })
 

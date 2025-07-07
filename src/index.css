@@ -202,6 +202,11 @@ input[type="date"] {
   margin-bottom: 1rem;
 }
 
+.warning {
+  color: #b36b00;
+  margin-bottom: 1rem;
+}
+
 /* Imported shifts section */
 .imported-turni-section h3 {
   color: #A52019;
