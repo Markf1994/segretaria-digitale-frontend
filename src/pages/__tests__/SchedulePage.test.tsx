@@ -175,8 +175,8 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
     const row = await screen.findByRole('row', { name: /u\s+2023-05-03/i })
-    expect(within(row).getByText('10:00')).toBeInTheDocument()
-    expect(within(row).getByText('12:00')).toBeInTheDocument()
+    const cells = within(row).getAllByText('RIPOSO')
+    expect(cells).toHaveLength(2)
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-03',
@@ -219,8 +219,8 @@ describe('SchedulePage', () => {
     await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
 
     const row = await screen.findByRole('row', { name: /u\s+2023-05-04/i })
-    expect(within(row).getByText('11:00')).toBeInTheDocument()
-    expect(within(row).getByText('13:00')).toBeInTheDocument()
+    const cells = within(row).getAllByText('FESTIVO')
+    expect(cells).toHaveLength(2)
     expect(mockedApi.post).toHaveBeenCalledWith('/orari/', {
       user_id: 'u',
       giorno: '2023-05-04',
