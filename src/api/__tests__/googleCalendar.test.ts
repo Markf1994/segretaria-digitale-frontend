@@ -32,6 +32,31 @@ describe('createShiftEvents', () => {
     )
     expect(ids).toEqual(['1', '1'])
   })
+
+  it('creates events without slot1', async () => {
+    fetchMock.mockResolvedValueOnce({ json: () => Promise.resolve({ id: '1' }) })
+
+    const ids = await createShiftEvents('cal', {
+      userEmail: 'u@e',
+      giorno: '2023-05-02',
+      slot2: { inizio: '10:00', fine: '11:00' },
+    })
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://www.googleapis.com/calendar/v3/calendars/cal/events',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          summary: 'u@e',
+          description: undefined,
+          start: { dateTime: '2023-05-02T10:00' },
+          end: { dateTime: '2023-05-02T11:00' },
+        }),
+      }),
+    )
+    expect(ids).toEqual(['1'])
+  })
 })
 
 describe('signIn', () => {

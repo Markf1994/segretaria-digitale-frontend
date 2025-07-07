@@ -150,38 +150,41 @@ export default function SchedulePage() {
           return d >= start && d <= end;
         });
         setImportedTurni(imported);
-        if (signedIn) {
-          for (const t of imported) {
-            const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
-            if (ferieLike) continue;
-            try {
-              const email = utenti.find(u => u.id === t.user_id)?.email || '';
-              await createShiftEvents(calendarId, {
-                userEmail: email,
-                giorno: t.giorno.format('YYYY-MM-DD'),
-                slot1: {
-                  inizio: t.slot1!.inizio.format('HH:mm'),
-                  fine: t.slot1!.fine.format('HH:mm'),
-                },
-                slot2: t.slot2
-                  ? {
-                      inizio: t.slot2.inizio.format('HH:mm'),
-                      fine: t.slot2.fine.format('HH:mm'),
-                    }
-                  : undefined,
-                slot3: t.slot3
-                  ? {
-                      inizio: t.slot3.inizio.format('HH:mm'),
-                      fine: t.slot3.fine.format('HH:mm'),
-                    }
-                  : undefined,
-                note: t.note,
-              } as ShiftData);
-            } catch {
-              setCalendarError('Errore di accesso al calendario');
+          if (signedIn) {
+            for (const t of imported) {
+              const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
+              if (ferieLike) continue;
+              try {
+                const email = utenti.find(u => u.id === t.user_id)?.email || '';
+                const shift: ShiftData = {
+                  userEmail: email,
+                  giorno: t.giorno.format('YYYY-MM-DD'),
+                  note: t.note,
+                };
+                if (t.slot1) {
+                  shift.slot1 = {
+                    inizio: t.slot1.inizio.format('HH:mm'),
+                    fine: t.slot1.fine.format('HH:mm'),
+                  };
+                }
+                if (t.slot2) {
+                  shift.slot2 = {
+                    inizio: t.slot2.inizio.format('HH:mm'),
+                    fine: t.slot2.fine.format('HH:mm'),
+                  };
+                }
+                if (t.slot3) {
+                  shift.slot3 = {
+                    inizio: t.slot3.inizio.format('HH:mm'),
+                    fine: t.slot3.fine.format('HH:mm'),
+                  };
+                }
+                await createShiftEvents(calendarId, shift);
+              } catch {
+                setCalendarError('Errore di accesso al calendario');
+              }
             }
           }
-        }
         setRefreshCal(prev => !prev);
       }
     }
@@ -238,7 +241,6 @@ export default function SchedulePage() {
     e.preventDefault();
     const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(tipo);
     if (!giorno || !utenteSel) return;
-    if (!ferieLike && (!s1Start || !s1End)) return;
 
     const payload: NewTurnoPayload & { id?: string } = {
       ...(editing ? { id: editing.id } : {}),
@@ -246,12 +248,13 @@ export default function SchedulePage() {
       giorno: dayjs(giorno),
       tipo,
       note: note || undefined,
-      slot1: ferieLike
-        ? null
-        : {
-            inizio: dayjs(`${giorno}T${s1Start}`),
-            fine: dayjs(`${giorno}T${s1End}`),
-          },
+      slot1:
+        ferieLike || !s1Start || !s1End
+          ? null
+          : {
+              inizio: dayjs(`${giorno}T${s1Start}`),
+              fine: dayjs(`${giorno}T${s1End}`),
+            },
     };
     if (!ferieLike && s2Start && s2End)
       payload.slot2 = {
@@ -269,30 +272,32 @@ export default function SchedulePage() {
       () => ({ ...(payload as Turno), id: editing?.id || Date.now().toString() })
     );
     let eventIds = editing?.eventIds;
-    if (signedIn && !ferieLike) {
-      try {
-        const email = utenti.find(u => u.id === data.user_id)?.email || '';
-        const shift = {
-          userEmail: email,
-          giorno: data.giorno.format('YYYY-MM-DD'),
-          slot1: {
-            inizio: data.slot1.inizio.format('HH:mm'),
-            fine: data.slot1.fine.format('HH:mm'),
-          },
-          slot2: data.slot2
-            ? {
-                inizio: data.slot2.inizio.format('HH:mm'),
-                fine: data.slot2.fine.format('HH:mm'),
-              }
-            : undefined,
-          slot3: data.slot3
-            ? {
-                inizio: data.slot3.inizio.format('HH:mm'),
-                fine: data.slot3.fine.format('HH:mm'),
-              }
-            : undefined,
-          note: data.note,
-        } as ShiftData;
+      if (signedIn && !ferieLike) {
+        try {
+          const email = utenti.find(u => u.id === data.user_id)?.email || '';
+          const shift: ShiftData = {
+            userEmail: email,
+            giorno: data.giorno.format('YYYY-MM-DD'),
+            note: data.note,
+          };
+          if (data.slot1) {
+            shift.slot1 = {
+              inizio: data.slot1.inizio.format('HH:mm'),
+              fine: data.slot1.fine.format('HH:mm'),
+            };
+          }
+          if (data.slot2) {
+            shift.slot2 = {
+              inizio: data.slot2.inizio.format('HH:mm'),
+              fine: data.slot2.fine.format('HH:mm'),
+            };
+          }
+          if (data.slot3) {
+            shift.slot3 = {
+              inizio: data.slot3.inizio.format('HH:mm'),
+              fine: data.slot3.fine.format('HH:mm'),
+            };
+          }
         if (editing && eventIds && eventIds.length) {
           const slots = [shift.slot1, shift.slot2, shift.slot3].filter(Boolean) as any[];
           for (let i = 0; i < Math.min(eventIds.length, slots.length); i++) {
@@ -384,19 +389,17 @@ export default function SchedulePage() {
         <input type="date" value={giorno} onChange={e => setGiorno(e.target.value)} required />
 
         <fieldset>
-          <legend>Slot 1 (obbligatorio)</legend>
+          <legend>Slot 1 (facoltativo)</legend>
           <input
             type="time"
             value={s1Start}
             onChange={e => setS1Start(e.target.value)}
-            required={tipo !== 'FERIE' && tipo !== 'RIPOSO' && tipo !== 'FESTIVO'}
           />
           <span>→</span>
           <input
             type="time"
             value={s1End}
             onChange={e => setS1End(e.target.value)}
-            required={tipo !== 'FERIE' && tipo !== 'RIPOSO' && tipo !== 'FESTIVO'}
           />
         </fieldset>
 
@@ -453,12 +456,13 @@ export default function SchedulePage() {
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const start = t.slot1 ? t.slot1.inizio.format('HH:mm') : '—';
               const end = t.slot1 ? t.slot1.fine.format('HH:mm') : '—';
+              const showType = ferieLike && !t.slot1;
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
                   <td>{t.giorno.format('YYYY-MM-DD')}</td>
-                  <td>{ferieLike ? t.tipo : start}</td>
-                  <td>{ferieLike ? '—' : end}</td>
+                  <td>{showType ? t.tipo : start}</td>
+                  <td>{showType ? '—' : end}</td>
                   <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
                   <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
                   <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
@@ -514,7 +518,9 @@ export default function SchedulePage() {
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo);
               const slot1 = ferieLike
                 ? t.tipo
-                : `${t.slot1!.inizio.format('HH:mm')}–${t.slot1!.fine.format('HH:mm')}`;
+                : t.slot1
+                ? `${t.slot1.inizio.format('HH:mm')}–${t.slot1.fine.format('HH:mm')}`
+                : '—';
               const slot2 = ferieLike
                 ? '—'
                 : t.slot2
