@@ -22,15 +22,16 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` to configure values for `VITE_API_URL`, `VITE_GAPI_CLIENT_ID` and
-`VITE_GAPI_API_KEY`. Make sure to supply your own Google credentials for the
-Google Calendar integration.
+Edit `.env` to configure `VITE_API_URL` and the credentials used by Google
+Identity Services (GIS). Set `VITE_GOOGLE_CLIENT_ID` to the OAuth client ID
+created in the Google Cloud console. `VITE_GAPI_API_KEY` is optional and only
+required for unauthenticated Calendar API calls.
 
 The variables are:
 
 - `VITE_API_URL` – https://<your-backend>.onrender.com.
-- `VITE_GAPI_CLIENT_ID` – `your-google-client-id`.
-- `VITE_GAPI_API_KEY` – `your-google-api-key`.
+- `VITE_GOOGLE_CLIENT_ID` – OAuth client ID for GIS.
+- `VITE_GAPI_API_KEY` – *(optional)* Google API key used when reading calendars.
 - `VITE_SCHEDULE_CALENDAR_IDS` – comma-separated list of Google Calendar IDs used
   by the schedule page. The first ID is selected by default and it falls back to
   `9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com`
@@ -59,6 +60,12 @@ Common fixes include:
 - Ensure the correct client ID and API key are in `.env`.
 - Use HTTPS in production.
 - Enable the "Google Calendar API" in the Google Cloud project.
+
+### Migration note
+
+`gapi.auth2` has been removed in favour of Google Identity Services. Rename
+`VITE_GAPI_CLIENT_ID` to `VITE_GOOGLE_CLIENT_ID` in your `.env` file and ensure
+you have created a GIS OAuth client.
 
 ## Development
 
