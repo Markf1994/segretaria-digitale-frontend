@@ -2,32 +2,57 @@
 import type { GcEvent } from './types'
 
 const DEFAULT_CALENDAR_ID = 'primary'
+const API_BASE = 'https://www.googleapis.com/calendar/v3'
+
+let accessToken: string | null = null
 
 export const signIn = async (): Promise<void> => {
-  const gapi = (window as any).gapi
-  await new Promise<void>((resolve, reject) =>
-    gapi.load('client:auth2', { callback: resolve, onerror: reject })
-  )
-  await gapi.client.init({
-    apiKey: import.meta.env.VITE_GAPI_API_KEY,
-    clientId: import.meta.env.VITE_GAPI_CLIENT_ID,
-    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-    scope: 'https://www.googleapis.com/auth/calendar.events',
+  const google = (window as any).google
+  let tokenClient: any
+
+  google.accounts.id.initialize({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    callback: () => {},
   })
-  await gapi.auth2.getAuthInstance().signIn()
+
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/calendar.events',
+    callback: (resp: any) => {
+      accessToken = resp.access_token
+    },
+  })
+
+  await new Promise<void>((resolve, reject) => {
+    tokenClient.callback = (resp: any) => {
+      if (resp.error) reject(resp)
+      else {
+        accessToken = resp.access_token
+        resolve()
+      }
+    }
+    tokenClient.requestAccessToken()
+  })
 }
 
 export const listEvents = async (
   calendarId: string = DEFAULT_CALENDAR_ID,
 ): Promise<GcEvent[]> => {
-  const gapi = (window as any).gapi
-  const res = await gapi.client.calendar.events.list({
-    calendarId,
-    singleEvents: true,
+  const params = new URLSearchParams({
+    singleEvents: 'true',
     orderBy: 'startTime',
     timeMin: new Date(0).toISOString(),
   })
-  return res.result.items || []
+  const res = await fetch(
+    `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events?${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  )
+  const data = await res.json()
+  return data.items || []
 }
 
 export const createEvent = async (
@@ -38,12 +63,18 @@ export const createEvent = async (
   start: { dateTime: string }
   end: { dateTime: string }
 }): Promise<GcEvent> => {
-  const gapi = (window as any).gapi
-  const res = await gapi.client.calendar.events.insert({
-    calendarId,
-    resource: event,
-  })
-  return res.result
+  const res = await fetch(
+    `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(event),
+    },
+  )
+  return res.json()
 }
 
 // ---- Nuove funzioni ----
@@ -58,24 +89,33 @@ export const updateEvent = async (
     end?: { dateTime: string }
   }
 ): Promise<GcEvent> => {
-  const gapi = (window as any).gapi
-  const res = await gapi.client.calendar.events.patch({
-    calendarId,
-    eventId: id,
-    resource: event,
-  })
-  return res.result
+  const res = await fetch(
+    `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events/${id}`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(event),
+    },
+  )
+  return res.json()
 }
 
 export const deleteEvent = async (
   calendarId: string = DEFAULT_CALENDAR_ID,
   id: string,
 ): Promise<void> => {
-  const gapi = (window as any).gapi
-  await gapi.client.calendar.events.delete({
-    calendarId,
-    eventId: id,
-  })
+  await fetch(
+    `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events/${id}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  )
 }
 
 export interface ShiftData {
@@ -91,7 +131,6 @@ export const createShiftEvents = async (
   calendarId: string = DEFAULT_CALENDAR_ID,
   turno: ShiftData
 ): Promise<string[]> => {
-  const gapi = (window as any).gapi
   const slots = [turno.slot1, turno.slot2, turno.slot3].filter(Boolean) as {
     inizio: string
     fine: string
@@ -99,16 +138,13 @@ export const createShiftEvents = async (
   const ids: string[] = []
 
   for (const slot of slots) {
-    const res = await gapi.client.calendar.events.insert({
-      calendarId,
-      resource: {
-        summary: turno.userEmail,
-        description: turno.note,
-        start: { dateTime: `${turno.giorno}T${slot.inizio}` },
-        end: { dateTime: `${turno.giorno}T${slot.fine}` },
-      },
+    const res = await createEvent(calendarId, {
+      summary: turno.userEmail,
+      description: turno.note,
+      start: { dateTime: `${turno.giorno}T${slot.inizio}` },
+      end: { dateTime: `${turno.giorno}T${slot.fine}` },
     })
-    if (res.result.id) ids.push(res.result.id)
+    if (res.id) ids.push(res.id)
   }
 
   return ids

@@ -1,12 +1,11 @@
 import { createShiftEvents, signIn } from '../googleCalendar'
 
 describe('createShiftEvents', () => {
-  const insert = jest.fn().mockResolvedValue({ result: { id: '1' } })
+  const fetchMock = jest.fn()
   beforeEach(() => {
-    ;(window as any).gapi = {
-      client: { calendar: { events: { insert } } },
-    }
-    insert.mockClear()
+    ;(global as any).fetch = fetchMock
+    fetchMock.mockResolvedValue({ json: () => Promise.resolve({ id: '1' }) })
+    fetchMock.mockClear()
   })
 
   it('creates an event for each slot', async () => {
@@ -18,16 +17,19 @@ describe('createShiftEvents', () => {
       note: 'note',
     })
 
-    expect(insert).toHaveBeenCalledTimes(2)
-    expect(insert).toHaveBeenCalledWith({
-      calendarId: 'cal',
-      resource: {
-        summary: 'u@e',
-        description: 'note',
-        start: { dateTime: '2023-05-01T08:00' },
-        end: { dateTime: '2023-05-01T09:00' },
-      },
-    })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://www.googleapis.com/calendar/v3/calendars/cal/events',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          summary: 'u@e',
+          description: 'note',
+          start: { dateTime: '2023-05-01T08:00' },
+          end: { dateTime: '2023-05-01T09:00' },
+        }),
+      }),
+    )
     expect(ids).toEqual(['1', '1'])
   })
 })
@@ -35,7 +37,8 @@ describe('createShiftEvents', () => {
 describe('signIn', () => {
   it('initializes google identity clients', async () => {
     const initialize = jest.fn()
-    const initTokenClient = jest.fn().mockReturnValue({ requestAccessToken: jest.fn() })
+    const requestAccessToken = jest.fn()
+    const initTokenClient = jest.fn().mockReturnValue({ requestAccessToken })
     ;(window as any).google = {
       accounts: {
         id: { initialize },
@@ -47,6 +50,7 @@ describe('signIn', () => {
 
     expect(initialize).toHaveBeenCalled()
     expect(initTokenClient).toHaveBeenCalled()
+    expect(requestAccessToken).toHaveBeenCalled()
   })
 })
 
