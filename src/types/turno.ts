@@ -10,7 +10,8 @@ export type TipoTurno =
   | 'STRAORD'
   | 'FERIE'
   | 'RIPOSO'
-  | 'FESTIVO';
+  | 'FESTIVO'
+  | 'RECUPERO';
 
 export interface Turno {
   id: string

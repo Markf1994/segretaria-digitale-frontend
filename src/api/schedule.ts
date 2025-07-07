@@ -23,7 +23,7 @@ const fromBackend = (t: BackendTurno): Turno => ({
 })
 
 const toBackend = (t: Turno): BackendTurno => {
-  const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO'].includes(t.tipo)
+  const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO', 'RECUPERO'].includes(t.tipo)
   return {
     ...(t.id ? { id: t.id } : {}),
     user_id: t.user_id,

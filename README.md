@@ -122,7 +122,7 @@ The schedule page lets you create shifts with up to three optional time slots.
 **Fine1** is blank, that slot is not saved. The same rule applies to the other
 slots.
 
-To insert a day off select `RIPOSO` or `FESTIVO` and leave all time fields
+To insert a day off select `RIPOSO`, `FESTIVO` or `RECUPERO` and leave all time fields
 blank:
 
 ```json
