@@ -12,7 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import Loader from "./components/Loader";
 
-const LoginPage = React.lazy(() => import("./pages/LoginPage"));
+import LoginPage from "./pages/LoginPage";
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const EventsPage = React.lazy(() => import("./pages/EventsPage"));
 const TodoPage = React.lazy(() => import("./pages/TodoPage"));
