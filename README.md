@@ -115,6 +115,23 @@ administrative tools. The page is available at
 export. The schedule page also includes a **PDF settimana** button that calls
 `/orari/pdf?week=YYYY-WW` and opens the generated file.
 
+## Schedule
+
+The schedule page lets you create shifts with up to three optional time slots.
+`Slot 1`, `Slot 2` and `Slot 3` can be left empty. When either **Inizio1** or
+**Fine1** is blank, that slot is not saved. The same rule applies to the other
+slots.
+
+To insert a day off select `RIPOSO` or `FESTIVO` and leave all time fields
+blank:
+
+```json
+{
+  "giorno": "2023-05-01",
+  "tipo": "RIPOSO"
+}
+```
+
 ## Testing
 
 Before running tests, install dependencies if you haven't already:
