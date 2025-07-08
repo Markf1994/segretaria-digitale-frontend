@@ -138,8 +138,10 @@ The **Importa Excel** button on the schedule page accepts a spreadsheet with the
 following header columns:
 
 ```
-Giorno | Tipo | Inizio1 | Fine1 | Inizio2 | Fine2 | Inizio3 | Fine3
+Giorno | Tipo | Inizio1 | Fine1 | Inizio2 | Fine2 | Inizio3 | Fine3 | Note
 ```
+
+The `Note` column is optional and can be left blank or filled with text.
 
 Times must be provided in the `HH:mm` format. Cells can be left blank, but any
 value entered must be a valid time string or the backend will reject that row.
