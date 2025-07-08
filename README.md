@@ -4,7 +4,8 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 
 ## Setup
 
-1. Ensure [Node.js](https://nodejs.org/) and npm are installed.
+1. Ensure [Node.js](https://nodejs.org/) **18** and npm are installed. A `.nvmrc` file
+   is provided for use with `nvm`.
 2. Install dependencies (creates `node_modules/.bin/jest` used by the test suite):
 
 ```bash
