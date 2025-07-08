@@ -36,6 +36,8 @@ The variables are:
   by the schedule page. The first ID is selected by default and it falls back to
   `9b868ea25bcd2be6f72fc415d45753a30abcc651070802054d21cfa9f5f97559@group.calendar.google.com`
   when unset.
+  The first ID should correspond to a calendar your OAuth client can write to; events
+  cannot be created if the client lacks write access.
 - `VITE_DASHBOARD_CALENDAR_ID` – calendar ID used by the Dashboard and Events
   pages. If unset, the first ID from `VITE_SCHEDULE_CALENDAR_IDS` is used,
   falling back to the default calendar.
