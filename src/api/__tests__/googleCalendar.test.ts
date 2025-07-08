@@ -25,8 +25,8 @@ describe('createShiftEvents', () => {
         body: JSON.stringify({
           summary: 'u@e',
           description: 'note',
-          start: { dateTime: '2023-05-01T08:00' },
-          end: { dateTime: '2023-05-01T09:00' },
+          start: { dateTime: new Date('2023-05-01T08:00:00').toISOString() },
+          end: { dateTime: new Date('2023-05-01T09:00:00').toISOString() },
         }),
       }),
     )
@@ -50,8 +50,8 @@ describe('createShiftEvents', () => {
         body: JSON.stringify({
           summary: 'u@e',
           description: undefined,
-          start: { dateTime: '2023-05-02T10:00' },
-          end: { dateTime: '2023-05-02T11:00' },
+          start: { dateTime: new Date('2023-05-02T10:00:00').toISOString() },
+          end: { dateTime: new Date('2023-05-02T11:00:00').toISOString() },
         }),
       }),
     )

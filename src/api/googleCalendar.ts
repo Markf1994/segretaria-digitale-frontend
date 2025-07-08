@@ -169,8 +169,12 @@ export const createShiftEvents = async (
     const res = await createEvent(calendarId, {
       summary: turno.userEmail,
       description: turno.note,
-      start: { dateTime: `${turno.giorno}T${slot.inizio}` },
-      end: { dateTime: `${turno.giorno}T${slot.fine}` },
+      start: {
+        dateTime: new Date(`${turno.giorno}T${slot.inizio}:00`).toISOString(),
+      },
+      end: {
+        dateTime: new Date(`${turno.giorno}T${slot.fine}:00`).toISOString(),
+      },
     })
     if (res.id) ids.push(res.id)
   }
