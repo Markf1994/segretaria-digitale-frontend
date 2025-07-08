@@ -311,8 +311,16 @@ export default function SchedulePage() {
             await updateEvent(calendarId, eventIds[i], {
               summary: shift.userEmail,
               description: shift.note,
-              start: { dateTime: `${shift.giorno}T${slots[i].inizio}` },
-              end: { dateTime: `${shift.giorno}T${slots[i].fine}` },
+              start: {
+                dateTime: new Date(
+                  `${shift.giorno}T${slots[i].inizio}:00`,
+                ).toISOString(),
+              },
+              end: {
+                dateTime: new Date(
+                  `${shift.giorno}T${slots[i].fine}:00`,
+                ).toISOString(),
+              },
             });
           }
         } else {
