@@ -4,9 +4,35 @@ import type { GcEvent } from './types'
 const DEFAULT_CALENDAR_ID = 'primary'
 const API_BASE = 'https://www.googleapis.com/calendar/v3'
 
-let accessToken: string | null = null
+const ACCESS_TOKEN_KEY = 'google_access_token'
+const TOKEN_EXPIRES_KEY = 'google_token_expires'
+
+const getStoredToken = (): string | null => {
+  if (typeof localStorage === 'undefined') return null
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+  const expires = localStorage.getItem(TOKEN_EXPIRES_KEY)
+  if (token && expires && Date.now() < Number(expires)) return token
+  return null
+}
+
+const storeToken = (token: string, expiresIn: number = 3600): void => {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(ACCESS_TOKEN_KEY, token)
+    localStorage.setItem(
+      TOKEN_EXPIRES_KEY,
+      String(Date.now() + expiresIn * 1000),
+    )
+  }
+}
+
+let accessToken: string | null = getStoredToken()
 
 export const signIn = async (): Promise<void> => {
+  const existing = getStoredToken()
+  if (existing) {
+    accessToken = existing
+    return
+  }
   const google = (window as any).google
   let tokenClient: any
 
@@ -20,6 +46,7 @@ export const signIn = async (): Promise<void> => {
     scope: 'https://www.googleapis.com/auth/calendar.events',
     callback: (resp: any) => {
       accessToken = resp.access_token
+      storeToken(accessToken, resp.expires_in)
     },
   })
 
@@ -28,6 +55,7 @@ export const signIn = async (): Promise<void> => {
       if (resp.error) reject(resp)
       else {
         accessToken = resp.access_token
+        storeToken(accessToken, resp.expires_in)
         resolve()
       }
     }
@@ -47,7 +75,7 @@ export const listEvents = async (
     `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events?${params}`,
     {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken || getStoredToken()}`,
       },
     },
   )
@@ -68,7 +96,7 @@ export const createEvent = async (
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken || getStoredToken()}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(event),
@@ -94,7 +122,7 @@ export const updateEvent = async (
     {
       method: 'PATCH',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken || getStoredToken()}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(event),
@@ -112,7 +140,7 @@ export const deleteEvent = async (
     {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken || getStoredToken()}`,
       },
     },
   )
