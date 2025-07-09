@@ -503,13 +503,13 @@ export default function SchedulePage() {
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
-                  <td>{t.giorno.format('YYYY-MM-DD')}</td>
-                  <td>{start}</td>
-                  <td>{end}</td>
-                  <td>{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
-                  <td>{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
-                  <td>{t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
+                  <td className="digit-font">{t.giorno.format('YYYY-MM-DD')}</td>
+                  <td className="digit-font">{start}</td>
+                  <td className="digit-font">{end}</td>
+                  <td className="digit-font">{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
+                  <td className="digit-font">{t.slot2 ? t.slot2.fine.format('HH:mm') : '—'}</td>
+                  <td className="digit-font">{t.slot3 ? t.slot3.inizio.format('HH:mm') : '—'}</td>
+                  <td className="digit-font">{t.slot3 ? t.slot3.fine.format('HH:mm') : '—'}</td>
                   <td>
                     <button onClick={() => handleEdit(t)}>Modifica</button>
                     <button onClick={() => handleDelete(t.id)}>🗑️</button>
@@ -577,11 +577,11 @@ export default function SchedulePage() {
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
-                  <td>{t.giorno.format('YYYY-MM-DD')}</td>
+                  <td className="digit-font">{t.giorno.format('YYYY-MM-DD')}</td>
                   <td>{t.tipo}</td>
-                  <td>{slot1}</td>
-                  <td>{slot2}</td>
-                  <td style={{ color: 'red' }}>{slot3Text}</td>
+                  <td className="digit-font">{slot1}</td>
+                  <td className="digit-font">{slot2}</td>
+                  <td className="digit-font" style={{ color: 'red' }}>{slot3Text}</td>
                 </tr>
               );
               })}
