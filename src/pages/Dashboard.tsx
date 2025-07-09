@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
@@ -28,6 +28,7 @@ export default function Dashboard() {
     import.meta.env.VITE_DASHBOARD_CALENDAR_ID ||
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
     DEFAULT_CALENDAR_ID;
+  const [refreshCal, setRefreshCal] = useState(false);
 
   const today = new Date();
   const upcomingEvents = events.filter(
@@ -82,6 +83,7 @@ export default function Dashboard() {
         <div className="top-wrapper">
           <div className="calendar-container dashboard-section">
             <iframe
+              key={String(refreshCal)}
               src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(
                 CALENDAR_ID
               )}&mode=WEEK&ctz=Europe/Rome`}
@@ -90,6 +92,9 @@ export default function Dashboard() {
               frameBorder={0}
               scrolling="no"
             />
+            <button onClick={() => setRefreshCal(prev => !prev)}>
+              Aggiorna calendario
+            </button>
           </div>
         </div>
       </div>
