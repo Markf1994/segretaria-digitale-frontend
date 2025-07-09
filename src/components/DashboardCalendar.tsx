@@ -1,11 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { signIn, listEvents } from '../api/googleCalendar';
-import { startOfISOWeek, endOfISOWeek, isWithinInterval } from 'date-fns';
+import {
+  startOfISOWeek,
+  endOfISOWeek,
+  isWithinInterval,
+  addDays,
+} from 'date-fns';
 import { listUsers } from '../api/users';
 import { useAuthStore } from '../store/auth';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import type { GcEvent } from '../api/types';
-import { startOfISOWeek, addDays } from 'date-fns';
 
 const DashboardCalendar: React.FC = () => {
   const user = useAuthStore(s => s.user);
@@ -66,7 +70,6 @@ const DashboardCalendar: React.FC = () => {
     return map;
   }, [filtered]);
 
-  const weekStart = startOfISOWeek(new Date());
   const weekDays = useMemo(
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
     [weekStart]
