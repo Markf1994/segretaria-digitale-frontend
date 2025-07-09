@@ -58,8 +58,8 @@ describe('Dashboard', () => {
     useAuthStore.getState().setUser({ id: '1', nome: 'Me', email: 'me@e' });
     mockedUserApi.listUsers.mockResolvedValueOnce({
       data: [
-        { id: '1', email: 'me@e' },
-        { id: '2', email: 'other@e' },
+        { id: '1', email: 'me@e', nome: 'Me' },
+        { id: '2', email: 'other@e', nome: 'Other' },
       ],
     } as any);
     mockedGcApi.listEvents.mockResolvedValueOnce([
@@ -81,6 +81,35 @@ describe('Dashboard', () => {
     expect(await screen.findByText('me@e')).toBeInTheDocument();
     expect(await screen.findByText('Meeting')).toBeInTheDocument();
     expect(screen.queryByText('other@e')).not.toBeInTheDocument();
+  });
+
+  it('filters events matching other user names', async () => {
+    useAuthStore.getState().setUser({ id: '1', nome: 'Me', email: 'me@e' });
+    mockedUserApi.listUsers.mockResolvedValueOnce({
+      data: [
+        { id: '1', email: 'me@e', nome: 'Me' },
+        { id: '2', email: 'other@e', nome: 'Other' },
+      ],
+    } as any);
+    mockedGcApi.listEvents.mockResolvedValueOnce([
+      { id: '1', summary: 'Me', start: { date: '2023-01-01' } } as any,
+      { id: '2', summary: 'Other', start: { date: '2023-01-02' } } as any,
+      { id: '3', summary: 'Meeting', start: { date: '2023-01-03' } } as any,
+    ]);
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Me')).toBeInTheDocument();
+    expect(await screen.findByText('Meeting')).toBeInTheDocument();
+    expect(screen.queryByText('Other')).not.toBeInTheDocument();
   });
 });
 
