@@ -1,0 +1,51 @@
+.riunioni-swiper {
+  width: 90%;
+  max-width: 600px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin: 0 auto;
+}
+
+.riunioni-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.riunioni-swiper img {
+  width: 200px;
+  height: auto;
+  object-fit: contain;
+  padding: 30px;
+  transition: transform 0.3s ease;
+}
+
+.riunioni-swiper a:hover img {
+  transform: scale(1.05);
+}
+
+.swiper-pagination-bullet,
+.swiper-pagination-bullet-active {
+  background: #0077ff;
+}
+
+.swiper-slide--riunione1 {
+  background: linear-gradient(to top, #0f2027, #203a4300, #2c536400),
+    url('https://images.unsplash.com/photo-1581092160612-ade902d2f4e4?fit=crop&w=900&q=80')
+      no-repeat center/cover;
+}
+
+.swiper-slide--riunione2 {
+  background: linear-gradient(to top, #0f2027, #203a4300, #2c536400),
+    url('https://images.unsplash.com/photo-1629904853893-c2c8981a1f5b?fit=crop&w=900&q=80')
+      no-repeat center/cover;
+}
+
+.swiper-slide--riunione3 {
+  background: linear-gradient(to top, #0f2027, #203a4300, #2c536400),
+    url('https://images.unsplash.com/photo-1596495577886-d920f1fb7238?fit=crop&w=900&q=80')
+      no-repeat center/cover;
+}
