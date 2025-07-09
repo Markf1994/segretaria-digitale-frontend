@@ -148,6 +148,11 @@ The `Note` column is optional and can be left blank or filled with text.
 Times must be provided in the `HH:mm` format. Cells can be left blank, but any
 value entered must be a valid time string or the backend will reject that row.
 
+## Dashboard
+
+The dashboard calendar shows Google Calendar events for the current week only.
+Events are fetched from the ID defined in `VITE_DASHBOARD_CALENDAR_ID`.
+
 ## Testing
 
 Before running tests, install dependencies if you haven't already:

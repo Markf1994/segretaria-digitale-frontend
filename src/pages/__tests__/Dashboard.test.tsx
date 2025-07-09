@@ -111,5 +111,31 @@ describe('Dashboard', () => {
     expect(await screen.findByText('Meeting')).toBeInTheDocument();
     expect(screen.queryByText('Other')).not.toBeInTheDocument();
   });
+
+  it('hides events outside the current week', async () => {
+    useAuthStore.getState().setUser({ id: '1', nome: 'Me', email: 'me@e' });
+    const today = new Date();
+    const inWeek = today.toISOString().split('T')[0];
+    const outside = new Date(today.getTime() + 14 * 864e5)
+      .toISOString()
+      .split('T')[0];
+    mockedGcApi.listEvents.mockResolvedValueOnce([
+      { id: '1', summary: 'In', start: { date: inWeek } } as any,
+      { id: '2', summary: 'Out', start: { date: outside } } as any,
+    ]);
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('In')).toBeInTheDocument();
+    expect(screen.queryByText('Out')).not.toBeInTheDocument();
+  });
 });
 
