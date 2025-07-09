@@ -1,6 +1,6 @@
 .riunioni-swiper {
   width: 90%;
-  max-width: 600px;
+  max-width: 1200px;
   padding-top: 40px;
   padding-bottom: 40px;
   margin: 0 auto;
@@ -16,7 +16,7 @@
 }
 
 .riunioni-swiper img {
-  width: 200px;
+  width: 400px;
   height: auto;
   object-fit: contain;
   padding: 30px;
