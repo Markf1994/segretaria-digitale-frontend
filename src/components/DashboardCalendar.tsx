@@ -18,7 +18,7 @@ const DashboardCalendar: React.FC = () => {
     DEFAULT_CALENDAR_ID;
 
   const [events, setEvents] = useState<GcEvent[]>([]);
-  const [userEmails, setUserEmails] = useState<string[]>([]);
+  const [userLabels, setUserLabels] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [refreshFlag, setRefreshFlag] = useState(false);
 
@@ -30,7 +30,7 @@ const DashboardCalendar: React.FC = () => {
           listEvents(calendarId),
           listUsers().then(r => r.data).catch(() => []),
         ]);
-        setUserEmails(users.map(u => u.email));
+        setUserLabels(users.flatMap(u => [u.email, u.nome]));
         setEvents(evs);
       } catch {
         setError('Errore di accesso al calendario');
@@ -43,10 +43,11 @@ const DashboardCalendar: React.FC = () => {
     return events.filter(ev => {
       const summary = ev.summary || '';
       if (summary === user?.email) return true;
-      if (!userEmails.includes(summary)) return true;
+      if (summary === user?.nome) return true;
+      if (!userLabels.includes(summary)) return true;
       return false;
     });
-  }, [events, user, userEmails]);
+  }, [events, user, userLabels]);
 
   const grouped: GroupedEvents[] = useMemo(() => {
     const map: Record<string, GcEvent[]> = {};
