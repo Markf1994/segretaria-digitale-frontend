@@ -62,6 +62,7 @@ export default function SchedulePage() {
   const [signedIn, setSignedIn] = useState(false);
   const [signInError, setSignInError] = useState('');
   const [calendarError, setCalendarError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
   const [pdfWarning, setPdfWarning] = useState('');
   const token = useAuthStore(s => s.token);
   const storageKey = useMemo(
@@ -223,6 +224,34 @@ export default function SchedulePage() {
     if (user?.id) setFiltroAgente(user.id);
   }, [user]);
 
+  useEffect(() => {
+    const handler = async () => {
+      const stored = localStorage.getItem('pendingTurnoDeletes');
+      if (!stored) return;
+      let ids: string[];
+      try {
+        ids = JSON.parse(stored) as string[];
+      } catch {
+        return;
+      }
+      const remaining: string[] = [];
+      for (const pid of ids) {
+        try {
+          await deleteTurno(pid);
+        } catch {
+          remaining.push(pid);
+        }
+      }
+      if (remaining.length) {
+        localStorage.setItem('pendingTurnoDeletes', JSON.stringify(remaining));
+      } else {
+        localStorage.removeItem('pendingTurnoDeletes');
+      }
+    };
+    window.addEventListener('online', handler);
+    return () => window.removeEventListener('online', handler);
+  }, []);
+
   /* --- helper --- */
   const resetForm = () => {
     setGiorno('');
@@ -358,7 +387,28 @@ export default function SchedulePage() {
         }
       }
     }
-    await withoutResult(() => deleteTurno(id));
+    let failed = false;
+    if (navigator.onLine) {
+      try {
+        await deleteTurno(id);
+      } catch {
+        failed = true;
+      }
+    } else {
+      failed = true;
+    }
+    if (failed) {
+      setDeleteError('Errore durante la cancellazione del turno');
+      const stored = localStorage.getItem('pendingTurnoDeletes');
+      let ids: string[] = [];
+      if (stored) {
+        try { ids = JSON.parse(stored) as string[]; } catch {}
+      }
+      if (!ids.includes(id)) {
+        ids.push(id);
+        localStorage.setItem('pendingTurnoDeletes', JSON.stringify(ids));
+      }
+    }
     setTurni(prev => {
       const updated = prev.filter(t => t.id !== id);
       saveLocal(updated);
@@ -466,6 +516,7 @@ export default function SchedulePage() {
             ))}
           </select>
         </div>
+        {deleteError && <p className="error">{deleteError}</p>}
         <table className="item-table">
           <thead>
             <tr style={{ fontFamily: 'Cormorant Garamond, serif', color: '#000' }}>
