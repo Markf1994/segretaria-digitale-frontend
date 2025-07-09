@@ -36,5 +36,19 @@ describe('Dashboard', () => {
     expect(screen.queryByText('Task')).not.toBeInTheDocument();
   });
 
+  it('renders calendar iframe', () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTitle('Calendario')).toBeInTheDocument();
+  });
+
 });
 
