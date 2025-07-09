@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
@@ -6,7 +6,6 @@ import { deleteTodo } from '../api/todos';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { DEFAULT_CALENDAR_ID } from '../constants';
-import DashboardCalendar from '../components/DashboardCalendar';
 interface EventItem {
   id: string;
   title: string;
@@ -24,6 +23,7 @@ export default function Dashboard() {
   );
   const [events] = useLocalStorage<EventItem[]>('events', []);
   const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
+  const [refreshCal, setRefreshCal] = useState(false);
   const CALENDAR_ID =
     import.meta.env.VITE_DASHBOARD_CALENDAR_ID ||
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
@@ -81,7 +81,17 @@ export default function Dashboard() {
         </div>
         <div className="top-wrapper">
           <div className="calendar-container dashboard-section">
-            <DashboardCalendar />
+            <iframe
+              key={String(refreshCal)}
+              src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(CALENDAR_ID)}&mode=WEEK&ctz=Europe/Rome`}
+              title="Calendario"
+              style={{ border: 0, width: '100%', height: '600px' }}
+              frameBorder={0}
+              scrolling="no"
+            />
+            <button onClick={() => setRefreshCal(prev => !prev)}>
+              Aggiorna calendario
+            </button>
           </div>
         </div>
       </div>
