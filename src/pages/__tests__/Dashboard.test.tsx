@@ -48,6 +48,7 @@ describe('Dashboard', () => {
     );
 
     expect(screen.getByTitle('Calendario')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Aggiorna calendario/i })).toBeInTheDocument();
   });
 
 });
