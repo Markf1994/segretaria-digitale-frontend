@@ -7,9 +7,9 @@ import 'swiper/css/pagination';
 import './MeetingCarousel.css';
 
 const MeetingCarousel: React.FC = () => {
-  const meetUrl = import.meta.env.VITE_MEET_URL;
-  const teamsUrl = import.meta.env.VITE_TEAMS_URL;
-  const zoomUrl = import.meta.env.VITE_ZOOM_URL;
+  const meetUrl = 'https://meet.google.com';
+  const teamsUrl = 'https://teams.microsoft.com';
+  const zoomUrl = 'https://zoom.us';
 
   return (
     <Swiper

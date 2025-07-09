@@ -42,9 +42,8 @@ The variables are:
 - `VITE_DASHBOARD_CALENDAR_ID` – calendar ID used by the Dashboard and Events
   pages. If unset, the first ID from `VITE_SCHEDULE_CALENDAR_IDS` is used,
   falling back to the default calendar.
-- `VITE_MEET_URL` – Google Meet room URL shown on the Utilità page.
-- `VITE_TEAMS_URL` – Microsoft Teams meeting link used by the Utilità page.
-- `VITE_ZOOM_URL` – Zoom meeting link used by the Utilità page.
+  The Utilità page includes a carousel linking to the Google Meet,
+  Microsoft Teams and Zoom home pages.
 
 4. Start the development server:
 
