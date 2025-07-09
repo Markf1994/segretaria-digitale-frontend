@@ -5,6 +5,7 @@ import { getUserStorageKey } from '../utils/auth';
 import { deleteTodo } from '../api/todos';
 import './Dashboard.css';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { DEFAULT_CALENDAR_ID } from '../constants';
 
 interface EventItem {
   id: string;
@@ -23,6 +24,10 @@ export default function Dashboard() {
   );
   const [events] = useLocalStorage<EventItem[]>('events', []);
   const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
+  const CALENDAR_ID =
+    import.meta.env.VITE_DASHBOARD_CALENDAR_ID ||
+    import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
+    DEFAULT_CALENDAR_ID;
 
   const today = new Date();
   const upcomingEvents = events.filter(
@@ -72,6 +77,19 @@ export default function Dashboard() {
               ))}
               {!upcomingEvents.length && <li>Nessun evento imminente.</li>}
             </ul>
+          </div>
+        </div>
+        <div className="top-wrapper">
+          <div className="calendar-container dashboard-section">
+            <iframe
+              src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(
+                CALENDAR_ID
+              )}&mode=WEEK&ctz=Europe/Rome`}
+              title="Calendario"
+              style={{ border: 0, width: '100%', height: '600px' }}
+              frameBorder={0}
+              scrolling="no"
+            />
           </div>
         </div>
       </div>
