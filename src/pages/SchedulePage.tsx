@@ -141,7 +141,7 @@ export default function SchedulePage() {
 
   const handleImportComplete = async (success: boolean) => {
     if (success) {
-        const data = await loadTurni();
+      const data = await loadTurni();
       if (data.length) {
         const maxDate = new Date(
           Math.max(...data.map(t => t.giorno.toDate().getTime()))
@@ -188,6 +188,7 @@ export default function SchedulePage() {
               }
             }
           }
+        await loadTurni();
         setRefreshCal(prev => !prev);
       }
     }
