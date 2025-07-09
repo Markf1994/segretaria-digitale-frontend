@@ -77,3 +77,15 @@
   -webkit-text-stroke: 0;
   text-shadow: none;
 }
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.week-day {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  background: #fff;
+}
