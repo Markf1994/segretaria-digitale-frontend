@@ -21,6 +21,7 @@ import { withOffline, withoutResult } from '../utils/offline';
 
 /* ---------- TIPI ---------- */
 import dayjs from 'dayjs';
+import 'dayjs/locale/it';
 import { Turno, Slot, TipoTurno } from '../types/turno';
 
 type NewTurnoPayload = Omit<Turno, 'id'>;
@@ -503,7 +504,7 @@ export default function SchedulePage() {
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
-                  <td className="digit-font">{t.giorno.format('YYYY-MM-DD')}</td>
+                  <td className="digit-font">{t.giorno.locale('it').format('YYYY-MM-DD dddd')}</td>
                   <td className="digit-font">{start}</td>
                   <td className="digit-font">{end}</td>
                   <td className="digit-font">{t.slot2 ? t.slot2.inizio.format('HH:mm') : '—'}</td>
@@ -577,7 +578,7 @@ export default function SchedulePage() {
               return (
                 <tr key={t.id}>
                   <td>{nome}</td>
-                  <td className="digit-font">{t.giorno.format('YYYY-MM-DD')}</td>
+                  <td className="digit-font">{t.giorno.locale('it').format('YYYY-MM-DD dddd')}</td>
                   <td>{t.tipo}</td>
                   <td className="digit-font">{slot1}</td>
                   <td className="digit-font">{slot2}</td>
