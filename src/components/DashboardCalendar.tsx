@@ -4,11 +4,7 @@ import { listUsers } from '../api/users';
 import { useAuthStore } from '../store/auth';
 import { DEFAULT_CALENDAR_ID } from '../constants';
 import type { GcEvent } from '../api/types';
-
-interface GroupedEvents {
-  date: string;
-  events: GcEvent[];
-}
+import { startOfISOWeek, addDays } from 'date-fns';
 
 const DashboardCalendar: React.FC = () => {
   const user = useAuthStore(s => s.user);
@@ -49,7 +45,7 @@ const DashboardCalendar: React.FC = () => {
     });
   }, [events, user, userLabels]);
 
-  const grouped: GroupedEvents[] = useMemo(() => {
+  const eventsByDate = useMemo(() => {
     const map: Record<string, GcEvent[]> = {};
     for (const ev of filtered) {
       const dt = ev.start?.dateTime || ev.start?.date;
@@ -58,25 +54,35 @@ const DashboardCalendar: React.FC = () => {
       if (!map[day]) map[day] = [];
       map[day].push(ev);
     }
-    return Object.entries(map)
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([date, events]) => ({ date, events }));
+    return map;
   }, [filtered]);
+
+  const weekStart = startOfISOWeek(new Date());
+  const weekDays = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    [weekStart]
+  );
 
   if (error) return <div>{error}</div>;
 
   return (
     <div>
-      {grouped.map(g => (
-        <div key={g.date}>
-          <h3>{new Date(g.date).toLocaleDateString()}</h3>
-          <ul>
-            {g.events.map(ev => (
-              <li key={ev.id}>{ev.summary}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <div className="week-grid">
+        {weekDays.map(day => {
+          const key = day.toISOString().split('T')[0];
+          const dayEvents = eventsByDate[key] || [];
+          return (
+            <div key={key} className="week-day" data-testid={`day-${key}`}>
+              <h3>{day.toLocaleDateString()}</h3>
+              <ul>
+                {dayEvents.map(ev => (
+                  <li key={ev.id}>{ev.summary}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
       <button onClick={() => setRefreshFlag(f => !f)}>
         Aggiorna calendario
       </button>
