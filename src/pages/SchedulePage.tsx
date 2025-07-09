@@ -71,6 +71,8 @@ export default function SchedulePage() {
       ),
     [token]
   );
+  const weekStart = startOfISOWeek(new Date());
+  const weekEnd = addDays(weekStart, 6);
 
   const toPlain = (t: Turno) => ({
     id: t.id,
@@ -479,7 +481,14 @@ export default function SchedulePage() {
           </thead>
           <tbody>
             {turni
-              .filter(t => !filtroAgente || t.user_id === filtroAgente)
+              .filter(t => {
+                const d = t.giorno.toDate();
+                return (
+                  d >= weekStart &&
+                  d <= weekEnd &&
+                  (!filtroAgente || t.user_id === filtroAgente)
+                );
+              })
               .map(t => {
               const nome =
                 utenti.find(u => u.id === t.user_id)?.nome ||

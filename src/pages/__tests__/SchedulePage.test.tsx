@@ -146,6 +146,52 @@ describe('SchedulePage', () => {
     expect(screen.queryByRole('row', { name: /b\s+2023-01-02/i })).not.toBeInTheDocument()
   })
 
+  it('shows only current week turni', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-05-03T00:00:00Z'))
+    mockedApi.get.mockImplementation(url => {
+      if (url === '/users/')
+        return Promise.resolve({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+      if (url === '/orari/')
+        return Promise.resolve({
+          data: [
+            {
+              id: '1',
+              giorno: '2023-05-03',
+              inizio_1: '08:00',
+              fine_1: '10:00',
+              tipo: 'NORMALE',
+              user_id: 'u',
+            },
+            {
+              id: '2',
+              giorno: '2023-04-28',
+              inizio_1: '08:00',
+              fine_1: '10:00',
+              tipo: 'NORMALE',
+              user_id: 'u',
+            },
+            {
+              id: '3',
+              giorno: '2023-05-10',
+              inizio_1: '08:00',
+              fine_1: '10:00',
+              tipo: 'NORMALE',
+              user_id: 'u',
+            },
+          ],
+        })
+      return Promise.resolve({ data: [] })
+    })
+
+    renderPage()
+
+    await screen.findByRole('row', { name: /u\s+2023-05-03/i })
+
+    expect(screen.getByRole('row', { name: /u\s+2023-05-03/i })).toBeInTheDocument()
+    expect(screen.queryByRole('row', { name: /2023-04-28/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('row', { name: /2023-05-10/i })).not.toBeInTheDocument()
+  })
+
   it('adds a new turno', async () => {
     mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
     mockedApi.get.mockResolvedValueOnce({ data: [] })
