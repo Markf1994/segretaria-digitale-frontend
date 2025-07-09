@@ -65,12 +65,15 @@ export const signIn = async (): Promise<void> => {
 
 export const listEvents = async (
   calendarId: string = DEFAULT_CALENDAR_ID,
+  timeMin?: Date,
+  timeMax?: Date,
 ): Promise<GcEvent[]> => {
   const params = new URLSearchParams({
     singleEvents: 'true',
     orderBy: 'startTime',
-    timeMin: new Date(0).toISOString(),
   })
+  if (timeMin) params.set('timeMin', timeMin.toISOString())
+  if (timeMax) params.set('timeMax', timeMax.toISOString())
   const res = await fetch(
     `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events?${params}`,
     {

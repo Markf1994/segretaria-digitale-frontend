@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { signIn, listEvents } from '../api/googleCalendar';
+import { startOfISOWeek, endOfISOWeek, isWithinInterval } from 'date-fns';
 import { listUsers } from '../api/users';
 import { useAuthStore } from '../store/auth';
 import { DEFAULT_CALENDAR_ID } from '../constants';
@@ -17,6 +18,10 @@ const DashboardCalendar: React.FC = () => {
     import.meta.env.VITE_SCHEDULE_CALENDAR_IDS?.split(',')[0] ||
     DEFAULT_CALENDAR_ID;
 
+  const today = new Date();
+  const weekStart = startOfISOWeek(today);
+  const weekEnd = endOfISOWeek(today);
+
   const [events, setEvents] = useState<GcEvent[]>([]);
   const [userLabels, setUserLabels] = useState<string[]>([]);
   const [error, setError] = useState('');
@@ -27,7 +32,7 @@ const DashboardCalendar: React.FC = () => {
       try {
         await signIn();
         const [evs, users] = await Promise.all([
-          listEvents(calendarId),
+          listEvents(calendarId, weekStart, weekEnd),
           listUsers().then(r => r.data).catch(() => []),
         ]);
         setUserLabels(users.flatMap(u => [u.email, u.nome]));
@@ -41,13 +46,17 @@ const DashboardCalendar: React.FC = () => {
 
   const filtered = useMemo(() => {
     return events.filter(ev => {
+      const dt = ev.start?.dateTime || ev.start?.date;
+      if (!dt) return false;
+      if (!isWithinInterval(new Date(dt), { start: weekStart, end: weekEnd }))
+        return false;
       const summary = ev.summary || '';
       if (summary === user?.email) return true;
       if (summary === user?.nome) return true;
       if (!userLabels.includes(summary)) return true;
       return false;
     });
-  }, [events, user, userLabels]);
+  }, [events, user, userLabels, weekStart, weekEnd]);
 
   const grouped: GroupedEvents[] = useMemo(() => {
     const map: Record<string, GcEvent[]> = {};
