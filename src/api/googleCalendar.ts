@@ -7,6 +7,24 @@ const API_BASE = 'https://www.googleapis.com/calendar/v3'
 const ACCESS_TOKEN_KEY = 'google_access_token'
 const TOKEN_EXPIRES_KEY = 'google_token_expires'
 
+let gsiPromise: Promise<void> | null = null
+
+const loadGoogleClient = (): Promise<void> => {
+  if (typeof window === 'undefined' || (window as any).google) return Promise.resolve()
+  if (!gsiPromise) {
+    gsiPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.defer = true
+      script.onload = () => resolve()
+      script.onerror = () => reject(new Error('Failed to load GIS'))
+      document.head.appendChild(script)
+    })
+  }
+  return gsiPromise
+}
+
 const getStoredToken = (): string | null => {
   if (typeof localStorage === 'undefined') return null
   const token = localStorage.getItem(ACCESS_TOKEN_KEY)
@@ -28,6 +46,7 @@ const storeToken = (token: string, expiresIn: number = 3600): void => {
 let accessToken: string | null = getStoredToken()
 
 export const signIn = async (): Promise<void> => {
+  await loadGoogleClient()
   const existing = getStoredToken()
   if (existing) {
     accessToken = existing

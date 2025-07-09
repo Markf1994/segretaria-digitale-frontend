@@ -10,10 +10,10 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-weight: bold;
   color: #333;
-  background: url('/Login.png') no-repeat center/cover fixed;
+  background: #fff;
 }
 body.login-bg {
-  background-size: contain;
+  background: url('/Login.png') no-repeat center/contain fixed;
   font-family: 'Almendra SC', serif;
 }
 
