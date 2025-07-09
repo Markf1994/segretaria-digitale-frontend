@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import SchedulePage from '../SchedulePage'
 import PageTemplate from '../../components/PageTemplate'
@@ -628,6 +628,47 @@ describe('SchedulePage', () => {
 
     expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument()
   })
+
+  it('shows error and stores id when deleting turno fails', async () => {
+    localStorage.clear()
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.post.mockResolvedValueOnce({
+      data: {
+        id: '9',
+        giorno: '2023-05-10',
+        inizio_1: '08:00',
+        fine_1: '10:00',
+        tipo: 'NORMALE',
+        user_id: 'u',
+      },
+    })
+    mockedScheduleApi.deleteTurno.mockRejectedValueOnce(new Error('fail'))
+
+    renderPage()
+    await screen.findByRole('button', { name: /salva turno/i })
+    const inputs = screen.getAllByRole('textbox')
+    await userEvent.type(inputs[0], '2023-05-10')
+    await userEvent.type(inputs[1], '08:00')
+    await userEvent.type(inputs[2], '10:00')
+    await userEvent.click(screen.getByRole('button', { name: /salva turno/i }))
+
+    const row = await screen.findByRole('row', { name: /u\s+2023-05-10/i })
+    await userEvent.click(within(row).getByRole('button', { name: '🗑️' }))
+
+    expect(await screen.findByText('Errore durante la cancellazione del turno')).toBeInTheDocument()
+    expect(localStorage.getItem('pendingTurnoDeletes')).toBe(JSON.stringify(['9']))
+  })
+
+  it('retries pending deletes when back online', async () => {
+    localStorage.setItem('pendingTurnoDeletes', JSON.stringify(['a1']))
+    renderPage()
+
+    window.dispatchEvent(new Event('online'))
+
+    await waitFor(() => expect(mockedScheduleApi.deleteTurno).toHaveBeenCalledWith('a1'))
+    expect(localStorage.getItem('pendingTurnoDeletes')).toBe(null)
+  })
 })
 
 describe('SchedulePage offline', () => {
@@ -709,5 +750,6 @@ describe('SchedulePage offline', () => {
 
     expect(screen.queryByText('08:00')).not.toBeInTheDocument()
     expect(mockedScheduleApi.deleteTurno).not.toHaveBeenCalled()
+    expect(localStorage.getItem('pendingTurnoDeletes')).toBe(JSON.stringify(['1']))
   })
 })
