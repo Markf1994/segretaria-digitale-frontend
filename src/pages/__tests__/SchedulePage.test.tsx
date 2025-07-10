@@ -233,7 +233,7 @@ describe('SchedulePage', () => {
     })
     expect((inputs[0] as HTMLInputElement).value).toBe('')
     expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-      userEmail: 'u@e',
+      nome: 'u',
       giorno: '2023-05-02',
       tipo: 'NORMALE',
       colorId: undefined,
