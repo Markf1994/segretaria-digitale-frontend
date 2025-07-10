@@ -7,22 +7,22 @@
 
 body {
   margin: 0;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'TikTok Sans', sans-serif;
   font-weight: bold;
   color: #333;
   background: url('/Login.png') no-repeat center/cover fixed;
 }
 body.login-bg {
   background-size: contain;
-  font-family: 'Almendra SC', serif;
+  font-family: 'TikTok Sans', sans-serif;
 }
 
-/* Use Cormorant Garamond for all input elements */
+/* Use TikTok Sans for all input elements */
 input,
 textarea,
 select,
 button {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'TikTok Sans', sans-serif;
 }
 
 
@@ -180,12 +180,12 @@ label {
 .digit-font,
 input[type="number"],
 input[type="datetime-local"] {
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'TikTok Sans', sans-serif;
 }
 
 /* Override font for date inputs */
 input[type="date"] {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'TikTok Sans', sans-serif;
 }
 
 .desc-cell {
