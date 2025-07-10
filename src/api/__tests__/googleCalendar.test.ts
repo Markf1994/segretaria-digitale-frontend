@@ -15,6 +15,7 @@ describe('createShiftEvents', () => {
       slot1: { inizio: '08:00', fine: '09:00' },
       slot2: { inizio: '10:00', fine: '11:00' },
       note: 'note',
+      colorId: '5',
     })
 
     expect(fetchMock).toHaveBeenCalledTimes(2)
@@ -27,6 +28,7 @@ describe('createShiftEvents', () => {
           description: 'note',
           start: { dateTime: new Date('2023-05-01T08:00:00').toISOString() },
           end: { dateTime: new Date('2023-05-01T09:00:00').toISOString() },
+          colorId: '5',
         }),
       }),
     )
@@ -56,6 +58,27 @@ describe('createShiftEvents', () => {
       }),
     )
     expect(ids).toEqual(['1'])
+  })
+
+  it('maps tipo to colorId', async () => {
+    fetchMock.mockResolvedValueOnce({ json: () => Promise.resolve({ id: '1' }) })
+
+    await createShiftEvents('cal', {
+      userEmail: 'u@e',
+      giorno: '2023-05-03',
+      slot1: { inizio: '08:00', fine: '09:00' },
+      tipo: 'NORMALE',
+    })
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://www.googleapis.com/calendar/v3/calendars/cal/events',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify(
+          expect.objectContaining({ colorId: '1' })
+        ),
+      }),
+    )
   })
 })
 

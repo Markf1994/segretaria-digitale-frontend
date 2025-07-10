@@ -235,6 +235,8 @@ describe('SchedulePage', () => {
     expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
       userEmail: 'u@e',
       giorno: '2023-05-02',
+      tipo: 'NORMALE',
+      colorId: undefined,
     }))
   })
 
@@ -473,7 +475,10 @@ describe('SchedulePage', () => {
 
     expect(await screen.findByText('08:00')).toBeInTheDocument()
     expect(screen.getByText('10:00')).toBeInTheDocument()
-    expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ giorno: '2023-06-01' }))
+    expect(mockedGcApi.createShiftEvents).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ giorno: '2023-06-01', tipo: 'NORMALE' })
+    )
   })
 
   it('shows imported shifts in table after import', async () => {

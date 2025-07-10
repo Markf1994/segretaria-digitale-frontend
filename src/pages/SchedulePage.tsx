@@ -167,6 +167,7 @@ export default function SchedulePage() {
                   userEmail: email,
                   giorno: t.giorno.format('YYYY-MM-DD'),
                   note: t.note,
+                  tipo: t.tipo,
                 };
                 if (t.slot1) {
                   shift.slot1 = {
@@ -319,6 +320,7 @@ export default function SchedulePage() {
             userEmail: email,
             giorno: data.giorno.format('YYYY-MM-DD'),
             note: data.note,
+            tipo: data.tipo,
           };
           if (data.slot1) {
             shift.slot1 = {

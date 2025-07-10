@@ -1,11 +1,21 @@
 // src/api/googleCalendar.ts
 import type { GcEvent } from './types'
+import type { TipoTurno } from '../types/turno'
 
 const DEFAULT_CALENDAR_ID = 'primary'
 const API_BASE = 'https://www.googleapis.com/calendar/v3'
 
 const ACCESS_TOKEN_KEY = 'google_access_token'
 const TOKEN_EXPIRES_KEY = 'google_token_expires'
+
+const COLOR_MAP: Record<TipoTurno, string> = {
+  NORMALE: '1',
+  STRAORD: '2',
+  FERIE: '3',
+  RIPOSO: '4',
+  FESTIVO: '5',
+  RECUPERO: '6',
+}
 
 const getStoredToken = (): string | null => {
   if (typeof localStorage === 'undefined') return null
@@ -93,6 +103,7 @@ export const createEvent = async (
   description?: string
   start: { dateTime: string }
   end: { dateTime: string }
+  colorId?: string
 }): Promise<GcEvent> => {
   const res = await fetch(
     `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events`,
@@ -156,6 +167,8 @@ export interface ShiftData {
   slot2?: { inizio: string; fine: string }
   slot3?: { inizio: string; fine: string }
   note?: string
+  tipo?: TipoTurno
+  colorId?: string
 }
 
 export const createShiftEvents = async (
@@ -167,6 +180,7 @@ export const createShiftEvents = async (
     fine: string
   }[]
   const ids: string[] = []
+  const colorId = turno.colorId ?? (turno.tipo ? COLOR_MAP[turno.tipo] : undefined)
 
   for (const slot of slots) {
     const res = await createEvent(calendarId, {
@@ -178,6 +192,7 @@ export const createShiftEvents = async (
       end: {
         dateTime: new Date(`${turno.giorno}T${slot.fine}:00`).toISOString(),
       },
+      ...(colorId ? { colorId } : {}),
     })
     if (res.id) ids.push(res.id)
   }
