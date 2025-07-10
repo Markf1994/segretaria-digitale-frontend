@@ -28,6 +28,7 @@ interface UnifiedEvent {
   isPublic: boolean;
   owner_id?: string;
   source: 'gc' | 'db';
+  colorId?: string;
 }
 
 interface FormValues {
@@ -36,6 +37,7 @@ interface FormValues {
   dateTime: string;
   endDateTime: string;
   isPublic: boolean;
+  colorId: string;
 }
 
 export default function EventsPage() {
@@ -46,6 +48,7 @@ export default function EventsPage() {
     dateTime: '',
     endDateTime: '',
     isPublic: false,
+    colorId: '',
   });
   const [editing, setEditing] = useState<{ id: string; source: 'db' | 'gc' } | null>(null);
   const [calendarError, setCalendarError] = useState('');
@@ -65,7 +68,7 @@ export default function EventsPage() {
   );
 
   const resetForm = (): void => {
-    setForm({ title: '', description: '', dateTime: '', endDateTime: '', isPublic: false });
+    setForm({ title: '', description: '', dateTime: '', endDateTime: '', isPublic: false, colorId: '' });
     setEditing(null);
   };
 
@@ -185,6 +188,7 @@ export default function EventsPage() {
             description,
             start: { dateTime },
             end: { dateTime: endDateTime || dateTime },
+            colorId: form.colorId || undefined,
           });
           gcEvent = {
             id: res.id,
@@ -230,6 +234,7 @@ export default function EventsPage() {
           isPublic,
           owner_id: userId || undefined,
           source: 'gc',
+          colorId: form.colorId || undefined,
         }
       }
       const newEvents = [...events];
@@ -250,6 +255,7 @@ export default function EventsPage() {
       dateTime: ev.dateTime,
       endDateTime: ev.endDateTime,
       isPublic: ev.isPublic,
+      colorId: '',
     });
   };
 

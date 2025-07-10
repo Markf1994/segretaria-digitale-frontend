@@ -11,6 +11,7 @@ export interface GcEvent {
     date?: string
   }
   visibility?: string
+  colorId?: string
 }
 
 export interface PDFFile {
