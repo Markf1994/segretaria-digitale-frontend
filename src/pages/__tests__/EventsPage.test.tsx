@@ -50,6 +50,7 @@ describe('EventsPage', () => {
           description: 'desc',
           dateTime: '2023-01-01T10:00',
           isPublic: true,
+          source: 'db',
         },
       ])
     );
@@ -75,9 +76,9 @@ describe('EventsPage', () => {
     localStorage.setItem(
       getUserStorageKey('events', token),
       JSON.stringify([
-        { id: '1', title: 'Mine', description: '', dateTime: '2023-01-01T10:00', isPublic: false, owner_id: '123' },
-        { id: '2', title: 'Other', description: '', dateTime: '2023-01-02T10:00', isPublic: false, owner_id: '456' },
-        { id: '3', title: 'Public', description: '', dateTime: '2023-01-03T10:00', isPublic: true, owner_id: '456' },
+        { id: '1', title: 'Mine', description: '', dateTime: '2023-01-01T10:00', isPublic: false, owner_id: '123', source: 'db' },
+        { id: '2', title: 'Other', description: '', dateTime: '2023-01-02T10:00', isPublic: false, owner_id: '456', source: 'db' },
+        { id: '3', title: 'Public', description: '', dateTime: '2023-01-03T10:00', isPublic: true, owner_id: '456', source: 'db' },
       ])
     );
 
