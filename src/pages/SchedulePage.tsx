@@ -162,9 +162,11 @@ export default function SchedulePage() {
               const ferieLike = ['FERIE', 'RIPOSO', 'FESTIVO', 'RECUPERO'].includes(t.tipo);
               if (ferieLike) continue;
               try {
-                const email = utenti.find(u => u.id === t.user_id)?.email || '';
+                const nome =
+                  utenti.find(u => u.id === t.user_id)?.nome ||
+                  stripDomain(utenti.find(u => u.id === t.user_id)?.email || '');
                 const shift: ShiftData = {
-                  userEmail: email,
+                  nome,
                   giorno: t.giorno.format('YYYY-MM-DD'),
                   note: t.note,
                 };
@@ -314,9 +316,11 @@ export default function SchedulePage() {
     let eventIds = editing?.eventIds;
       if (signedIn && !ferieLike) {
         try {
-          const email = utenti.find(u => u.id === data.user_id)?.email || '';
+          const nome =
+            utenti.find(u => u.id === data.user_id)?.nome ||
+            stripDomain(utenti.find(u => u.id === data.user_id)?.email || '');
           const shift: ShiftData = {
-            userEmail: email,
+            nome,
             giorno: data.giorno.format('YYYY-MM-DD'),
             note: data.note,
           };
@@ -342,7 +346,7 @@ export default function SchedulePage() {
           const slots = [shift.slot1, shift.slot2, shift.slot3].filter(Boolean) as any[];
           for (let i = 0; i < Math.min(eventIds.length, slots.length); i++) {
             await updateEvent(calendarId, eventIds[i], {
-              summary: shift.userEmail,
+              summary: `turno ${shift.nome}`,
               description: shift.note,
               start: {
                 dateTime: new Date(

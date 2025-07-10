@@ -150,7 +150,7 @@ export const deleteEvent = async (
 }
 
 export interface ShiftData {
-  userEmail: string
+  nome: string
   giorno: string
   slot1?: { inizio: string; fine: string }
   slot2?: { inizio: string; fine: string }
@@ -170,7 +170,7 @@ export const createShiftEvents = async (
 
   for (const slot of slots) {
     const res = await createEvent(calendarId, {
-      summary: turno.userEmail,
+      summary: `turno ${turno.nome}`,
       description: turno.note,
       start: {
         dateTime: new Date(`${turno.giorno}T${slot.inizio}:00`).toISOString(),
