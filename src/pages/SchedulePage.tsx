@@ -525,7 +525,7 @@ export default function SchedulePage() {
         {deleteError && <p className="error">{deleteError}</p>}
         <table className="item-table">
           <thead>
-            <tr style={{ fontFamily: 'Cormorant Garamond, serif', color: '#000' }}>
+            <tr style={{ fontFamily: 'TikTok Sans, sans-serif', color: '#000' }}>
               <th>Utente</th>
               <th>Data</th>
               <th>Mattino (inizio)</th>
