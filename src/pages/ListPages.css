@@ -217,3 +217,23 @@
     align-items: center;
   }
 }
+
+/* Upcoming meetings list on Utilita page */
+.meeting-events {
+  max-width: 600px;
+  margin: 1rem auto;
+  text-align: center;
+}
+
+.meeting-events ul {
+  list-style: none;
+  padding: 0;
+}
+
+.meeting-events li {
+  background: #a8a3a3;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
