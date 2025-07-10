@@ -474,7 +474,7 @@ export default function SchedulePage() {
         />
 
         <SlotInput
-          label="Slot 3 (facoltativo)"
+          label="Straordinario (facoltativo)"
           startValue={s3Start}
           endValue={s3End}
           onStartChange={e => setS3Start(e.target.value)}
@@ -602,7 +602,7 @@ export default function SchedulePage() {
                 <th>Tipo</th>
                 <th>Slot 1</th>
                 <th>Slot 2</th>
-                <th>Slot 3</th>
+                <th>Straordinario</th>
               </tr>
             </thead>
             <tbody>

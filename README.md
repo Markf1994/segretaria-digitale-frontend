@@ -120,7 +120,7 @@ export. The schedule page also includes a **PDF settimana** button that calls
 ## Schedule
 
 The schedule page lets you create shifts with up to three optional time slots.
-`Slot 1`, `Slot 2` and `Slot 3` can be left empty. When either **Inizio1** or
+`Slot 1`, `Slot 2` and `Straordinario` can be left empty. When either **Inizio1** or
 **Fine1** is blank, that slot is not saved. The same rule applies to the other
 slots.
 
