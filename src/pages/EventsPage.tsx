@@ -326,7 +326,12 @@ export default function EventsPage() {
           </tr>
         </thead>
         <tbody>
-          {events.filter(ev => ev.source === 'db').map(ev => (
+          {events
+            .filter(ev => ev.source === 'db')
+            .sort((a, b) =>
+              new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
+            )
+            .map(ev => (
             <tr key={`${ev.source}-${ev.id}`}>
               <td>{ev.title}</td>
               <td className="digit-font">{new Date(ev.dateTime).toLocaleString()}</td>
