@@ -10,7 +10,7 @@ import {
   endOfWeek,
   isWithinInterval,
 } from 'date-fns';
-import { DEFAULT_CALENDAR_ID } from '../constants';
+import { DEFAULT_CALENDAR_ID, GOOGLE_COLOR_MAP } from '../constants';
 
 interface EventItem {
   id: string;
@@ -19,6 +19,7 @@ interface EventItem {
   dateTime: string;
   isPublic: boolean;
   source?: 'gc' | 'db';
+  colorId?: string;
 }
 interface TodoItem { id: string; text: string; due: string; }
 
@@ -83,6 +84,12 @@ export default function Dashboard() {
             <ul>
               {upcomingEvents.map(e => (
                 <li key={e.id}>
+                  <span
+                    className="event-color-dot"
+                    style={{
+                      backgroundColor: e.colorId ? GOOGLE_COLOR_MAP[e.colorId] : 'transparent',
+                    }}
+                  />
                   Evento: {e.title} – {new Date(e.dateTime).toLocaleDateString()}
                 </li>
               ))}

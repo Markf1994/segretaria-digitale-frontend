@@ -99,6 +99,7 @@ export default function EventsPage() {
             isPublic: ev.visibility === 'public',
             owner_id: currentUserId || undefined,
             source: 'gc',
+            colorId: ev.colorId,
           }));
           const dbEvents: UnifiedEvent[] = db
             .filter(ev =>
