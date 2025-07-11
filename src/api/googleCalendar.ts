@@ -17,6 +17,12 @@ const COLOR_MAP: Record<TipoTurno, string> = {
   RECUPERO: '6',
 }
 
+const AGENT_COLOR_MAP: Record<string, string> = {
+  'Ag.Sc. Fenaroli Marco': '10',
+  'Ag.Sc. Danesi Mattia': '6',
+  'Sovr. Licini Rossella': '1',
+}
+
 const getStoredToken = (): string | null => {
   if (typeof localStorage === 'undefined') return null
   const token = localStorage.getItem(ACCESS_TOKEN_KEY)
@@ -180,7 +186,10 @@ export const createShiftEvents = async (
     fine: string
   }[]
   const ids: string[] = []
-  const colorId = turno.colorId ?? (turno.tipo ? COLOR_MAP[turno.tipo] : undefined)
+  const colorId =
+    turno.colorId ??
+    AGENT_COLOR_MAP[turno.nome] ??
+    (turno.tipo ? COLOR_MAP[turno.tipo] : undefined)
 
   for (const slot of slots) {
     const res = await createEvent(calendarId, {
