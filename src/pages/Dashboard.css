@@ -48,6 +48,15 @@
   align-items: center;
 }
 
+.event-color-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-right: 0.5rem;
+}
+
 .notifications li button {
   margin-left: 0.5rem;
   background: #A52019;
