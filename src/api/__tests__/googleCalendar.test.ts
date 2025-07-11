@@ -80,6 +80,26 @@ describe('createShiftEvents', () => {
       }),
     )
   })
+
+  it('maps nome to colorId', async () => {
+    fetchMock.mockResolvedValueOnce({ json: () => Promise.resolve({ id: '1' }) })
+
+    await createShiftEvents('cal', {
+      nome: 'Ag.Sc. Fenaroli Marco',
+      giorno: '2023-05-04',
+      slot1: { inizio: '08:00', fine: '09:00' },
+    })
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://www.googleapis.com/calendar/v3/calendars/cal/events',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify(
+          expect.objectContaining({ colorId: '10' })
+        ),
+      }),
+    )
+  })
 })
 
 describe('signIn', () => {
