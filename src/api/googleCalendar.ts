@@ -23,6 +23,21 @@ const AGENT_COLOR_MAP: Record<string, string> = {
   'Sovr. Licini Rossella': '1',
 }
 
+export const formatDateTime = (local: string): string => {
+  const d = new Date(local)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const h = String(d.getHours()).padStart(2, '0')
+  const min = String(d.getMinutes()).padStart(2, '0')
+  const s = String(d.getSeconds()).padStart(2, '0')
+  const off = -d.getTimezoneOffset()
+  const sign = off >= 0 ? '+' : '-'
+  const offH = String(Math.floor(Math.abs(off) / 60)).padStart(2, '0')
+  const offM = String(Math.abs(off) % 60).padStart(2, '0')
+  return `${y}-${m}-${day}T${h}:${min}:${s}${sign}${offH}:${offM}`
+}
+
 const getStoredToken = (): string | null => {
   if (typeof localStorage === 'undefined') return null
   const token = localStorage.getItem(ACCESS_TOKEN_KEY)
@@ -196,10 +211,10 @@ export const createShiftEvents = async (
       summary: `turno ${turno.nome}`,
       description: turno.note,
       start: {
-        dateTime: new Date(`${turno.giorno}T${slot.inizio}:00`).toISOString(),
+        dateTime: formatDateTime(`${turno.giorno}T${slot.inizio}:00`),
       },
       end: {
-        dateTime: new Date(`${turno.giorno}T${slot.fine}:00`).toISOString(),
+        dateTime: formatDateTime(`${turno.giorno}T${slot.fine}:00`),
       },
       ...(colorId ? { colorId } : {}),
     })
