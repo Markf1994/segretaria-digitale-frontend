@@ -1,4 +1,4 @@
-import { createShiftEvents, signIn } from '../googleCalendar'
+import { createShiftEvents, signIn, formatDateTime } from '../googleCalendar'
 
 describe('createShiftEvents', () => {
   const fetchMock = jest.fn()
@@ -26,8 +26,8 @@ describe('createShiftEvents', () => {
         body: JSON.stringify({
           summary: 'turno u',
           description: 'note',
-          start: { dateTime: new Date('2023-05-01T08:00:00').toISOString() },
-          end: { dateTime: new Date('2023-05-01T09:00:00').toISOString() },
+          start: { dateTime: formatDateTime('2023-05-01T08:00:00') },
+          end: { dateTime: formatDateTime('2023-05-01T09:00:00') },
           colorId: '5',
         }),
       }),
@@ -52,8 +52,8 @@ describe('createShiftEvents', () => {
         body: JSON.stringify({
           summary: 'turno u',
           description: undefined,
-          start: { dateTime: new Date('2023-05-02T10:00:00').toISOString() },
-          end: { dateTime: new Date('2023-05-02T11:00:00').toISOString() },
+          start: { dateTime: formatDateTime('2023-05-02T10:00:00') },
+          end: { dateTime: formatDateTime('2023-05-02T11:00:00') },
         }),
       }),
     )

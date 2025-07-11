@@ -11,6 +11,7 @@ import {
   createShiftEvents,
   updateEvent,
   deleteEvent,
+  formatDateTime,
   ShiftData,
   signIn,
 } from '../api/googleCalendar';
@@ -351,14 +352,14 @@ export default function SchedulePage() {
               summary: `turno ${shift.nome}`,
               description: shift.note,
               start: {
-                dateTime: new Date(
+                dateTime: formatDateTime(
                   `${shift.giorno}T${slots[i].inizio}:00`,
-                ).toISOString(),
+                ),
               },
               end: {
-                dateTime: new Date(
+                dateTime: formatDateTime(
                   `${shift.giorno}T${slots[i].fine}:00`,
-                ).toISOString(),
+                ),
               },
             });
           }
