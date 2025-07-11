@@ -29,7 +29,15 @@ export default function Dashboard() {
     () => getUserStorageKey('todos', token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null)),
     [token]
   );
-  const [events] = useLocalStorage<EventItem[]>('events', []);
+  const eventsKey = useMemo(
+    () =>
+      getUserStorageKey(
+        'events',
+        token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null),
+      ),
+    [token],
+  );
+  const [events] = useLocalStorage<EventItem[]>(eventsKey, []);
   const [todos, setTodos] = useLocalStorage<TodoItem[]>(todoKey, []);
   const CALENDAR_ID =
     import.meta.env.VITE_DASHBOARD_CALENDAR_ID ||
