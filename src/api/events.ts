@@ -6,6 +6,7 @@ export interface DbEvent {
   titolo: string
   descrizione?: string
   data_ora: string
+  colorId?: string
   is_public?: boolean
   owner_id: string | null
 }

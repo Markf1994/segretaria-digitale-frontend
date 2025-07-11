@@ -114,6 +114,7 @@ export default function EventsPage() {
               endDateTime: ev.data_ora,
               isPublic: !!ev.is_public,
               owner_id: ev.owner_id || undefined,
+              colorId: ev.colorId,
               source: 'db',
             }));
           const all = [...gcEvents, ...dbEvents];
@@ -161,12 +162,13 @@ export default function EventsPage() {
               end: { dateTime: endDateTime || dateTime },
             });
           } else {
-            await updateDbEvent(id, {
-              titolo: title,
-              descrizione: description,
-              data_ora: dateTime,
-              is_public: isPublic,
-            });
+          await updateDbEvent(id, {
+            titolo: title,
+            descrizione: description,
+            data_ora: dateTime,
+            is_public: isPublic,
+            ...(form.colorId ? { colorId: form.colorId } : {}),
+          });
           }
         } catch {
           if (source === 'gc') setCalendarError('Errore di accesso al calendario');
@@ -210,6 +212,7 @@ export default function EventsPage() {
             descrizione: description,
             data_ora: dateTime,
             is_public: isPublic,
+            ...(form.colorId ? { colorId: form.colorId } : {}),
           });
           dbEvent = {
             id: res.id,
