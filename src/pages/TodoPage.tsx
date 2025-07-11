@@ -160,7 +160,11 @@ export default function TodoPage() {
           </tr>
         </thead>
         <tbody>
-          {todos.map(t => (
+          {[...todos]
+            .sort((a, b) =>
+              new Date(a.due).getTime() - new Date(b.due).getTime(),
+            )
+            .map(t => (
             <tr key={t.id}>
               <td className="desc-cell">{t.text}</td>
               <td className="digit-font">{new Date(t.due).toLocaleDateString()}</td>
