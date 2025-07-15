@@ -97,6 +97,33 @@ describe('EventsPage', () => {
     expect(screen.queryByText('Other')).not.toBeInTheDocument();
   });
 
+  it('handles numeric owner_id values', async () => {
+    const header = Buffer.from('{}').toString('base64');
+    const payload = Buffer.from(JSON.stringify({ sub: 123 })).toString('base64');
+    const token = `${header}.${payload}.sig`;
+    localStorage.setItem('token', token);
+    localStorage.setItem(
+      getUserStorageKey('events', token),
+      JSON.stringify([
+        { id: '1', title: 'Mine', description: '', dateTime: '2023-01-01T10:00', isPublic: false, owner_id: 123, source: 'db' },
+        { id: '2', title: 'Other', description: '', dateTime: '2023-01-02T10:00', isPublic: false, owner_id: 999, source: 'db' },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/events']}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Mine')).toBeInTheDocument();
+    expect(screen.queryByText('Other')).not.toBeInTheDocument();
+  });
+
   it('adds new event offline', async () => {
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 

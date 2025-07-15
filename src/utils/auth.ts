@@ -22,12 +22,12 @@ export function getUserId(token: string | null): string | null {
   if (!token) return null;
   const decoded = decodeToken(token);
   const id = decoded?.sub ?? decoded?.user_id ?? decoded?.id ?? decoded?.email;
-  return id ?? null;
+  return id == null ? null : String(id);
 }
 
 export function getUserStorageKey(prefix: string, token: string | null): string {
   if (!token) return prefix;
   const decoded = decodeToken(token);
   const id = decoded?.sub ?? decoded?.user_id ?? decoded?.id ?? decoded?.email;
-  return id ? `${prefix}_${id}` : prefix;
+  return id != null ? `${prefix}_${String(id)}` : prefix;
 }
