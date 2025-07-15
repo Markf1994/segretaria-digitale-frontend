@@ -29,6 +29,7 @@ const Header: React.FC = () => {
           <Link to="/todo">📝 To-Do</Link>
           <Link to="/orari">🕑 Orari</Link>
           <Link to="/determinazioni">📄 Determine</Link>
+          <Link to="/inventario">📦 Inventario</Link>
           <Link to="/utilita">🤝 Riunioni</Link>
           <button onClick={logout} aria-label="Esci">🚪 esci</button>
         </nav>

@@ -153,6 +153,13 @@ value entered must be a valid time string or the backend will reject that row.
 The dashboard calendar shows Google Calendar events for the current week only.
 Events are fetched from the ID defined in `VITE_DASHBOARD_CALENDAR_ID`.
 
+## Inventory
+
+Visit `/inventario` to manage devices and road signage. The page lets you
+create, edit and search devices, temporary signage and vertical/horizontal
+signage. Horizontal signage includes a **PDF anno** button that calls
+`/inventario/signage-horizontal/pdf?year=YYYY` and downloads the generated PDF.
+
 ## Testing
 
 Before running tests, install dependencies if you haven't already:
