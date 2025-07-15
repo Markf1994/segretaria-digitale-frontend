@@ -51,4 +51,11 @@ describe('getUserId', () => {
     const token = `${header}.${payload}.sig`;
     expect(getUserId(token)).toBe('me@example.com');
   });
+
+  it('returns string when id is numeric', () => {
+    const header = Buffer.from('{}').toString('base64');
+    const payload = Buffer.from(JSON.stringify({ sub: 42 })).toString('base64');
+    const token = `${header}.${payload}.sig`;
+    expect(getUserId(token)).toBe('42');
+  });
 });

@@ -81,8 +81,10 @@ export default function EventsPage() {
       const rawToken =
         token || (typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null);
       const decoded = rawToken ? decodeToken(rawToken) : null;
+      const rawCurrentUserId =
+        decoded?.sub ?? decoded?.user_id ?? decoded?.id ?? decoded?.email ?? null;
       const currentUserId =
-        decoded?.sub || decoded?.user_id || decoded?.id || decoded?.email || null;
+        rawCurrentUserId != null ? String(rawCurrentUserId) : null;
       if (navigator.onLine) {
         try {
           await signIn();
@@ -104,7 +106,9 @@ export default function EventsPage() {
           const dbEvents: UnifiedEvent[] = db
             .filter(ev =>
               ev.is_public === true ||
-              (currentUserId ? ev.owner_id === currentUserId : false)
+              (currentUserId
+                ? String(ev.owner_id) === String(currentUserId)
+                : false)
             )
             .map((ev: DbEvent) => ({
               id: ev.id,
@@ -130,7 +134,10 @@ export default function EventsPage() {
         try {
           const parsed = JSON.parse(stored) as UnifiedEvent[];
           const filtered = parsed.filter(ev =>
-            ev.isPublic || (currentUserId ? ev.owner_id === currentUserId : false)
+            ev.isPublic ||
+            (currentUserId
+              ? String(ev.owner_id) === String(currentUserId)
+              : false)
           );
           setEvents(filtered);
         } catch {
