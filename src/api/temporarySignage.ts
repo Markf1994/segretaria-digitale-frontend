@@ -6,7 +6,7 @@ export interface TemporarySign {
   fine_validita: string
   descrizione?: string
   quantita?: number
-  note?: string
+  anno?: number
 }
 
 export const listTemporarySignage = (): Promise<TemporarySign[]> =>
