@@ -167,6 +167,7 @@ export default function EventsPage() {
               description,
               start: { dateTime },
               end: { dateTime: endDateTime || dateTime },
+              visibility: isPublic ? 'public' : 'private',
             });
           } else {
           await updateDbEvent(id, {
@@ -200,6 +201,7 @@ export default function EventsPage() {
             start: { dateTime },
             end: { dateTime: endDateTime || dateTime },
             colorId: form.colorId || undefined,
+            visibility: isPublic ? 'public' : 'private',
           });
           gcEvent = {
             id: res.id,

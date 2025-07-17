@@ -120,12 +120,14 @@ export const listEvents = async (
 export const createEvent = async (
   calendarId: string = DEFAULT_CALENDAR_ID,
   event: {
-  summary: string
-  description?: string
-  start: { dateTime: string }
-  end: { dateTime: string }
-  colorId?: string
-}): Promise<GcEvent> => {
+    summary: string
+    description?: string
+    start: { dateTime: string }
+    end: { dateTime: string }
+    colorId?: string
+    visibility?: string
+  },
+): Promise<GcEvent> => {
   const res = await fetch(
     `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events`,
     {
@@ -150,6 +152,7 @@ export const updateEvent = async (
     description?: string
     start?: { dateTime: string }
     end?: { dateTime: string }
+    visibility?: string
   }
 ): Promise<GcEvent> => {
   const res = await fetch(
