@@ -19,7 +19,16 @@ beforeEach(() => {
 describe('SegnalazioniPage', () => {
   it('lists segnalazioni from api', async () => {
     mockedApi.listSegnalazioni.mockResolvedValue([
-      { id: '1', tipo: 'Buco', priorita: 'Alta', data: '2024-01-01', descrizione: 'desc', lat: 0, lng: 0 }
+      {
+        id: '1',
+        tipo: 'Buco',
+        priorita: 'Alta',
+        data: '2024-01-01',
+        descrizione: 'desc',
+        stato: 'aperta',
+        lat: 0,
+        lng: 0,
+      }
     ])
 
     render(
@@ -48,6 +57,7 @@ describe('SegnalazioniPage', () => {
 
     const selects = screen.getAllByRole('combobox')
     expect(selects).toHaveLength(2)
+    expect(screen.getByPlaceholderText(/stato/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/data/i)).toHaveAttribute('type', 'datetime-local')
   })
 })
