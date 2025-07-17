@@ -25,6 +25,7 @@ const SegnalazioniPage: React.FC = () => {
   const [priorita, setPriorita] = useState('')
   const [data, setData] = useState(() => new Date().toISOString().slice(0, 16))
   const [descrizione, setDescrizione] = useState('')
+  const [stato, setStato] = useState('')
   const [pos, setPos] = useState<[number, number] | null>(null)
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const SegnalazioniPage: React.FC = () => {
       priorita,
       data,
       descrizione,
+      stato,
       lat: pos[0],
       lng: pos[1]
     })
@@ -47,6 +49,7 @@ const SegnalazioniPage: React.FC = () => {
     setPriorita('')
     setData(new Date().toISOString().slice(0, 16))
     setDescrizione('')
+    setStato('')
     setPos(null)
   }
 
@@ -76,6 +79,11 @@ const SegnalazioniPage: React.FC = () => {
           value={data}
           onChange={e => setData(e.target.value)}
         />
+        <input
+          placeholder="Stato"
+          value={stato}
+          onChange={e => setStato(e.target.value)}
+        />
         <textarea placeholder="Descrizione" value={descrizione} onChange={e => setDescrizione(e.target.value)} />
         <button type="submit">Invia</button>
       </form>
@@ -85,9 +93,12 @@ const SegnalazioniPage: React.FC = () => {
         {items.map(s => (
           <Marker key={s.id} position={[s.lat, s.lng]}>
             <Popup>
-              <strong>{s.tipo}</strong>
-              <br />
-              {s.descrizione}
+              <div>
+                <strong>{s.tipo}</strong>
+              </div>
+              {s.stato && <div>Stato: {s.stato}</div>}
+              <div>{new Date(s.data).toLocaleString()}</div>
+              <div>{s.descrizione}</div>
             </Popup>
           </Marker>
         ))}
