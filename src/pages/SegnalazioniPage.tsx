@@ -57,8 +57,10 @@ const SegnalazioniPage: React.FC = () => {
       <form onSubmit={onSubmit} className="item-form">
         <select value={tipo} onChange={e => setTipo(e.target.value)}>
           <option value="">Tipo</option>
-          <option value="Incidente">Incidente</option>
-          <option value="Violazione">Violazione</option>
+          <option value="Piante">Piante</option>
+          <option value="Animali">Animali</option>
+          <option value="Danneggiamenti">Danneggiamenti</option>
+          <option value="Reati">Reati</option>
           <option value="Altro">Altro</option>
         </select>
         <select value={priorita} onChange={e => setPriorita(e.target.value)}>
