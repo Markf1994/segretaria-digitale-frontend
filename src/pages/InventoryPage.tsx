@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './ListPages.css'
+import Modal from '../components/ui/modal'
 import {
   listDevices,
   createDevice,
@@ -55,6 +56,11 @@ const InventoryPage: React.FC = () => {
   const [horSearch, setHorSearch] = useState('')
   const [horEdit, setHorEdit] = useState<string | null>(null)
   const [pdfYear, setPdfYear] = useState('')
+
+  const [showDevModal, setShowDevModal] = useState(false)
+  const [showTempModal, setShowTempModal] = useState(false)
+  const [showVertModal, setShowVertModal] = useState(false)
+  const [showHorModal, setShowHorModal] = useState(false)
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -122,6 +128,7 @@ const InventoryPage: React.FC = () => {
       saveDevices(updated)
     }
     resetDevice()
+    setShowDevModal(false)
   }
 
   const submitTemp = async (e: React.FormEvent) => {
@@ -139,6 +146,7 @@ const InventoryPage: React.FC = () => {
       saveTemps(updated)
     }
     resetTemp()
+    setShowTempModal(false)
   }
 
   const submitVert = async (e: React.FormEvent) => {
@@ -156,6 +164,7 @@ const InventoryPage: React.FC = () => {
       saveVerticals(updated)
     }
     resetVert()
+    setShowVertModal(false)
   }
 
   const submitHor = async (e: React.FormEvent) => {
@@ -173,6 +182,7 @@ const InventoryPage: React.FC = () => {
       saveHorizontals(updated)
     }
     resetHor()
+    setShowHorModal(false)
   }
 
   const onPdf = async () => {
@@ -186,12 +196,7 @@ const InventoryPage: React.FC = () => {
     <div className="list-page">
       <div>
         <h2>Dispositivi</h2>
-        <form onSubmit={submitDevice} className="item-form">
-          <input data-testid="dev-name" placeholder="Nome" value={devName} onChange={e => setDevName(e.target.value)} />
-          <input data-testid="dev-notes" placeholder="Note" value={devNotes} onChange={e => setDevNotes(e.target.value)} />
-          <button data-testid="dev-submit" type="submit">{devEdit ? 'Salva' : 'Aggiungi'}</button>
-          {devEdit && <button data-testid="dev-cancel" type="button" onClick={resetDevice}>Annulla</button>}
-        </form>
+        <button type="button" onClick={() => { resetDevice(); setShowDevModal(true) }}>Aggiungi</button>
         <input placeholder="Cerca" value={devSearch} onChange={e => setDevSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -203,23 +208,26 @@ const InventoryPage: React.FC = () => {
                 <td>{d.nome}</td>
                 <td>{d.note}</td>
                 <td>
-                  <button onClick={() => { setDevEdit(d.id); setDevName(d.nome); setDevNotes(d.note || '') }}>Modifica</button>
+                  <button onClick={() => { setDevEdit(d.id); setDevName(d.nome); setDevNotes(d.note || ''); setShowDevModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteDevice(d.id); const u = devices.filter(x => x.id !== d.id); setDevices(u); saveDevices(u) }}>Elimina</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Modal open={showDevModal} onClose={() => { setShowDevModal(false); resetDevice() }}>
+          <form onSubmit={submitDevice} className="item-form">
+            <input data-testid="dev-name" placeholder="Nome" value={devName} onChange={e => setDevName(e.target.value)} />
+            <input data-testid="dev-notes" placeholder="Note" value={devNotes} onChange={e => setDevNotes(e.target.value)} />
+            <button data-testid="dev-submit" type="submit">{devEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button data-testid="dev-cancel" type="button" onClick={() => { setShowDevModal(false); resetDevice() }}>Annulla</button>
+          </form>
+        </Modal>
       </div>
 
       <div>
         <h2>Segnaletica Temporanea</h2>
-        <form onSubmit={submitTemp} className="item-form">
-          <input data-testid="temp-luogo" placeholder="Luogo" value={tempLuogo} onChange={e => setTempLuogo(e.target.value)} />
-          <input data-testid="temp-fine" type="date" value={tempFine} onChange={e => setTempFine(e.target.value)} />
-          <button data-testid="temp-submit" type="submit">{tempEdit ? 'Salva' : 'Aggiungi'}</button>
-          {tempEdit && <button data-testid="temp-cancel" type="button" onClick={resetTemp}>Annulla</button>}
-        </form>
+        <button type="button" onClick={() => { resetTemp(); setShowTempModal(true) }}>Aggiungi</button>
         <input placeholder="Cerca" value={tempSearch} onChange={e => setTempSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -231,23 +239,26 @@ const InventoryPage: React.FC = () => {
                 <td>{t.luogo}</td>
                 <td>{t.fine_validita}</td>
                 <td>
-                  <button onClick={() => { setTempEdit(t.id); setTempLuogo(t.luogo); setTempFine(t.fine_validita) }}>Modifica</button>
+                  <button onClick={() => { setTempEdit(t.id); setTempLuogo(t.luogo); setTempFine(t.fine_validita); setShowTempModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteTemporarySignage(t.id); const u = temps.filter(x => x.id !== t.id); setTemps(u); saveTemps(u) }}>Elimina</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Modal open={showTempModal} onClose={() => { setShowTempModal(false); resetTemp() }}>
+          <form onSubmit={submitTemp} className="item-form">
+            <input data-testid="temp-luogo" placeholder="Luogo" value={tempLuogo} onChange={e => setTempLuogo(e.target.value)} />
+            <input data-testid="temp-fine" type="date" value={tempFine} onChange={e => setTempFine(e.target.value)} />
+            <button data-testid="temp-submit" type="submit">{tempEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button data-testid="temp-cancel" type="button" onClick={() => { setShowTempModal(false); resetTemp() }}>Annulla</button>
+          </form>
+        </Modal>
       </div>
 
       <div>
         <h2>Segnaletica Verticale</h2>
-        <form onSubmit={submitVert} className="item-form">
-          <input data-testid="vert-luogo" placeholder="Luogo" value={vertLuogo} onChange={e => setVertLuogo(e.target.value)} />
-          <input data-testid="vert-desc" placeholder="Descrizione" value={vertDesc} onChange={e => setVertDesc(e.target.value)} />
-          <button data-testid="vert-submit" type="submit">{vertEdit ? 'Salva' : 'Aggiungi'}</button>
-          {vertEdit && <button data-testid="vert-cancel" type="button" onClick={resetVert}>Annulla</button>}
-        </form>
+        <button type="button" onClick={() => { resetVert(); setShowVertModal(true) }}>Aggiungi</button>
         <input placeholder="Cerca" value={vertSearch} onChange={e => setVertSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -259,21 +270,24 @@ const InventoryPage: React.FC = () => {
                 <td>{v.luogo}</td>
                 <td>{v.descrizione}</td>
                 <td>
-                  <button onClick={() => { setVertEdit(v.id); setVertLuogo(v.luogo); setVertDesc(v.descrizione) }}>Modifica</button>
+                  <button onClick={() => { setVertEdit(v.id); setVertLuogo(v.luogo); setVertDesc(v.descrizione); setShowVertModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteVerticalSignage(v.id); const u = verticals.filter(x => x.id !== v.id); setVerticals(u); saveVerticals(u) }}>Elimina</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Modal open={showVertModal} onClose={() => { setShowVertModal(false); resetVert() }}>
+          <form onSubmit={submitVert} className="item-form">
+            <input data-testid="vert-luogo" placeholder="Luogo" value={vertLuogo} onChange={e => setVertLuogo(e.target.value)} />
+            <input data-testid="vert-desc" placeholder="Descrizione" value={vertDesc} onChange={e => setVertDesc(e.target.value)} />
+            <button data-testid="vert-submit" type="submit">{vertEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button data-testid="vert-cancel" type="button" onClick={() => { setShowVertModal(false); resetVert() }}>Annulla</button>
+          </form>
+        </Modal>
 
         <h2>Segnaletica Orizzontale</h2>
-        <form onSubmit={submitHor} className="item-form">
-          <input data-testid="hor-luogo" placeholder="Luogo" value={horLuogo} onChange={e => setHorLuogo(e.target.value)} />
-          <input data-testid="hor-data" type="date" value={horData} onChange={e => setHorData(e.target.value)} />
-          <button data-testid="hor-submit" type="submit">{horEdit ? 'Salva' : 'Aggiungi'}</button>
-          {horEdit && <button data-testid="hor-cancel" type="button" onClick={resetHor}>Annulla</button>}
-        </form>
+        <button type="button" onClick={() => { resetHor(); setShowHorModal(true) }}>Aggiungi</button>
         <input placeholder="Cerca" value={horSearch} onChange={e => setHorSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -285,13 +299,21 @@ const InventoryPage: React.FC = () => {
                 <td>{h.luogo}</td>
                 <td>{h.data}</td>
                 <td>
-                  <button onClick={() => { setHorEdit(h.id); setHorLuogo(h.luogo); setHorData(h.data) }}>Modifica</button>
+                  <button onClick={() => { setHorEdit(h.id); setHorLuogo(h.luogo); setHorData(h.data); setShowHorModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteHorizontalSignage(h.id); const u = horizontals.filter(x => x.id !== h.id); setHorizontals(u); saveHorizontals(u) }}>Elimina</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <Modal open={showHorModal} onClose={() => { setShowHorModal(false); resetHor() }}>
+          <form onSubmit={submitHor} className="item-form">
+            <input data-testid="hor-luogo" placeholder="Luogo" value={horLuogo} onChange={e => setHorLuogo(e.target.value)} />
+            <input data-testid="hor-data" type="date" value={horData} onChange={e => setHorData(e.target.value)} />
+            <button data-testid="hor-submit" type="submit">{horEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button data-testid="hor-cancel" type="button" onClick={() => { setShowHorModal(false); resetHor() }}>Annulla</button>
+          </form>
+        </Modal>
         <div className="pdf-controls">
           <input data-testid="hor-year" placeholder="Anno" value={pdfYear} onChange={e => setPdfYear(e.target.value)} />
           <button data-testid="hor-pdf" type="button" onClick={onPdf}>PDF anno</button>
