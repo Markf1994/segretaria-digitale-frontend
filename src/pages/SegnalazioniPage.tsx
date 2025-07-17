@@ -41,6 +41,7 @@ const SegnalazioniPage: React.FC = () => {
   return (
     <div className="list-page">
       <h2>Segnalazioni</h2>
+      <h2>🚧 LAVORI IN CORSO 🚧</h2>
       <form onSubmit={onSubmit} className="item-form">
         <input placeholder="Tipo" value={tipo} onChange={e => setTipo(e.target.value)} />
         <input placeholder="Priorità" value={priorita} onChange={e => setPriorita(e.target.value)} />
