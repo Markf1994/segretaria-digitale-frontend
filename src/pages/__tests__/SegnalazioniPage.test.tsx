@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import SegnalazioniPage from '../SegnalazioniPage'
 import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
@@ -59,5 +60,39 @@ describe('SegnalazioniPage', () => {
     expect(selects).toHaveLength(2)
     expect(screen.getByPlaceholderText(/stato/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/data/i)).toHaveAttribute('type', 'datetime-local')
+  })
+
+  it('adds marker after map click and form submit', async () => {
+    mockedApi.createSegnalazione.mockResolvedValue({
+      id: '1',
+      tipo: '',
+      priorita: '',
+      data: '',
+      descrizione: '',
+      lat: 0,
+      lng: 0,
+    } as any)
+
+    render(
+      <MemoryRouter initialEntries={["/segnalazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/segnalazioni" element={<SegnalazioniPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    const map = screen.getByTestId('map')
+    expect(map.querySelectorAll('.leaflet-marker-icon')).toHaveLength(0)
+
+    fireEvent.click(map)
+
+    expect(map.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1)
+
+    await userEvent.click(screen.getByRole('button', { name: /invia/i }))
+
+    expect(mockedApi.createSegnalazione).toHaveBeenCalled()
+    expect(map.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1)
   })
 })
