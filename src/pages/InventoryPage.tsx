@@ -53,6 +53,7 @@ const InventoryPage: React.FC = () => {
   const [verticals, setVerticals] = useState<VerticalSign[]>([])
   const [vertLuogo, setVertLuogo] = useState('')
   const [vertDesc, setVertDesc] = useState('')
+  const [vertTipo, setVertTipo] = useState('')
   const [vertAnno, setVertAnno] = useState('')
   const [vertQuant, setVertQuant] = useState('')
   const [vertSearch, setVertSearch] = useState('')
@@ -122,7 +123,7 @@ const InventoryPage: React.FC = () => {
 
   const resetDevice = () => { setDevName(''); setDevNotes(''); setDevEdit(null); setDevOpen(false) }
   const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempDesc(''); setTempQuant(''); setTempEdit(null); setTempOpen(false) }
-  const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertAnno(''); setVertQuant(''); setVertEdit(null); setVertOpen(false) }
+  const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertTipo(''); setVertAnno(''); setVertQuant(''); setVertEdit(null); setVertOpen(false) }
   const resetPlan = () => { setPlanDesc(''); setPlanAnno(''); setPlanEdit(null); setPlanOpen(false) }
 
   const submitDevice = async (e: React.FormEvent) => {
@@ -180,6 +181,7 @@ const InventoryPage: React.FC = () => {
       const res = await updateVerticalSignage(vertEdit, {
         luogo: vertLuogo,
         descrizione: vertDesc,
+        tipo: vertTipo,
         anno: vertAnno ? Number(vertAnno) : undefined,
         quantita: vertQuant ? Number(vertQuant) : undefined
       })
@@ -190,6 +192,7 @@ const InventoryPage: React.FC = () => {
       const res = await createVerticalSignage({
         luogo: vertLuogo,
         descrizione: vertDesc,
+        tipo: vertTipo,
         anno: vertAnno ? Number(vertAnno) : undefined,
         quantita: vertQuant ? Number(vertQuant) : undefined
       })
@@ -307,6 +310,7 @@ const InventoryPage: React.FC = () => {
           <form onSubmit={submitVert} className="item-form">
             <input data-testid="vert-luogo" placeholder="Luogo" value={vertLuogo} onChange={e => setVertLuogo(e.target.value)} />
             <input data-testid="vert-desc" placeholder="Descrizione" value={vertDesc} onChange={e => setVertDesc(e.target.value)} />
+            <input data-testid="vert-tipo" placeholder="Tipo" value={vertTipo} onChange={e => setVertTipo(e.target.value)} />
             <input data-testid="vert-anno" type="number" placeholder="Anno" value={vertAnno} onChange={e => setVertAnno(e.target.value)} />
             <input data-testid="vert-quant" type="number" placeholder="Quantità" value={vertQuant} onChange={e => setVertQuant(e.target.value)} />
             <button data-testid="vert-submit" type="submit">{vertEdit ? 'Salva' : 'Aggiungi'}</button>
@@ -316,17 +320,18 @@ const InventoryPage: React.FC = () => {
         <input placeholder="Cerca" value={vertSearch} onChange={e => setVertSearch(e.target.value)} />
         <table className="item-table">
           <thead>
-            <tr><th>Luogo</th><th>Descrizione</th><th>Anno</th><th>Quantità</th><th></th></tr>
+            <tr><th>Luogo</th><th>Descrizione</th><th>Tipo</th><th>Anno</th><th>Quantità</th><th></th></tr>
           </thead>
           <tbody>
             {verticals.filter(v => v.luogo.toLowerCase().includes(vertSearch.toLowerCase())).map(v => (
               <tr key={v.id}>
                 <td>{v.luogo}</td>
                 <td>{v.descrizione}</td>
+                <td>{v.tipo}</td>
                 <td>{v.anno}</td>
                 <td>{v.quantita}</td>
                 <td>
-                  <button onClick={() => { setVertEdit(v.id); setVertLuogo(v.luogo); setVertDesc(v.descrizione); setVertAnno(v.anno?.toString() || ''); setVertQuant(v.quantita?.toString() || ''); setVertOpen(true) }}>Modifica</button>
+                  <button onClick={() => { setVertEdit(v.id); setVertLuogo(v.luogo); setVertDesc(v.descrizione); setVertTipo(v.tipo || ''); setVertAnno(v.anno?.toString() || ''); setVertQuant(v.quantita?.toString() || ''); setVertOpen(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteVerticalSignage(v.id); const u = verticals.filter(x => x.id !== v.id); setVerticals(u); saveVerticals(u) }}>Elimina</button>
                 </td>
               </tr>
