@@ -24,12 +24,16 @@ import {
 } from '../api/verticalSignage'
 import {
   listHorizontalSignage,
-  createHorizontalSignage,
-  updateHorizontalSignage,
-  deleteHorizontalSignage,
   getHorizontalSignagePdf,
   HorizontalSign,
 } from '../api/horizontalSignage'
+import {
+  listHorizontalPlans,
+  createHorizontalPlan,
+  updateHorizontalPlan,
+  deleteHorizontalPlan,
+  HorizontalPlan,
+} from '../api/horizontalPlans'
 
 const InventoryPage: React.FC = () => {
   const [devices, setDevices] = useState<Device[]>([])
@@ -57,15 +61,17 @@ const InventoryPage: React.FC = () => {
   const [devOpen, setDevOpen] = useState(false)
   const [tempOpen, setTempOpen] = useState(false)
   const [vertOpen, setVertOpen] = useState(false)
-  const [horOpen, setHorOpen] = useState(false)
+  const [planOpen, setPlanOpen] = useState(false)
+
+  const [plans, setPlans] = useState<HorizontalPlan[]>([])
+  const [planDesc, setPlanDesc] = useState('')
+  const [planAnno, setPlanAnno] = useState('')
+  const [planSearch, setPlanSearch] = useState('')
+  const [planEdit, setPlanEdit] = useState<string | null>(null)
 
   const [horizontals, setHorizontals] = useState<HorizontalSign[]>([])
-  const [horLuogo, setHorLuogo] = useState('')
-  const [horData, setHorData] = useState('')
-  const [horDesc, setHorDesc] = useState('')
-  const [horQuant, setHorQuant] = useState('')
-  const [horSearch, setHorSearch] = useState('')
-  const [horEdit, setHorEdit] = useState<string | null>(null)
+  const [showPlan, setShowPlan] = useState<string | null>(null)
+  const [interventionsOpen, setInterventionsOpen] = useState(false)
   const [pdfYear, setPdfYear] = useState('')
 
   useEffect(() => {
@@ -98,12 +104,12 @@ const InventoryPage: React.FC = () => {
       }
 
       try {
-        const h = await listHorizontalSignage()
-        setHorizontals(h)
-        localStorage.setItem('horizontals', JSON.stringify(h))
+        const p = await listHorizontalPlans()
+        setPlans(p)
+        localStorage.setItem('horizontalPlans', JSON.stringify(p))
       } catch {
-        const stored = localStorage.getItem('horizontals')
-        if (stored) setHorizontals(JSON.parse(stored))
+        const stored = localStorage.getItem('horizontalPlans')
+        if (stored) setPlans(JSON.parse(stored))
       }
     }
     fetchAll()
@@ -112,12 +118,12 @@ const InventoryPage: React.FC = () => {
   const saveDevices = (d: Device[]) => localStorage.setItem('devices', JSON.stringify(d))
   const saveTemps = (t: TemporarySign[]) => localStorage.setItem('temps', JSON.stringify(t))
   const saveVerticals = (v: VerticalSign[]) => localStorage.setItem('verticals', JSON.stringify(v))
-  const saveHorizontals = (h: HorizontalSign[]) => localStorage.setItem('horizontals', JSON.stringify(h))
+  const savePlans = (p: HorizontalPlan[]) => localStorage.setItem('horizontalPlans', JSON.stringify(p))
 
   const resetDevice = () => { setDevName(''); setDevNotes(''); setDevEdit(null); setDevOpen(false) }
   const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempDesc(''); setTempQuant(''); setTempEdit(null); setTempOpen(false) }
   const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertAnno(''); setVertQuant(''); setVertEdit(null); setVertOpen(false) }
-  const resetHor = () => { setHorLuogo(''); setHorData(''); setHorDesc(''); setHorQuant(''); setHorEdit(null); setHorOpen(false) }
+  const resetPlan = () => { setPlanDesc(''); setPlanAnno(''); setPlanEdit(null); setPlanOpen(false) }
 
   const submitDevice = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -195,32 +201,28 @@ const InventoryPage: React.FC = () => {
     setVertOpen(false)
   }
 
-  const submitHor = async (e: React.FormEvent) => {
+  const submitPlan = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!horLuogo || !horData) return
-    if (horEdit) {
-      const res = await updateHorizontalSignage(horEdit, {
-        luogo: horLuogo,
-        data: horData,
-        descrizione: horDesc,
-        quantita: horQuant ? Number(horQuant) : undefined
+    if (!planDesc) return
+    if (planEdit) {
+      const res = await updateHorizontalPlan(planEdit, {
+        descrizione: planDesc,
+        anno: planAnno ? Number(planAnno) : undefined,
       })
-      const updated = horizontals.map(h => h.id === horEdit ? res : h)
-      setHorizontals(updated)
-      saveHorizontals(updated)
+      const updated = plans.map(p => p.id === planEdit ? res : p)
+      setPlans(updated)
+      savePlans(updated)
     } else {
-      const res = await createHorizontalSignage({
-        luogo: horLuogo,
-        data: horData,
-        descrizione: horDesc,
-        quantita: horQuant ? Number(horQuant) : undefined
+      const res = await createHorizontalPlan({
+        descrizione: planDesc,
+        anno: planAnno ? Number(planAnno) : undefined,
       })
-      const updated = [...horizontals, res]
-      setHorizontals(updated)
-      saveHorizontals(updated)
+      const updated = [...plans, res]
+      setPlans(updated)
+      savePlans(updated)
     }
-    resetHor()
-    setHorOpen(false)
+    resetPlan()
+    setPlanOpen(false)
   }
 
   const onPdf = async () => {
@@ -333,32 +335,46 @@ const InventoryPage: React.FC = () => {
         </table>
 
         <h2>Segnaletica Orizzontale</h2>
-        <button type="button" onClick={() => { resetHor(); setHorOpen(true); }}>Aggiungi</button>
-        <Modal open={horOpen} onClose={resetHor} title={horEdit ? 'Modifica orizzontale' : 'Nuova segnaletica'}>
-          <form onSubmit={submitHor} className="item-form">
-            <input data-testid="hor-luogo" placeholder="Luogo" value={horLuogo} onChange={e => setHorLuogo(e.target.value)} />
-            <input data-testid="hor-data" type="date" value={horData} onChange={e => setHorData(e.target.value)} />
-            <input data-testid="hor-desc" placeholder="Descrizione" value={horDesc} onChange={e => setHorDesc(e.target.value)} />
-            <input data-testid="hor-quant" type="number" placeholder="Quantità" value={horQuant} onChange={e => setHorQuant(e.target.value)} />
-            <button data-testid="hor-submit" type="submit">{horEdit ? 'Salva' : 'Aggiungi'}</button>
-            <button data-testid="hor-cancel" type="button" onClick={resetHor}>Annulla</button>
+        <button type="button" onClick={() => { resetPlan(); setPlanOpen(true); }}>Aggiungi</button>
+        <Modal open={planOpen} onClose={resetPlan} title={planEdit ? 'Modifica piano' : 'Nuovo piano'}>
+          <form onSubmit={submitPlan} className="item-form">
+            <input data-testid="plan-desc" placeholder="Descrizione" value={planDesc} onChange={e => setPlanDesc(e.target.value)} />
+            <input data-testid="plan-anno" type="number" placeholder="Anno" value={planAnno} onChange={e => setPlanAnno(e.target.value)} />
+            <button data-testid="plan-submit" type="submit">{planEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button data-testid="plan-cancel" type="button" onClick={resetPlan}>Annulla</button>
           </form>
         </Modal>
-        <input placeholder="Cerca" value={horSearch} onChange={e => setHorSearch(e.target.value)} />
+        <Modal open={interventionsOpen} onClose={() => setInterventionsOpen(false)} title="Interventi">
+          <table className="item-table">
+            <thead>
+              <tr><th>Luogo</th><th>Data</th><th>Descrizione</th><th>Quantità</th></tr>
+            </thead>
+            <tbody>
+              {horizontals.map(h => (
+                <tr key={h.id}>
+                  <td>{h.luogo}</td>
+                  <td>{h.data}</td>
+                  <td>{h.descrizione}</td>
+                  <td>{h.quantita}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Modal>
+        <input placeholder="Cerca" value={planSearch} onChange={e => setPlanSearch(e.target.value)} />
         <table className="item-table">
           <thead>
-            <tr><th>Luogo</th><th>Data</th><th>Descrizione</th><th>Quantità</th><th></th></tr>
+            <tr><th>Descrizione</th><th>Anno</th><th></th></tr>
           </thead>
           <tbody>
-            {horizontals.filter(h => h.luogo.toLowerCase().includes(horSearch.toLowerCase())).map(h => (
-              <tr key={h.id}>
-                <td>{h.luogo}</td>
-                <td>{h.data}</td>
-                <td>{h.descrizione}</td>
-                <td>{h.quantita}</td>
+            {plans.filter(p => p.descrizione.toLowerCase().includes(planSearch.toLowerCase())).map(p => (
+              <tr key={p.id}>
+                <td>{p.descrizione}</td>
+                <td>{p.anno}</td>
                 <td>
-                  <button onClick={() => { setHorEdit(h.id); setHorLuogo(h.luogo); setHorData(h.data); setHorDesc(h.descrizione || ''); setHorQuant(h.quantita?.toString() || ''); setHorOpen(true) }}>Modifica</button>
-                  <button onClick={async () => { await deleteHorizontalSignage(h.id); const u = horizontals.filter(x => x.id !== h.id); setHorizontals(u); saveHorizontals(u) }}>Elimina</button>
+                  <button onClick={() => { setPlanEdit(p.id); setPlanDesc(p.descrizione); setPlanAnno(p.anno.toString()); setPlanOpen(true) }}>Modifica</button>
+                  <button onClick={async () => { await deleteHorizontalPlan(p.id); const u = plans.filter(x => x.id !== p.id); setPlans(u); savePlans(u) }}>Elimina</button>
+                  <button onClick={async () => { setShowPlan(p.id); const all = await listHorizontalSignage(); setHorizontals(all.filter(h => h.piano_id === p.id)); setInterventionsOpen(true); }}>Vedi interventi</button>
                 </td>
               </tr>
             ))}
