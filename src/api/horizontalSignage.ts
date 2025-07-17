@@ -5,26 +5,27 @@ export interface HorizontalSign {
   luogo: string
   data: string
   descrizione?: string
+  quantita?: number
 }
 
 export const listHorizontalSignage = (): Promise<HorizontalSign[]> =>
-  api.get<HorizontalSign[]>('/inventario/signage-horizontal').then(r => r.data)
+  api.get<HorizontalSign[]>('/segnaletica-orizzontale').then(r => r.data)
 
 export const createHorizontalSignage = (
   data: Omit<HorizontalSign, 'id'>,
 ): Promise<HorizontalSign> =>
-  api.post<HorizontalSign>('/inventario/signage-horizontal', data).then(r => r.data)
+  api.post<HorizontalSign>('/segnaletica-orizzontale', data).then(r => r.data)
 
 export const updateHorizontalSignage = (
   id: string,
   data: Partial<Omit<HorizontalSign, 'id'>>,
 ): Promise<HorizontalSign> =>
-  api.put<HorizontalSign>(`/inventario/signage-horizontal/${id}`, data).then(r => r.data)
+  api.put<HorizontalSign>(`/segnaletica-orizzontale/${id}`, data).then(r => r.data)
 
 export const deleteHorizontalSignage = (id: string): Promise<void> =>
-  api.delete(`/inventario/signage-horizontal/${id}`).then(() => undefined)
+  api.delete(`/segnaletica-orizzontale/${id}`).then(() => undefined)
 
 export const getHorizontalSignagePdf = (year: number): Promise<Blob> =>
   api
-    .get('/inventario/signage-horizontal/pdf', { params: { year }, responseType: 'blob' })
+    .get('/segnaletica-orizzontale/pdf', { params: { year }, responseType: 'blob' })
     .then(r => r.data)
