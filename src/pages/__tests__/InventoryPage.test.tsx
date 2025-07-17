@@ -53,6 +53,11 @@ beforeEach(() => {
   mockedVerts.listVerticalSignage.mockResolvedValue([])
   mockedPlans.listHorizontalPlans.mockResolvedValue([])
   mockedDevices.createDevice.mockResolvedValue({ id: '1', nome: 'Device 1' } as any)
+  mockedTemps.createTemporarySignage.mockResolvedValue({
+    id: 't1',
+    luogo: 'Luogo',
+    fine_validita: '2024-01-01',
+  } as any)
 })
 
 const renderPage = () =>
@@ -111,5 +116,26 @@ describe('InventoryPage', () => {
     expect(mockedDevices.createDevice).toHaveBeenCalledTimes(1)
     expect(dialog).not.toHaveAttribute('open')
     expect(screen.queryByText('Device 2')).not.toBeInTheDocument()
+  })
+
+  it('creates temporary signage with year', async () => {
+    renderPage()
+    const addButtons = screen.getAllByRole('button', { name: /aggiungi/i })
+
+    await userEvent.click(addButtons[1])
+    await userEvent.type(screen.getByTestId('temp-luogo'), 'Luogo')
+    await userEvent.type(screen.getByTestId('temp-fine'), '2024-01-01')
+    await userEvent.type(screen.getByTestId('temp-desc'), 'Desc')
+    await userEvent.type(screen.getByTestId('temp-anno'), '2024')
+    await userEvent.type(screen.getByTestId('temp-quant'), '3')
+    await userEvent.click(screen.getByTestId('temp-submit'))
+
+    expect(mockedTemps.createTemporarySignage).toHaveBeenCalledWith({
+      luogo: 'Luogo',
+      fine_validita: '2024-01-01',
+      descrizione: 'Desc',
+      anno: 2024,
+      quantita: 3,
+    })
   })
 })
