@@ -291,7 +291,7 @@ const InventoryPage: React.FC = () => {
 
   return (
     <div className="list-page">
-      <h2>🚧 LAVORI IN CORSO 🚧</h2>
+      <h2 className="wip-warning">🚧 LAVORI IN CORSO 🚧</h2>
       <div>
         <h2>Dispositivi</h2>
         <button type="button" onClick={() => { resetDevice(); setDevOpen(true); }}>Aggiungi</button>
