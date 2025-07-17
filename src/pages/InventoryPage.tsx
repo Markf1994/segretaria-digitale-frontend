@@ -29,6 +29,7 @@ import {
   getHorizontalSignagePdf,
   HorizontalSign,
 } from '../api/horizontalSignage'
+import Modal from '../components/ui/Modal'
 
 const InventoryPage: React.FC = () => {
   const [devices, setDevices] = useState<Device[]>([])
@@ -36,24 +37,28 @@ const InventoryPage: React.FC = () => {
   const [devNotes, setDevNotes] = useState('')
   const [devSearch, setDevSearch] = useState('')
   const [devEdit, setDevEdit] = useState<string | null>(null)
+  const [devModal, setDevModal] = useState(false)
 
   const [temps, setTemps] = useState<TemporarySign[]>([])
   const [tempLuogo, setTempLuogo] = useState('')
   const [tempFine, setTempFine] = useState('')
   const [tempSearch, setTempSearch] = useState('')
   const [tempEdit, setTempEdit] = useState<string | null>(null)
+  const [tempModal, setTempModal] = useState(false)
 
   const [verticals, setVerticals] = useState<VerticalSign[]>([])
   const [vertLuogo, setVertLuogo] = useState('')
   const [vertDesc, setVertDesc] = useState('')
   const [vertSearch, setVertSearch] = useState('')
   const [vertEdit, setVertEdit] = useState<string | null>(null)
+  const [vertModal, setVertModal] = useState(false)
 
   const [horizontals, setHorizontals] = useState<HorizontalSign[]>([])
   const [horLuogo, setHorLuogo] = useState('')
   const [horData, setHorData] = useState('')
   const [horSearch, setHorSearch] = useState('')
   const [horEdit, setHorEdit] = useState<string | null>(null)
+  const [horModal, setHorModal] = useState(false)
   const [pdfYear, setPdfYear] = useState('')
 
   useEffect(() => {
@@ -102,10 +107,10 @@ const InventoryPage: React.FC = () => {
   const saveVerticals = (v: VerticalSign[]) => localStorage.setItem('verticals', JSON.stringify(v))
   const saveHorizontals = (h: HorizontalSign[]) => localStorage.setItem('horizontals', JSON.stringify(h))
 
-  const resetDevice = () => { setDevName(''); setDevNotes(''); setDevEdit(null) }
-  const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempEdit(null) }
-  const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertEdit(null) }
-  const resetHor = () => { setHorLuogo(''); setHorData(''); setHorEdit(null) }
+  const resetDevice = () => { setDevName(''); setDevNotes(''); setDevEdit(null); setDevModal(false) }
+  const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempEdit(null); setTempModal(false) }
+  const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertEdit(null); setVertModal(false) }
+  const resetHor = () => { setHorLuogo(''); setHorData(''); setHorEdit(null); setHorModal(false) }
 
   const submitDevice = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -186,12 +191,15 @@ const InventoryPage: React.FC = () => {
     <div className="list-page">
       <div>
         <h2>Dispositivi</h2>
+        <button data-testid="dev-add" type="button" onClick={() => { resetDevice(); setDevModal(true) }}>Aggiungi</button>
+        <Modal open={devModal || devEdit !== null} onClose={resetDevice}>
         <form onSubmit={submitDevice} className="item-form">
           <input data-testid="dev-name" placeholder="Nome" value={devName} onChange={e => setDevName(e.target.value)} />
           <input data-testid="dev-notes" placeholder="Note" value={devNotes} onChange={e => setDevNotes(e.target.value)} />
           <button data-testid="dev-submit" type="submit">{devEdit ? 'Salva' : 'Aggiungi'}</button>
-          {devEdit && <button data-testid="dev-cancel" type="button" onClick={resetDevice}>Annulla</button>}
+          <button data-testid="dev-cancel" type="button" onClick={resetDevice}>Annulla</button>
         </form>
+        </Modal>
         <input placeholder="Cerca" value={devSearch} onChange={e => setDevSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -203,7 +211,7 @@ const InventoryPage: React.FC = () => {
                 <td>{d.nome}</td>
                 <td>{d.note}</td>
                 <td>
-                  <button onClick={() => { setDevEdit(d.id); setDevName(d.nome); setDevNotes(d.note || '') }}>Modifica</button>
+                  <button onClick={() => { setDevEdit(d.id); setDevName(d.nome); setDevNotes(d.note || ''); setDevModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteDevice(d.id); const u = devices.filter(x => x.id !== d.id); setDevices(u); saveDevices(u) }}>Elimina</button>
                 </td>
               </tr>
@@ -214,12 +222,15 @@ const InventoryPage: React.FC = () => {
 
       <div>
         <h2>Segnaletica Temporanea</h2>
+        <button data-testid="temp-add" type="button" onClick={() => { resetTemp(); setTempModal(true) }}>Aggiungi</button>
+        <Modal open={tempModal || tempEdit !== null} onClose={resetTemp}>
         <form onSubmit={submitTemp} className="item-form">
           <input data-testid="temp-luogo" placeholder="Luogo" value={tempLuogo} onChange={e => setTempLuogo(e.target.value)} />
           <input data-testid="temp-fine" type="date" value={tempFine} onChange={e => setTempFine(e.target.value)} />
           <button data-testid="temp-submit" type="submit">{tempEdit ? 'Salva' : 'Aggiungi'}</button>
-          {tempEdit && <button data-testid="temp-cancel" type="button" onClick={resetTemp}>Annulla</button>}
+          <button data-testid="temp-cancel" type="button" onClick={resetTemp}>Annulla</button>
         </form>
+        </Modal>
         <input placeholder="Cerca" value={tempSearch} onChange={e => setTempSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -231,7 +242,7 @@ const InventoryPage: React.FC = () => {
                 <td>{t.luogo}</td>
                 <td>{t.fine_validita}</td>
                 <td>
-                  <button onClick={() => { setTempEdit(t.id); setTempLuogo(t.luogo); setTempFine(t.fine_validita) }}>Modifica</button>
+                  <button onClick={() => { setTempEdit(t.id); setTempLuogo(t.luogo); setTempFine(t.fine_validita); setTempModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteTemporarySignage(t.id); const u = temps.filter(x => x.id !== t.id); setTemps(u); saveTemps(u) }}>Elimina</button>
                 </td>
               </tr>
@@ -242,12 +253,15 @@ const InventoryPage: React.FC = () => {
 
       <div>
         <h2>Segnaletica Verticale</h2>
+        <button data-testid="vert-add" type="button" onClick={() => { resetVert(); setVertModal(true) }}>Aggiungi</button>
+        <Modal open={vertModal || vertEdit !== null} onClose={resetVert}>
         <form onSubmit={submitVert} className="item-form">
           <input data-testid="vert-luogo" placeholder="Luogo" value={vertLuogo} onChange={e => setVertLuogo(e.target.value)} />
           <input data-testid="vert-desc" placeholder="Descrizione" value={vertDesc} onChange={e => setVertDesc(e.target.value)} />
           <button data-testid="vert-submit" type="submit">{vertEdit ? 'Salva' : 'Aggiungi'}</button>
-          {vertEdit && <button data-testid="vert-cancel" type="button" onClick={resetVert}>Annulla</button>}
+          <button data-testid="vert-cancel" type="button" onClick={resetVert}>Annulla</button>
         </form>
+        </Modal>
         <input placeholder="Cerca" value={vertSearch} onChange={e => setVertSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -259,7 +273,7 @@ const InventoryPage: React.FC = () => {
                 <td>{v.luogo}</td>
                 <td>{v.descrizione}</td>
                 <td>
-                  <button onClick={() => { setVertEdit(v.id); setVertLuogo(v.luogo); setVertDesc(v.descrizione) }}>Modifica</button>
+                  <button onClick={() => { setVertEdit(v.id); setVertLuogo(v.luogo); setVertDesc(v.descrizione); setVertModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteVerticalSignage(v.id); const u = verticals.filter(x => x.id !== v.id); setVerticals(u); saveVerticals(u) }}>Elimina</button>
                 </td>
               </tr>
@@ -268,12 +282,15 @@ const InventoryPage: React.FC = () => {
         </table>
 
         <h2>Segnaletica Orizzontale</h2>
+        <button data-testid="hor-add" type="button" onClick={() => { resetHor(); setHorModal(true) }}>Aggiungi</button>
+        <Modal open={horModal || horEdit !== null} onClose={resetHor}>
         <form onSubmit={submitHor} className="item-form">
           <input data-testid="hor-luogo" placeholder="Luogo" value={horLuogo} onChange={e => setHorLuogo(e.target.value)} />
           <input data-testid="hor-data" type="date" value={horData} onChange={e => setHorData(e.target.value)} />
           <button data-testid="hor-submit" type="submit">{horEdit ? 'Salva' : 'Aggiungi'}</button>
-          {horEdit && <button data-testid="hor-cancel" type="button" onClick={resetHor}>Annulla</button>}
+          <button data-testid="hor-cancel" type="button" onClick={resetHor}>Annulla</button>
         </form>
+        </Modal>
         <input placeholder="Cerca" value={horSearch} onChange={e => setHorSearch(e.target.value)} />
         <table className="item-table">
           <thead>
@@ -285,7 +302,7 @@ const InventoryPage: React.FC = () => {
                 <td>{h.luogo}</td>
                 <td>{h.data}</td>
                 <td>
-                  <button onClick={() => { setHorEdit(h.id); setHorLuogo(h.luogo); setHorData(h.data) }}>Modifica</button>
+                  <button onClick={() => { setHorEdit(h.id); setHorLuogo(h.luogo); setHorData(h.data); setHorModal(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteHorizontalSignage(h.id); const u = horizontals.filter(x => x.id !== h.id); setHorizontals(u); saveHorizontals(u) }}>Elimina</button>
                 </td>
               </tr>
