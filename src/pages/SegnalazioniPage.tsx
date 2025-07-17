@@ -53,7 +53,7 @@ const SegnalazioniPage: React.FC = () => {
   return (
     <div className="list-page">
       <h2>Segnalazioni</h2>
-      <h2>🚧 LAVORI IN CORSO 🚧</h2>
+      <h2 className="wip-warning">🚧 LAVORI IN CORSO 🚧</h2>
       <form onSubmit={onSubmit} className="item-form">
         <select value={tipo} onChange={e => setTipo(e.target.value)}>
           <option value="">Tipo</option>
