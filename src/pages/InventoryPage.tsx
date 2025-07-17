@@ -23,12 +23,16 @@ import {
 } from '../api/verticalSignage'
 import {
   listHorizontalSignage,
-  createHorizontalSignage,
-  updateHorizontalSignage,
-  deleteHorizontalSignage,
   getHorizontalSignagePdf,
   HorizontalSign,
 } from '../api/horizontalSignage'
+import {
+  listHorizontalPlans,
+  createHorizontalPlan,
+  updateHorizontalPlan,
+  deleteHorizontalPlan,
+  HorizontalPlan,
+} from '../api/horizontalPlans'
 
 const InventoryPage: React.FC = () => {
   const [devices, setDevices] = useState<Device[]>([])
@@ -49,11 +53,15 @@ const InventoryPage: React.FC = () => {
   const [vertSearch, setVertSearch] = useState('')
   const [vertEdit, setVertEdit] = useState<string | null>(null)
 
-  const [horizontals, setHorizontals] = useState<HorizontalSign[]>([])
-  const [horLuogo, setHorLuogo] = useState('')
-  const [horData, setHorData] = useState('')
-  const [horSearch, setHorSearch] = useState('')
-  const [horEdit, setHorEdit] = useState<string | null>(null)
+  const [plans, setPlans] = useState<HorizontalPlan[]>([])
+  const [planDescr, setPlanDescr] = useState('')
+  const [planYear, setPlanYear] = useState('')
+  const [planSearch, setPlanSearch] = useState('')
+  const [planEdit, setPlanEdit] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState<HorizontalPlan | null>(null)
+  const [planInterventions, setPlanInterventions] = useState<HorizontalSign[]>([])
+  const planDialog = React.useRef<HTMLDialogElement>(null)
+  const intervDialog = React.useRef<HTMLDialogElement>(null)
   const [pdfYear, setPdfYear] = useState('')
 
   useEffect(() => {
@@ -86,12 +94,12 @@ const InventoryPage: React.FC = () => {
       }
 
       try {
-        const h = await listHorizontalSignage()
-        setHorizontals(h)
-        localStorage.setItem('horizontals', JSON.stringify(h))
+        const p = await listHorizontalPlans()
+        setPlans(p)
+        localStorage.setItem('horPlans', JSON.stringify(p))
       } catch {
-        const stored = localStorage.getItem('horizontals')
-        if (stored) setHorizontals(JSON.parse(stored))
+        const stored = localStorage.getItem('horPlans')
+        if (stored) setPlans(JSON.parse(stored))
       }
     }
     fetchAll()
@@ -100,12 +108,42 @@ const InventoryPage: React.FC = () => {
   const saveDevices = (d: Device[]) => localStorage.setItem('devices', JSON.stringify(d))
   const saveTemps = (t: TemporarySign[]) => localStorage.setItem('temps', JSON.stringify(t))
   const saveVerticals = (v: VerticalSign[]) => localStorage.setItem('verticals', JSON.stringify(v))
-  const saveHorizontals = (h: HorizontalSign[]) => localStorage.setItem('horizontals', JSON.stringify(h))
+  const savePlans = (p: HorizontalPlan[]) =>
+    localStorage.setItem('horPlans', JSON.stringify(p))
 
   const resetDevice = () => { setDevName(''); setDevNotes(''); setDevEdit(null) }
   const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempEdit(null) }
   const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertEdit(null) }
-  const resetHor = () => { setHorLuogo(''); setHorData(''); setHorEdit(null) }
+  const resetPlan = () => { setPlanDescr(''); setPlanYear(''); setPlanEdit(null) }
+
+  const openPlanForm = (p?: HorizontalPlan) => {
+    if (p) {
+      setPlanEdit(p.id)
+      setPlanDescr(p.descrizione)
+      setPlanYear(String(p.anno))
+    } else {
+      resetPlan()
+    }
+    planDialog.current?.showModal()
+  }
+
+  const closePlanForm = () => {
+    planDialog.current?.close()
+    resetPlan()
+  }
+
+  const openInterventions = async (p: HorizontalPlan) => {
+    const data = await listHorizontalSignage(p.id)
+    setSelectedPlan(p)
+    setPlanInterventions(data)
+    intervDialog.current?.showModal()
+  }
+
+  const closeInterventions = () => {
+    intervDialog.current?.close()
+    setSelectedPlan(null)
+    setPlanInterventions([])
+  }
 
   const submitDevice = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -158,21 +196,27 @@ const InventoryPage: React.FC = () => {
     resetVert()
   }
 
-  const submitHor = async (e: React.FormEvent) => {
+  const submitPlan = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!horLuogo || !horData) return
-    if (horEdit) {
-      const res = await updateHorizontalSignage(horEdit, { luogo: horLuogo, data: horData })
-      const updated = horizontals.map(h => h.id === horEdit ? res : h)
-      setHorizontals(updated)
-      saveHorizontals(updated)
+    if (!planDescr || !planYear) return
+    if (planEdit) {
+      const res = await updateHorizontalPlan(planEdit, {
+        descrizione: planDescr,
+        anno: Number(planYear),
+      })
+      const updated = plans.map(p => (p.id === planEdit ? res : p))
+      setPlans(updated)
+      savePlans(updated)
     } else {
-      const res = await createHorizontalSignage({ luogo: horLuogo, data: horData })
-      const updated = [...horizontals, res]
-      setHorizontals(updated)
-      saveHorizontals(updated)
+      const res = await createHorizontalPlan({
+        descrizione: planDescr,
+        anno: Number(planYear),
+      })
+      const updated = [...plans, res]
+      setPlans(updated)
+      savePlans(updated)
     }
-    resetHor()
+    resetPlan()
   }
 
   const onPdf = async () => {
@@ -268,25 +312,21 @@ const InventoryPage: React.FC = () => {
         </table>
 
         <h2>Segnaletica Orizzontale</h2>
-        <form onSubmit={submitHor} className="item-form">
-          <input data-testid="hor-luogo" placeholder="Luogo" value={horLuogo} onChange={e => setHorLuogo(e.target.value)} />
-          <input data-testid="hor-data" type="date" value={horData} onChange={e => setHorData(e.target.value)} />
-          <button data-testid="hor-submit" type="submit">{horEdit ? 'Salva' : 'Aggiungi'}</button>
-          {horEdit && <button data-testid="hor-cancel" type="button" onClick={resetHor}>Annulla</button>}
-        </form>
-        <input placeholder="Cerca" value={horSearch} onChange={e => setHorSearch(e.target.value)} />
+        <button type="button" onClick={() => openPlanForm()}>Nuovo piano</button>
+        <input placeholder="Cerca" value={planSearch} onChange={e => setPlanSearch(e.target.value)} />
         <table className="item-table">
           <thead>
-            <tr><th>Luogo</th><th>Data</th><th></th></tr>
+            <tr><th>Descrizione</th><th>Anno</th><th></th></tr>
           </thead>
           <tbody>
-            {horizontals.filter(h => h.luogo.toLowerCase().includes(horSearch.toLowerCase())).map(h => (
-              <tr key={h.id}>
-                <td>{h.luogo}</td>
-                <td>{h.data}</td>
+            {plans.filter(p => p.descrizione.toLowerCase().includes(planSearch.toLowerCase())).map(p => (
+              <tr key={p.id}>
+                <td>{p.descrizione}</td>
+                <td>{p.anno}</td>
                 <td>
-                  <button onClick={() => { setHorEdit(h.id); setHorLuogo(h.luogo); setHorData(h.data) }}>Modifica</button>
-                  <button onClick={async () => { await deleteHorizontalSignage(h.id); const u = horizontals.filter(x => x.id !== h.id); setHorizontals(u); saveHorizontals(u) }}>Elimina</button>
+                  <button onClick={() => openPlanForm(p)}>Modifica</button>
+                  <button onClick={() => openInterventions(p)}>Vedi interventi</button>
+                  <button onClick={async () => { await deleteHorizontalPlan(p.id); const u = plans.filter(x => x.id !== p.id); setPlans(u); savePlans(u) }}>Elimina</button>
                 </td>
               </tr>
             ))}
@@ -296,6 +336,31 @@ const InventoryPage: React.FC = () => {
           <input data-testid="hor-year" placeholder="Anno" value={pdfYear} onChange={e => setPdfYear(e.target.value)} />
           <button data-testid="hor-pdf" type="button" onClick={onPdf}>PDF anno</button>
         </div>
+        <dialog ref={planDialog}>
+          <form onSubmit={submitPlan} className="item-form">
+            <input placeholder="Descrizione" value={planDescr} onChange={e => setPlanDescr(e.target.value)} />
+            <input placeholder="Anno" value={planYear} onChange={e => setPlanYear(e.target.value)} />
+            <button type="submit">{planEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button type="button" onClick={closePlanForm}>Annulla</button>
+          </form>
+        </dialog>
+        <dialog ref={intervDialog}>
+          <h3>Interventi</h3>
+          <table className="item-table">
+            <thead>
+              <tr><th>Luogo</th><th>Data</th></tr>
+            </thead>
+            <tbody>
+              {planInterventions.map(i => (
+                <tr key={i.id}>
+                  <td>{i.luogo}</td>
+                  <td>{i.data}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button type="button" onClick={closeInterventions}>Chiudi</button>
+        </dialog>
       </div>
     </div>
   )

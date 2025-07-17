@@ -7,8 +7,14 @@ export interface HorizontalSign {
   descrizione?: string
 }
 
-export const listHorizontalSignage = (): Promise<HorizontalSign[]> =>
-  api.get<HorizontalSign[]>('/inventario/signage-horizontal').then(r => r.data)
+export const listHorizontalSignage = (
+  planId?: string,
+): Promise<HorizontalSign[]> =>
+  api
+    .get<HorizontalSign[]>('/inventario/signage-horizontal', {
+      params: planId ? { planId } : undefined,
+    })
+    .then(r => r.data)
 
 export const createHorizontalSignage = (
   data: Omit<HorizontalSign, 'id'>,
