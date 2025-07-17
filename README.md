@@ -155,10 +155,13 @@ Events are fetched from the ID defined in `VITE_DASHBOARD_CALENDAR_ID`.
 
 ## Inventory
 
-Visit `/inventario` to manage devices and road signage. The page lets you
-create, edit and search devices, temporary signage and vertical/horizontal
-signage. Horizontal signage includes a **PDF anno** button that calls
-`/inventario/signage-horizontal/pdf?year=YYYY` and downloads the generated PDF.
+Visit `/inventario` to manage devices and road signage. Items open in modal
+dialogs for editing and each record includes a **quantità** field. The backend
+exposes Italian endpoint paths such as `/inventario/devices`,
+`/inventario/signage-temp`, `/inventario/signage-vertical` and
+`/inventario/signage-horizontal`. Horizontal signage offers a **PDF anno** button
+that calls `/inventario/signage-horizontal/pdf?year=YYYY` to download the annual
+plan.
 
 ## Testing
 
