@@ -18,3 +18,9 @@ class Segnalazione(SegnalazioneBase):
 
     class Config:
         orm_mode = True
+
+
+class User(BaseModel):
+    id: str
+    email: str
+    nome: str
