@@ -30,6 +30,7 @@ const Header: React.FC = () => {
           <Link to="/orari">🕑 Orari</Link>
           <Link to="/determinazioni">📄 Determine</Link>
           <Link to="/inventario">📦 Inventario</Link>
+          <Link to="/segnaletica-orizzontale">🚧 Orizzontale</Link>
           <Link to="/segnalazioni">🚨 Segnalazioni</Link>
           <Link to="/utilita">🤝 Riunioni</Link>
           <button onClick={logout} aria-label="Esci">🚪 esci</button>
