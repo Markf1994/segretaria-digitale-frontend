@@ -146,6 +146,29 @@ describe('EventsPage', () => {
     expect(await screen.findByText('My Event')).toBeInTheDocument();
   });
 
+  it('passes visibility when creating a calendar event', async () => {
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await userEvent.type(screen.getByTestId('title-input'), 'My Event');
+    await userEvent.type(screen.getByTestId('description-input'), 'Desc');
+    await userEvent.type(screen.getByTestId('date-input'), '2023-05-01T12:00');
+    await userEvent.click(screen.getByLabelText(/pubblico/i));
+    await userEvent.click(screen.getByRole('button', { name: /aggiungi/i }));
+
+    expect(mockedGcApi.createEvent).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ visibility: 'public' })
+    );
+  });
+
   it('shows error when calendar sign-in fails', async () => {
     mockedGcApi.signIn.mockRejectedValueOnce(new Error('fail'));
 
@@ -205,6 +228,33 @@ describe('EventsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /salva/i }));
 
     expect(await screen.findByText('Errore di accesso al calendario')).toBeInTheDocument();
+  });
+
+  it('passes visibility when updating a calendar event', async () => {
+    mockedGcApi.listEvents.mockResolvedValueOnce([
+      { id: '1', summary: 'Ev', start: { dateTime: '2023-01-01T10:00' }, end: { dateTime: '2023-01-01T11:00' } } as any,
+    ]);
+
+    render(
+      <MemoryRouter initialEntries={["/events"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/events" element={<EventsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await screen.findByText('Ev');
+    await userEvent.click(screen.getByText('Modifica'));
+    await userEvent.type(screen.getByTestId('title-input'), 'x');
+    await userEvent.click(screen.getByRole('button', { name: /salva/i }));
+
+    expect(mockedGcApi.updateEvent).toHaveBeenCalledWith(
+      expect.any(String),
+      '1',
+      expect.objectContaining({ visibility: 'private' })
+    );
   });
 
   it('shows error when deleting calendar event fails', async () => {
