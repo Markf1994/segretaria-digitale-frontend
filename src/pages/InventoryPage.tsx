@@ -292,7 +292,8 @@ const InventoryPage: React.FC = () => {
   return (
     <div className="list-page">
       <h2 className="wip-warning">🚧 LAVORI IN CORSO 🚧</h2>
-      <div>
+      <div className="inventory-wrapper">
+        <div className="devices-section">
         <h2>Dispositivi</h2>
         <button type="button" onClick={() => { resetDevice(); setDevOpen(true); }}>Aggiungi</button>
         <Modal open={devOpen} onClose={resetDevice} title={devEdit ? 'Modifica dispositivo' : 'Nuovo dispositivo'}>
@@ -334,7 +335,7 @@ const InventoryPage: React.FC = () => {
         </table>
       </div>
 
-      <div>
+      <div className="temp-section">
         <h2>Segnaletica Temporanea</h2>
         <button type="button" onClick={() => { resetTemp(); setTempOpen(true); }}>Aggiungi</button>
         <Modal open={tempOpen} onClose={resetTemp} title={tempEdit ? 'Modifica temporanea' : 'Nuova segnaletica'}>
@@ -371,7 +372,7 @@ const InventoryPage: React.FC = () => {
         </table>
       </div>
 
-      <div>
+      <div className="vertical-section">
         <h2>Segnaletica Verticale</h2>
         <button type="button" onClick={() => { resetVert(); setVertOpen(true); }}>Aggiungi</button>
         <Modal open={vertOpen} onClose={resetVert} title={vertEdit ? 'Modifica verticale' : 'Nuova segnaletica'}>
@@ -485,6 +486,7 @@ const InventoryPage: React.FC = () => {
         </div>
       </div>
     </div>
+  </div>
   )
 }
 
