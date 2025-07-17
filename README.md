@@ -228,9 +228,10 @@ Example JSON response:
 
 ## Backend Setup
 
-The API used by the frontend resides in a separate backend repository. Clone
-the backend and follow its README to install Python dependencies and start the
-server. The backend expects a few environment variables to be configured:
+This repository now ships with a minimal FastAPI backend located in the
+`backend/` directory.  Install the Python dependencies and run the API with
+`uvicorn backend.main:app` after configuring the following environment
+variables:
 
 - `DATABASE_URL` – connection string for the persistent database.
 - `ALGORITHM` – algorithm used for signing JWT access tokens.
@@ -238,8 +239,9 @@ server. The backend expects a few environment variables to be configured:
 
 The backend must send an `Access-Control-Allow-Origin` header allowing the frontend's domain (or `*`) so that features like the Excel import work. You can enable a CORS middleware or configure your framework to add this header.
 
-Once the environment variables are set you can run `uvicorn main:app` to launch
-the API.
+After applying the Alembic migrations
+(`alembic -c backend/alembic.ini upgrade head`) you can start the API with
+`uvicorn backend.main:app`.
 
 
 ## License
