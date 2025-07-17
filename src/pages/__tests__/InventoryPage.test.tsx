@@ -4,7 +4,7 @@ import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
 describe('InventoryPage', () => {
-  it('renders forms', () => {
+  it('opens modal on add', () => {
     render(
       <MemoryRouter initialEntries={["/inventario"]}>
         <Routes>
@@ -15,8 +15,9 @@ describe('InventoryPage', () => {
       </MemoryRouter>
     )
 
+    const addButtons = screen.getAllByText('Aggiungi')
+    addButtons[0].click()
     expect(screen.getByTestId('dev-name')).toBeInTheDocument()
-    expect(screen.getByTestId('temp-luogo')).toBeInTheDocument()
     expect(screen.getByText(/Segnaletica Verticale/)).toBeInTheDocument()
   })
 })
