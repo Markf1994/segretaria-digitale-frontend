@@ -9,16 +9,16 @@ export interface Device {
 }
 
 export const listDevices = (): Promise<Device[]> =>
-  api.get<Device[]>('/inventario/devices').then(r => r.data)
+  api.get<Device[]>('/dispositivi').then(r => r.data)
 
 export const createDevice = (data: Omit<Device, 'id'>): Promise<Device> =>
-  api.post<Device>('/inventario/devices', data).then(r => r.data)
+  api.post<Device>('/dispositivi', data).then(r => r.data)
 
 export const updateDevice = (
   id: string,
   data: Partial<Omit<Device, 'id'>>,
 ): Promise<Device> =>
-  api.put<Device>(`/inventario/devices/${id}`, data).then(r => r.data)
+  api.put<Device>(`/dispositivi/${id}`, data).then(r => r.data)
 
 export const deleteDevice = (id: string): Promise<void> =>
-  api.delete(`/inventario/devices/${id}`).then(() => undefined)
+  api.delete(`/dispositivi/${id}`).then(() => undefined)
