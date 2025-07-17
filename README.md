@@ -192,6 +192,12 @@ npm test
 
 The tests use Jest together with React Testing Library.
 
+### Jest not found
+
+Running `npm test` before installing dependencies will fail because Jest is
+missing. Execute `npm install` or `./scripts/setup.sh` first so that the local
+`node_modules/.bin/jest` binary is available.
+
 
 ## Backend API
 
