@@ -7,19 +7,19 @@ export interface HorizontalPlan {
 }
 
 export const listHorizontalPlans = (): Promise<HorizontalPlan[]> =>
-  api.get<HorizontalPlan[]>('/piani-orizzontali').then(r => r.data)
+  api.get<HorizontalPlan[]>('/piani-orizzontali/').then(r => r.data)
 
 export const createHorizontalPlan = (
   data: Omit<HorizontalPlan, 'id'>,
 ): Promise<HorizontalPlan> =>
-  api.post<HorizontalPlan>('/piani-orizzontali', data).then(r => r.data)
+  api.post<HorizontalPlan>('/piani-orizzontali/', data).then(r => r.data)
 
 export const updateHorizontalPlan = (
   id: string,
   data: Partial<Omit<HorizontalPlan, 'id'>>,
 ): Promise<HorizontalPlan> =>
-  api.put<HorizontalPlan>(`/piani-orizzontali/${id}`, data).then(r => r.data)
+  api.put<HorizontalPlan>(`/piani-orizzontali/${id}/`, data).then(r => r.data)
 
 export const deleteHorizontalPlan = (id: string): Promise<void> =>
-  api.delete(`/piani-orizzontali/${id}`).then(() => undefined)
+  api.delete(`/piani-orizzontali/${id}/`).then(() => undefined)
 
