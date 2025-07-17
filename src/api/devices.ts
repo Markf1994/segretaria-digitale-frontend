@@ -3,6 +3,8 @@ import api from './axios'
 export interface Device {
   id: string
   nome: string
+  descrizione?: string
+  anno?: number
   note?: string
 }
 
