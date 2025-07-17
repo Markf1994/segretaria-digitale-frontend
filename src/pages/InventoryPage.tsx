@@ -48,6 +48,7 @@ const InventoryPage: React.FC = () => {
   const [tempLuogo, setTempLuogo] = useState('')
   const [tempFine, setTempFine] = useState('')
   const [tempDesc, setTempDesc] = useState('')
+  const [tempAnno, setTempAnno] = useState('')
   const [tempQuant, setTempQuant] = useState('')
   const [tempSearch, setTempSearch] = useState('')
   const [tempEdit, setTempEdit] = useState<string | null>(null)
@@ -131,7 +132,7 @@ const InventoryPage: React.FC = () => {
     setDevEdit(null);
     setDevOpen(false);
   }
-  const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempDesc(''); setTempQuant(''); setTempEdit(null); setTempOpen(false) }
+  const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempDesc(''); setTempAnno(''); setTempQuant(''); setTempEdit(null); setTempOpen(false) }
   const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertTipo(''); setVertAnno(''); setVertQuant(''); setVertEdit(null); setVertOpen(false) }
   const resetPlan = () => { setPlanDesc(''); setPlanAnno(''); setPlanEdit(null); setPlanOpen(false) }
 
@@ -168,7 +169,7 @@ const InventoryPage: React.FC = () => {
         fine_validita: tempFine,
         descrizione: tempDesc,
         quantita: tempQuant ? Number(tempQuant) : undefined,
-        note: ''
+        anno: tempAnno ? Number(tempAnno) : undefined,
       })
       const updated = temps.map(t => t.id === tempEdit ? res : t)
       setTemps(updated)
@@ -179,7 +180,7 @@ const InventoryPage: React.FC = () => {
         fine_validita: tempFine,
         descrizione: tempDesc,
         quantita: tempQuant ? Number(tempQuant) : undefined,
-        note: ''
+        anno: tempAnno ? Number(tempAnno) : undefined,
       })
       const updated = [...temps, res]
       setTemps(updated)
@@ -302,6 +303,7 @@ const InventoryPage: React.FC = () => {
             <input data-testid="temp-luogo" placeholder="Luogo" value={tempLuogo} onChange={e => setTempLuogo(e.target.value)} />
             <input data-testid="temp-fine" type="date" value={tempFine} onChange={e => setTempFine(e.target.value)} />
             <input data-testid="temp-desc" placeholder="Descrizione" value={tempDesc} onChange={e => setTempDesc(e.target.value)} />
+            <input data-testid="temp-anno" type="number" placeholder="Anno" value={tempAnno} onChange={e => setTempAnno(e.target.value)} />
             <input data-testid="temp-quant" type="number" placeholder="Quantità" value={tempQuant} onChange={e => setTempQuant(e.target.value)} />
             <button data-testid="temp-submit" type="submit">{tempEdit ? 'Salva' : 'Aggiungi'}</button>
             <button data-testid="temp-cancel" type="button" onClick={resetTemp}>Annulla</button>
@@ -310,7 +312,7 @@ const InventoryPage: React.FC = () => {
         <input placeholder="Cerca" value={tempSearch} onChange={e => setTempSearch(e.target.value)} />
         <table className="item-table">
           <thead>
-            <tr><th>Luogo</th><th>Fine validità</th><th>Descrizione</th><th>Quantità</th><th></th></tr>
+            <tr><th>Luogo</th><th>Fine validità</th><th>Descrizione</th><th>Anno</th><th>Quantità</th><th></th></tr>
           </thead>
           <tbody>
             {temps.filter(t => t.luogo.toLowerCase().includes(tempSearch.toLowerCase())).map(t => (
@@ -318,9 +320,10 @@ const InventoryPage: React.FC = () => {
                 <td>{t.luogo}</td>
                 <td>{t.fine_validita}</td>
                 <td>{t.descrizione}</td>
+                <td>{t.anno}</td>
                 <td>{t.quantita}</td>
                 <td>
-                  <button onClick={() => { setTempEdit(t.id); setTempLuogo(t.luogo); setTempFine(t.fine_validita); setTempDesc(t.descrizione || ''); setTempQuant(t.quantita?.toString() || ''); setTempOpen(true) }}>Modifica</button>
+                  <button onClick={() => { setTempEdit(t.id); setTempLuogo(t.luogo); setTempFine(t.fine_validita); setTempDesc(t.descrizione || ''); setTempAnno(t.anno?.toString() || ''); setTempQuant(t.quantita?.toString() || ''); setTempOpen(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteTemporarySignage(t.id); const u = temps.filter(x => x.id !== t.id); setTemps(u); saveTemps(u) }}>Elimina</button>
                 </td>
               </tr>
