@@ -115,7 +115,7 @@ export default function Dashboard() {
               key={String(refreshCal)}
               src={`https://calendar.google.com/calendar/embed?src=${encodeURIComponent(
                 CALENDAR_ID
-              )}&mode=WEEK&ctz=Europe/Rome`}
+              )}&mode=MONTH&ctz=Europe/Rome`}
               title="Calendario"
               style={{ border: 0, width: '100%', height: '600px' }}
               frameBorder={0}
