@@ -10,6 +10,8 @@ This project contains the React front end of **Segretaria Digitale**, a simple a
 
 ```bash
 npm install
+# install mapping dependencies
+npm install leaflet react-leaflet
 # Dependencies are locked via `package-lock.json`
 # If you see 404 errors for `@tanstack/react-query`,
 # update the dependency to a recent release (>=4.36.1).
@@ -162,6 +164,15 @@ exposes Italian endpoint paths such as `/inventario/devices`,
 `/inventario/signage-horizontal`. Horizontal signage offers a **PDF anno** button
 that calls `/inventario/signage-horizontal/pdf?year=YYYY` to download the annual
 plan.
+
+## Segnalazioni
+
+The `/segnalazioni` page lets users report issues on a map. Click anywhere on the
+map to place a marker, fill in the tipo, priorità, data and descrizione fields
+and submit the form. Existing segnalazioni are shown as markers with a popup
+containing the details.
+
+Leaflet's default CSS is imported in `src/main.tsx` so the map renders correctly.
 
 ## Testing
 
