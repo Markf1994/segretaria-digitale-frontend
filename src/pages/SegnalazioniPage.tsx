@@ -27,36 +27,51 @@ const SegnalazioniPage: React.FC = () => {
   const [descrizione, setDescrizione] = useState('')
   const [stato, setStato] = useState('')
   const [pos, setPos] = useState<[number, number] | null>(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    listSegnalazioni().then(setItems).catch(() => {})
+    const fetch = async () => {
+      try {
+        const data = await listSegnalazioni()
+        setItems(data)
+      } catch {
+        setError('Errore nel caricamento delle segnalazioni')
+      }
+    }
+    fetch()
   }, [])
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     if (!pos) return
-    const res = await createSegnalazione({
-      tipo,
-      priorita,
-      data,
-      descrizione,
-      stato,
-      lat: pos[0],
-      lng: pos[1]
-    })
-    setItems([...items, res])
-    setTipo('')
-    setPriorita('')
-    setData(new Date().toISOString().slice(0, 16))
-    setDescrizione('')
-    setStato('')
-    setPos(null)
+    try {
+      const res = await createSegnalazione({
+        tipo,
+        priorita,
+        data,
+        descrizione,
+        stato,
+        lat: pos[0],
+        lng: pos[1]
+      })
+      setItems([...items, res])
+      setTipo('')
+      setPriorita('')
+      setData(new Date().toISOString().slice(0, 16))
+      setDescrizione('')
+      setStato('')
+      setPos(null)
+    } catch {
+      setError('Errore durante la creazione della segnalazione')
+    }
   }
 
   return (
     <div className="list-page">
       <h2>Segnalazioni</h2>
       <h2 className="wip-warning">🚧 LAVORI IN CORSO 🚧</h2>
+      {error && <p className="error">{error}</p>}
       <form onSubmit={onSubmit} className="item-form">
         <select value={tipo} onChange={e => setTipo(e.target.value)}>
           <option value="">Tipo</option>
