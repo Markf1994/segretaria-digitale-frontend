@@ -121,6 +121,7 @@ const HorizontalSignagePage: React.FC = () => {
 
   return (
     <div className="list-page">
+      <h2 className="wip-warning">🚧 LAVORI IN CORSO 🚧</h2>
       <div>
         <h2>Segnaletica Orizzontale</h2>
         <button type="button" onClick={() => { resetPlan(); setPlanOpen(true) }}>
