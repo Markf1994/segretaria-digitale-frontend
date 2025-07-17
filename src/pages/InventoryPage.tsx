@@ -25,6 +25,9 @@ import {
 import {
   listHorizontalSignage,
   getHorizontalSignagePdf,
+  createHorizontalSignage,
+  updateHorizontalSignage,
+  listHorizontalSignageByPlan,
   HorizontalSign,
 } from '../api/horizontalSignage'
 import {
@@ -74,6 +77,12 @@ const InventoryPage: React.FC = () => {
 
   const [horizontals, setHorizontals] = useState<HorizontalSign[]>([])
   const [showPlan, setShowPlan] = useState<string | null>(null)
+  const [horizLuogo, setHorizLuogo] = useState('')
+  const [horizData, setHorizData] = useState('')
+  const [horizDesc, setHorizDesc] = useState('')
+  const [horizQuant, setHorizQuant] = useState('')
+  const [horizEdit, setHorizEdit] = useState<string | null>(null)
+  const [horizOpen, setHorizOpen] = useState(false)
   const [interventionsOpen, setInterventionsOpen] = useState(false)
   const [pdfYear, setPdfYear] = useState('')
 
@@ -134,6 +143,14 @@ const InventoryPage: React.FC = () => {
   const resetTemp = () => { setTempLuogo(''); setTempFine(''); setTempDesc(''); setTempQuant(''); setTempEdit(null); setTempOpen(false) }
   const resetVert = () => { setVertLuogo(''); setVertDesc(''); setVertTipo(''); setVertAnno(''); setVertQuant(''); setVertEdit(null); setVertOpen(false) }
   const resetPlan = () => { setPlanDesc(''); setPlanAnno(''); setPlanEdit(null); setPlanOpen(false) }
+  const resetHoriz = () => {
+    setHorizLuogo('')
+    setHorizData('')
+    setHorizDesc('')
+    setHorizQuant('')
+    setHorizEdit(null)
+    setHorizOpen(false)
+  }
 
   const submitDevice = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -241,6 +258,27 @@ const InventoryPage: React.FC = () => {
     }
     resetPlan()
     setPlanOpen(false)
+  }
+
+  const submitHoriz = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!horizLuogo || !horizData || !showPlan) return
+    const payload = {
+      luogo: horizLuogo,
+      data: horizData,
+      descrizione: horizDesc || undefined,
+      quantita: horizQuant ? Number(horizQuant) : undefined,
+      piano_id: showPlan,
+    }
+    if (horizEdit) {
+      const res = await updateHorizontalSignage(horizEdit, payload)
+      const updated = horizontals.map(h => (h.id === horizEdit ? res : h))
+      setHorizontals(updated)
+    } else {
+      const res = await createHorizontalSignage(payload)
+      setHorizontals([...horizontals, res])
+    }
+    resetHoriz()
   }
 
   const onPdf = async () => {
@@ -375,10 +413,11 @@ const InventoryPage: React.FC = () => {
             <button data-testid="plan-cancel" type="button" onClick={resetPlan}>Annulla</button>
           </form>
         </Modal>
-        <Modal open={interventionsOpen} onClose={() => setInterventionsOpen(false)} title="Interventi">
+        <Modal open={interventionsOpen} onClose={() => { setInterventionsOpen(false); resetHoriz() }} title="Interventi">
+          <button type="button" onClick={() => { resetHoriz(); setHorizOpen(true) }}>Aggiungi</button>
           <table className="item-table">
             <thead>
-              <tr><th>Luogo</th><th>Data</th><th>Descrizione</th><th>Quantità</th></tr>
+              <tr><th>Luogo</th><th>Data</th><th>Descrizione</th><th>Quantità</th><th></th></tr>
             </thead>
             <tbody>
               {horizontals.map(h => (
@@ -387,10 +426,30 @@ const InventoryPage: React.FC = () => {
                   <td>{h.data}</td>
                   <td>{h.descrizione}</td>
                   <td>{h.quantita}</td>
+                  <td>
+                    <button onClick={() => {
+                      setHorizEdit(h.id)
+                      setHorizLuogo(h.luogo)
+                      setHorizData(h.data)
+                      setHorizDesc(h.descrizione || '')
+                      setHorizQuant(h.quantita?.toString() || '')
+                      setHorizOpen(true)
+                    }}>Modifica</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </Modal>
+        <Modal open={horizOpen} onClose={resetHoriz} title={horizEdit ? 'Modifica intervento' : 'Nuovo intervento'}>
+          <form onSubmit={submitHoriz} className="item-form">
+            <input placeholder="Luogo" value={horizLuogo} onChange={e => setHorizLuogo(e.target.value)} />
+            <input type="date" value={horizData} onChange={e => setHorizData(e.target.value)} />
+            <input placeholder="Descrizione" value={horizDesc} onChange={e => setHorizDesc(e.target.value)} />
+            <input type="number" placeholder="Quantità" value={horizQuant} onChange={e => setHorizQuant(e.target.value)} />
+            <button type="submit">{horizEdit ? 'Salva' : 'Aggiungi'}</button>
+            <button type="button" onClick={resetHoriz}>Annulla</button>
+          </form>
         </Modal>
         <input placeholder="Cerca" value={planSearch} onChange={e => setPlanSearch(e.target.value)} />
         <table className="item-table">
@@ -405,7 +464,12 @@ const InventoryPage: React.FC = () => {
                 <td>
                   <button onClick={() => { setPlanEdit(p.id); setPlanDesc(p.descrizione); setPlanAnno(p.anno.toString()); setPlanOpen(true) }}>Modifica</button>
                   <button onClick={async () => { await deleteHorizontalPlan(p.id); const u = plans.filter(x => x.id !== p.id); setPlans(u); savePlans(u) }}>Elimina</button>
-                  <button onClick={async () => { setShowPlan(p.id); const all = await listHorizontalSignage(); setHorizontals(all.filter(h => h.piano_id === p.id)); setInterventionsOpen(true); }}>Vedi interventi</button>
+                  <button onClick={async () => {
+                    setShowPlan(p.id)
+                    const res = await listHorizontalSignageByPlan(p.id)
+                    setHorizontals(res)
+                    setInterventionsOpen(true)
+                  }}>Vedi interventi</button>
                 </td>
               </tr>
             ))}

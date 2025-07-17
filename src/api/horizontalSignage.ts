@@ -30,3 +30,12 @@ export const getHorizontalSignagePdf = (year: number): Promise<Blob> =>
   api
     .get('/segnaletica-orizzontale/pdf', { params: { year }, responseType: 'blob' })
     .then(r => r.data)
+
+export const listHorizontalSignageByPlan = (
+  planId: string,
+): Promise<HorizontalSign[]> =>
+  api
+    .get<HorizontalSign[]>('/inventario/signage-horizontal', {
+      params: { plan: planId },
+    })
+    .then(r => r.data)
