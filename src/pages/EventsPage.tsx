@@ -174,6 +174,7 @@ export default function EventsPage() {
             descrizione: description,
             data_ora: dateTime,
             is_public: isPublic,
+            owner_id: userId ?? null,
             ...(form.colorId ? { colorId: form.colorId } : {}),
           });
           }
@@ -219,6 +220,7 @@ export default function EventsPage() {
             descrizione: description,
             data_ora: dateTime,
             is_public: isPublic,
+            owner_id: userId ?? null,
             ...(form.colorId ? { colorId: form.colorId } : {}),
           });
           dbEvent = {
