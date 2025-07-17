@@ -4,6 +4,7 @@ export interface VerticalSign {
   id: string
   luogo: string
   descrizione: string
+  tipo?: string
   anno?: number
   quantita?: number
 }
