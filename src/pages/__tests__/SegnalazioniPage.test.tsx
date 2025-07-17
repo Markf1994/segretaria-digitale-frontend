@@ -34,4 +34,20 @@ describe('SegnalazioniPage', () => {
 
     expect(await screen.findByText('Buco')).toBeInTheDocument()
   })
+
+  it('shows form fields', () => {
+    render(
+      <MemoryRouter initialEntries={["/segnalazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/segnalazioni" element={<SegnalazioniPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    const selects = screen.getAllByRole('combobox')
+    expect(selects).toHaveLength(2)
+    expect(screen.getByLabelText(/data/i)).toHaveAttribute('type', 'datetime-local')
+  })
 })
