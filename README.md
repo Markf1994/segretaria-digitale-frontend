@@ -152,8 +152,9 @@ value entered must be a valid time string or the backend will reject that row.
 
 ## Dashboard
 
-The dashboard calendar shows Google Calendar events for the current week only.
+The dashboard calendar defaults to the **month** view of Google Calendar.
 Events are fetched from the ID defined in `VITE_DASHBOARD_CALENDAR_ID`.
+The `/events` page shows the same calendar in **week** view.
 
 ## Inventory
 
