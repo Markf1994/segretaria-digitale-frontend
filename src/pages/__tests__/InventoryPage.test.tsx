@@ -78,6 +78,8 @@ describe('InventoryPage', () => {
 
     expect(dialog).toHaveAttribute('open')
     expect(screen.getByTestId('dev-name')).toBeInTheDocument()
+    expect(screen.getByTestId('dev-desc')).toBeInTheDocument()
+    expect(screen.getByTestId('dev-year')).toBeInTheDocument()
   })
 
   it('saves and cancels via modal', async () => {
@@ -87,14 +89,23 @@ describe('InventoryPage', () => {
 
     await userEvent.click(addButtons[0])
     await userEvent.type(screen.getByTestId('dev-name'), 'Device 1')
+    await userEvent.type(screen.getByTestId('dev-desc'), 'Desc')
+    await userEvent.type(screen.getByTestId('dev-year'), '2024')
     await userEvent.click(screen.getByTestId('dev-submit'))
 
-    expect(mockedDevices.createDevice).toHaveBeenCalled()
+    expect(mockedDevices.createDevice).toHaveBeenCalledWith({
+      nome: 'Device 1',
+      descrizione: 'Desc',
+      anno: 2024,
+      note: '',
+    })
     await screen.findByText('Device 1')
     expect(dialog).not.toHaveAttribute('open')
 
     await userEvent.click(addButtons[0])
     await userEvent.type(screen.getByTestId('dev-name'), 'Device 2')
+    await userEvent.type(screen.getByTestId('dev-desc'), 'Desc')
+    await userEvent.type(screen.getByTestId('dev-year'), '2024')
     await userEvent.click(screen.getByTestId('dev-cancel'))
 
     expect(mockedDevices.createDevice).toHaveBeenCalledTimes(1)
