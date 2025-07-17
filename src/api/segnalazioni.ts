@@ -6,6 +6,8 @@ export interface Segnalazione {
   priorita: string
   data: string
   descrizione: string
+  /** Current status, may be omitted if the backend does not return it */
+  stato?: string
   lat: number
   lng: number
 }
