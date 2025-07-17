@@ -79,7 +79,7 @@ const SegnalazioniPage: React.FC = () => {
         <textarea placeholder="Descrizione" value={descrizione} onChange={e => setDescrizione(e.target.value)} />
         <button type="submit">Invia</button>
       </form>
-      <MapContainer center={[45.07, 7.69]} zoom={13} style={{ height: '400px', width: '100%' }} data-testid="map">
+      <MapContainer center={[45.9229, 10.0644]} zoom={13} style={{ height: '400px', width: '100%' }} data-testid="map">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
         <LocationMarker position={pos} onChange={setPos} />
         {items.map(s => (
