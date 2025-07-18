@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import { createSegnalazione, listSegnalazioni, Segnalazione } from '../api/segnalazioni'
 import './ListPages.css'
+import Modal from '../components/ui/Modal'
 
 const LocationMarker: React.FC<{
   position: [number, number] | null
@@ -28,6 +29,7 @@ const SegnalazioniPage: React.FC = () => {
   const [stato, setStato] = useState('')
   const [pos, setPos] = useState<[number, number] | null>(null)
   const [error, setError] = useState('')
+  const [showCompleted, setShowCompleted] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
@@ -94,18 +96,24 @@ const SegnalazioniPage: React.FC = () => {
           value={data}
           onChange={e => setData(e.target.value)}
         />
-        <input
-          placeholder="Stato"
+        <label htmlFor="stato">Stato</label>
+        <select
+          id="stato"
           value={stato}
           onChange={e => setStato(e.target.value)}
-        />
+        >
+          <option value="">Stato</option>
+          <option value="Aperta">Aperta</option>
+          <option value="In corso">In corso</option>
+          <option value="Chiusa">Chiusa</option>
+        </select>
         <textarea placeholder="Descrizione" value={descrizione} onChange={e => setDescrizione(e.target.value)} />
         <button type="submit">Invia</button>
       </form>
       <MapContainer center={[45.9229, 10.0644]} zoom={13} style={{ height: '400px', width: '100%' }} data-testid="map">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
         <LocationMarker position={pos} onChange={setPos} />
-        {items.map((item, idx) => (
+        {items.filter(item => item.stato !== 'Chiusa').map((item, idx) => (
           <Marker key={idx} position={[item.latitudine, item.longitudine]}>
             <Popup>
               <strong>{item.tipo}</strong>
@@ -121,6 +129,22 @@ const SegnalazioniPage: React.FC = () => {
           </Marker>
         ))}
       </MapContainer>
+      <button type="button" onClick={() => setShowCompleted(true)}>
+        Completate
+      </button>
+      <Modal
+        open={showCompleted}
+        onClose={() => setShowCompleted(false)}
+        title="Segnalazioni completate"
+      >
+        <ul>
+          {items
+            .filter(item => item.stato === 'Chiusa')
+            .map(item => (
+              <li key={item.id}>{item.tipo}</li>
+            ))}
+        </ul>
+      </Modal>
     </div>
   )
 }

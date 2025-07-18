@@ -57,8 +57,10 @@ describe('SegnalazioniPage', () => {
     )
 
     const selects = screen.getAllByRole('combobox')
-    expect(selects).toHaveLength(2)
-    expect(screen.getByPlaceholderText(/stato/i)).toBeInTheDocument()
+    expect(selects).toHaveLength(3)
+    expect(
+      screen.getByRole('combobox', { name: /stato/i })
+    ).toBeInTheDocument()
     expect(screen.getByLabelText(/data/i)).toHaveAttribute('type', 'datetime-local')
   })
 
@@ -94,5 +96,47 @@ describe('SegnalazioniPage', () => {
 
     expect(mockedApi.createSegnalazione).toHaveBeenCalled()
     expect(map.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1)
+  })
+
+  it('handles closed segnalazioni', async () => {
+    mockedApi.listSegnalazioni.mockResolvedValue([
+      {
+        id: '1',
+        tipo: 'Buco',
+        priorita: 'Alta',
+        data: '2024-01-01',
+        descrizione: 'desc',
+        stato: 'Aperta',
+        latitudine: 0,
+        longitudine: 0,
+      },
+      {
+        id: '2',
+        tipo: 'Rifiuti',
+        priorita: 'Bassa',
+        data: '2024-01-02',
+        descrizione: 'desc2',
+        stato: 'Chiusa',
+        latitudine: 1,
+        longitudine: 1,
+      },
+    ])
+
+    render(
+      <MemoryRouter initialEntries={["/segnalazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/segnalazioni" element={<SegnalazioniPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    const map = await screen.findByTestId('map')
+    expect(map.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1)
+
+    await userEvent.click(screen.getByRole('button', { name: /completate/i }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText('Rifiuti')).toBeInTheDocument()
   })
 })
