@@ -25,6 +25,17 @@ SECRET_KEY = os.getenv("SECRET_KEY", "secret")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 
+@app.post("/login", response_model=schemas.Token)
+def login(data: schemas.LoginRequest):
+    token_data = {
+        "sub": data.email,
+        "email": data.email,
+        "nome": data.email.split("@")[0],
+    }
+    access_token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
+    return {"access_token": access_token}
+
+
 def get_db():
     db = SessionLocal()
     try:
