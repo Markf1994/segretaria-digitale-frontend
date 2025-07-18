@@ -35,7 +35,7 @@ describe('PageTemplate', () => {
 
     // navigation links
     expect(screen.getByText('🏠 Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('📅 Eventi')).toBeInTheDocument();
+    expect(screen.getByText('📅 Impegni')).toBeInTheDocument();
     expect(screen.getByText('📝 To-Do')).toBeInTheDocument();
     expect(screen.getByText('🕑 Orari')).toBeInTheDocument();
     expect(screen.getByText('📄 Determine')).toBeInTheDocument();
