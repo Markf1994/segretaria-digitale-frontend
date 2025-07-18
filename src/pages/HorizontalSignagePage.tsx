@@ -39,7 +39,14 @@ const HorizontalSignagePage: React.FC = () => {
   const handlePdf = async (year: number) => {
     const blob = await getHorizontalSignagePdf(year)
     const url = URL.createObjectURL(blob)
-    window.open(url, '_blank')
+    const newWindow = window.open(url, '_blank')
+    if (newWindow) {
+      newWindow.addEventListener('load', () => {
+        URL.revokeObjectURL(url)
+      })
+    } else {
+      setTimeout(() => URL.revokeObjectURL(url))
+    }
   }
 
   return (

@@ -11,7 +11,15 @@ import * as scheduleApi from '../../api/schedule'
 jest.mock('../../components/ImportExcel', () => ({
   __esModule: true,
   default: ({ onComplete }: any) => (
-    <button onClick={() => onComplete(true)}>Importa</button>
+    <button
+      onClick={() => {
+        const url = URL.createObjectURL(new Blob())
+        window.open(url, '_blank')
+        onComplete(true)
+      }}
+    >
+      Importa
+    </button>
   ),
 }))
 
@@ -505,6 +513,23 @@ describe('SchedulePage', () => {
     expect(tables).toHaveLength(2)
     expect(within(tables[1]).getByText('u')).toBeInTheDocument()
     expect(within(tables[1]).getByText('2023-06-02')).toBeInTheDocument()
+  })
+
+  it('opens PDF after import', async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: [{ id: 'u', email: 'u@e', nome: 'u' }] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+    mockedApi.get.mockResolvedValueOnce({ data: [] })
+
+    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
+    const urlSpy = jest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:1')
+
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /importa/i }))
+
+    expect(openSpy).toHaveBeenCalledWith('blob:1', '_blank')
+
+    openSpy.mockRestore()
+    urlSpy.mockRestore()
   })
 
   it('downloads weekly PDF', async () => {
