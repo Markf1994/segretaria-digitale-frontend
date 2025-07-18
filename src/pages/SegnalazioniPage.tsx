@@ -43,8 +43,14 @@ const SegnalazioniPage: React.FC = () => {
   const [pos, setPos] = useState<[number, number] | null>(null)
   const [error, setError] = useState('')
   const [showClosed, setShowClosed] = useState(false)
+  const [showActive, setShowActive] = useState(false)
+  const [showProgress, setShowProgress] = useState(false)
 
   const closedItems = items.filter(i => i.stato === 'Chiusa')
+  const activeItems = items.filter(
+    i => i.stato === 'Aperta' || i.stato === 'Attiva'
+  )
+  const progressItems = items.filter(i => i.stato === 'In lavorazione')
 
   useEffect(() => {
     const fetch = async () => {
@@ -127,7 +133,14 @@ const SegnalazioniPage: React.FC = () => {
       <MapContainer center={[45.9229, 10.0644]} zoom={13} style={{ height: '400px', width: '100%' }} data-testid="map">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
         <LocationMarker position={pos} onChange={setPos} />
-        {items.filter(item => item.stato !== 'Chiusa').map((item, idx) => (
+        {items
+          .filter(
+            item =>
+              item.stato === 'Aperta' ||
+              item.stato === 'Attiva' ||
+              item.stato === 'In lavorazione'
+          )
+          .map((item, idx) => (
           <Marker key={idx} position={[item.latitudine, item.longitudine]}>
             <Popup>
               <strong>{item.tipo}</strong>
@@ -143,9 +156,65 @@ const SegnalazioniPage: React.FC = () => {
           </Marker>
         ))}
       </MapContainer>
+      <Button type="button" onClick={() => setShowActive(true)}>
+        Attive
+      </Button>
+      <Button type="button" onClick={() => setShowProgress(true)}>
+        In lavorazione
+      </Button>
       <Button type="button" onClick={() => setShowClosed(true)}>
         Completate
       </Button>
+      <Modal
+        open={showActive}
+        onClose={() => setShowActive(false)}
+        title="Segnalazioni attive"
+      >
+        <table className="item-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Data</th>
+              <th>Descrizione</th>
+            </tr>
+          </thead>
+          <tbody>
+            {activeItems.map(item => (
+              <tr key={item.id}>
+                <td>{item.tipo}</td>
+                <td>{new Date(item.data_segnalazione).toLocaleDateString()}</td>
+                <td>{item.descrizione}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Button onClick={() => setShowActive(false)}>Chiudi</Button>
+      </Modal>
+      <Modal
+        open={showProgress}
+        onClose={() => setShowProgress(false)}
+        title="Segnalazioni in lavorazione"
+      >
+        <table className="item-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Data</th>
+              <th>Descrizione</th>
+            </tr>
+          </thead>
+          <tbody>
+            {progressItems.map(item => (
+              <tr key={item.id}>
+                <td>{item.tipo}</td>
+                <td>{new Date(item.data_segnalazione).toLocaleDateString()}</td>
+                <td>{item.descrizione}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Button onClick={() => setShowProgress(false)}>Chiudi</Button>
+      </Modal>
       <Modal
         open={showClosed}
         onClose={() => setShowClosed(false)}
