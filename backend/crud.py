@@ -12,3 +12,22 @@ def create_segnalazione(db: Session, segnalazione: schemas.SegnalazioneCreate):
     db.commit()
     db.refresh(db_segnalazione)
     return db_segnalazione
+
+
+def update_segnalazione(
+    db: Session,
+    segnalazione_id: int,
+    segnalazione: schemas.SegnalazioneUpdate,
+):
+    db_segnalazione = (
+        db.query(models.Segnalazione)
+        .filter(models.Segnalazione.id == segnalazione_id)
+        .first()
+    )
+    if not db_segnalazione:
+        return None
+    for key, value in segnalazione.dict(exclude_unset=True).items():
+        setattr(db_segnalazione, key, value)
+    db.commit()
+    db.refresh(db_segnalazione)
+    return db_segnalazione
