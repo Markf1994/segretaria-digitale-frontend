@@ -57,8 +57,8 @@ describe('SegnalazioniPage', () => {
     )
 
     const selects = screen.getAllByRole('combobox')
-    expect(selects).toHaveLength(2)
-    expect(screen.getByPlaceholderText(/stato/i)).toBeInTheDocument()
+    expect(selects).toHaveLength(3)
+    expect(screen.getByLabelText(/stato/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/data/i)).toHaveAttribute('type', 'datetime-local')
   })
 

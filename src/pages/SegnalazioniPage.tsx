@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import { createSegnalazione, listSegnalazioni, Segnalazione } from '../api/segnalazioni'
+import Modal from '../components/ui/Modal'
+import Button from '../components/ui/button'
 import './ListPages.css'
 
 const LocationMarker: React.FC<{
@@ -28,6 +30,8 @@ const SegnalazioniPage: React.FC = () => {
   const [stato, setStato] = useState('')
   const [pos, setPos] = useState<[number, number] | null>(null)
   const [error, setError] = useState('')
+  const [showClosed, setShowClosed] = useState(false)
+  const closedItems = items.filter(i => i.stato === 'Chiusa')
 
   useEffect(() => {
     const fetch = async () => {
@@ -94,18 +98,26 @@ const SegnalazioniPage: React.FC = () => {
           value={data}
           onChange={e => setData(e.target.value)}
         />
-        <input
-          placeholder="Stato"
+        <select
+          aria-label="Stato"
           value={stato}
           onChange={e => setStato(e.target.value)}
-        />
+        >
+          <option value="">Stato</option>
+          <option value="Aperta">Aperta</option>
+          <option value="In lavorazione">In lavorazione</option>
+          <option value="Chiusa">Chiusa</option>
+        </select>
         <textarea placeholder="Descrizione" value={descrizione} onChange={e => setDescrizione(e.target.value)} />
         <button type="submit">Invia</button>
       </form>
+      <Button type="button" onClick={() => setShowClosed(true)}>Completate</Button>
       <MapContainer center={[45.9229, 10.0644]} zoom={13} style={{ height: '400px', width: '100%' }} data-testid="map">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
         <LocationMarker position={pos} onChange={setPos} />
-        {items.map((item, idx) => (
+        {items
+          .filter(i => i.stato !== 'Chiusa')
+          .map((item, idx) => (
           <Marker key={idx} position={[item.latitudine, item.longitudine]}>
             <Popup>
               <strong>{item.tipo}</strong>
@@ -121,6 +133,27 @@ const SegnalazioniPage: React.FC = () => {
           </Marker>
         ))}
       </MapContainer>
+      <Modal open={showClosed} onClose={() => setShowClosed(false)} title="Segnalazioni completate">
+        <table className="item-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Data</th>
+              <th>Descrizione</th>
+            </tr>
+          </thead>
+          <tbody>
+            {closedItems.map(item => (
+              <tr key={item.id}>
+                <td>{item.tipo}</td>
+                <td>{new Date(item.data_segnalazione || item.data).toLocaleDateString()}</td>
+                <td>{item.descrizione}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" onClick={() => setShowClosed(false)}>Chiudi</button>
+      </Modal>
     </div>
   )
 }
