@@ -50,11 +50,15 @@ const SegnalazioniPage: React.FC = () => {
   const [showActive, setShowActive] = useState(false)
   const [showProgress, setShowProgress] = useState(false)
 
-  const closedItems = items.filter(i => i.stato === 'Chiusa')
-  const activeItems = items.filter(
-    i => i.stato === 'Aperta' || i.stato === 'Attiva'
+  const closedItems = items.filter(
+    i => i.stato === 'chiusa' || i.stato === 'Chiusa'
   )
-  const progressItems = items.filter(i => i.stato === 'In lavorazione')
+  const activeItems = items.filter(
+    i => i.stato === 'aperta' || i.stato === 'Aperta' || i.stato === 'Attiva'
+  )
+  const progressItems = items.filter(
+    i => i.stato === 'in lavorazione' || i.stato === 'In lavorazione'
+  )
 
   useEffect(() => {
     const fetch = async () => {
@@ -73,22 +77,18 @@ const SegnalazioniPage: React.FC = () => {
     setError('')
     if (!pos) return
     try {
-      const statusMap: Record<string, 'aperta' | 'in lavorazione' | 'chiusa'> = {
-        Aperta: 'aperta',
-        'In lavorazione': 'in lavorazione',
-        Chiusa: 'chiusa'
-      }
-      const status =
-        statusMap[stato] ?? (stato.toLowerCase() as 'aperta' | 'in lavorazione' | 'chiusa')
       const priorityMap: Record<string, number> = {
         Alta: 1,
         Media: 2,
-        Bassa: 3
+        Bassa: 3,
+        '1': 1,
+        '2': 2,
+        '3': 3
       }
       const res = await createSegnalazione({
         tipo, // solo uno tra: "Piante", "Danneggiamenti", "Reati", "Animali", "Altro"
-        stato: status,
-        priorita: priorityMap[priorita] ?? (priorita as unknown as any),
+        stato: stato as 'aperta' | 'in lavorazione' | 'chiusa',
+        priorita: priorityMap[priorita] ?? parseInt(priorita, 10),
         descrizione,
         latitudine: pos[0],
         longitudine: pos[1],
@@ -122,9 +122,9 @@ const SegnalazioniPage: React.FC = () => {
         </select>
         <select value={priorita} onChange={e => setPriorita(e.target.value)}>
           <option value="">Priorità</option>
-          <option value="Alta">Alta</option>
-          <option value="Media">Media</option>
-          <option value="Bassa">Bassa</option>
+          <option value="1">Alta</option>
+          <option value="2">Media</option>
+          <option value="3">Bassa</option>
         </select>
         <label htmlFor="data">Data</label>
         <input
@@ -139,9 +139,9 @@ const SegnalazioniPage: React.FC = () => {
           onChange={e => setStato(e.target.value)}
         >
           <option value="">Stato</option>
-          <option value="Aperta">Aperta</option>
-          <option value="In lavorazione">In lavorazione</option>
-          <option value="Chiusa">Chiusa</option>
+          <option value="aperta">Aperta</option>
+          <option value="in lavorazione">In lavorazione</option>
+          <option value="chiusa">Chiusa</option>
         </select>
         <textarea placeholder="Descrizione" value={descrizione} onChange={e => setDescrizione(e.target.value)} />
         <button type="submit">Invia</button>
@@ -152,8 +152,10 @@ const SegnalazioniPage: React.FC = () => {
         {items
           .filter(
             item =>
+              item.stato === 'aperta' ||
               item.stato === 'Aperta' ||
               item.stato === 'Attiva' ||
+              item.stato === 'in lavorazione' ||
               item.stato === 'In lavorazione'
           )
           .map((item, idx) => (
