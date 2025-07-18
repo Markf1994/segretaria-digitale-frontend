@@ -1,10 +1,25 @@
 from pydantic import BaseModel
 from datetime import datetime
+from enum import Enum
+
+
+class TipoSegnalazione(str, Enum):
+    PIANTE = "Piante"
+    ANIMALI = "Animali"
+    DANNEGGIAMENTI = "Danneggiamenti"
+    REATI = "Reati"
+    ALTRO = "Altro"
+
+
+class StatoSegnalazione(str, Enum):
+    APERTA = "aperta"
+    IN_LAVORAZIONE = "in lavorazione"
+    CHIUSA = "chiusa"
 
 class SegnalazioneBase(BaseModel):
-    tipo: str
+    tipo: TipoSegnalazione
     priorita: str
-    stato: str
+    stato: StatoSegnalazione
     descrizione: str | None = None
     lat: float | None = None
     lng: float | None = None
