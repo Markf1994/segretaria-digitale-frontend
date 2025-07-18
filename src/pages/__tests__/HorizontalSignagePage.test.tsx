@@ -3,41 +3,22 @@ import userEvent from '@testing-library/user-event'
 import HorizontalSignagePage from '../HorizontalSignagePage'
 import PageTemplate from '../../components/PageTemplate'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
-import * as planApi from '../../api/horizontalPlans'
 import * as horizApi from '../../api/horizontalSignage'
-
-jest.mock('../../api/horizontalPlans', () => ({
-  __esModule: true,
-  listHorizontalPlans: jest.fn(),
-  createHorizontalPlan: jest.fn(),
-  updateHorizontalPlan: jest.fn(),
-  deleteHorizontalPlan: jest.fn(),
-}))
 
 jest.mock('../../api/horizontalSignage', () => ({
   __esModule: true,
-  listHorizontalSignage: jest.fn(),
-  createHorizontalSignage: jest.fn(),
-  updateHorizontalSignage: jest.fn(),
-  deleteHorizontalSignage: jest.fn(),
+  listHorizontalYears: jest.fn(),
+  listHorizontalByYear: jest.fn(),
   getHorizontalSignagePdf: jest.fn(),
-  listHorizontalSignageByPlan: jest.fn(),
 }))
 
-const mockedPlans = planApi as jest.Mocked<typeof planApi>
 const mockedHoriz = horizApi as jest.Mocked<typeof horizApi>
 
 beforeEach(() => {
   jest.resetAllMocks()
-  mockedPlans.listHorizontalPlans.mockResolvedValue([])
-  mockedHoriz.listHorizontalSignage.mockResolvedValue([])
-  mockedHoriz.listHorizontalSignageByPlan.mockResolvedValue([])
+  mockedHoriz.listHorizontalYears.mockResolvedValue([])
+  mockedHoriz.listHorizontalByYear.mockResolvedValue([])
   mockedHoriz.getHorizontalSignagePdf.mockResolvedValue(new Blob())
-  mockedHoriz.createHorizontalSignage.mockResolvedValue({
-    id: 'h1',
-    luogo: 'Luogo',
-    data: '2024-01-01',
-  } as any)
 })
 
 const renderPage = () =>
@@ -53,65 +34,44 @@ const renderPage = () =>
 
 describe('HorizontalSignagePage', () => {
   it('opens interventions modal', async () => {
-    mockedPlans.listHorizontalPlans.mockResolvedValueOnce([
-      { id: 'p1', descrizione: 'Piano 1', anno: 2024 } as any,
+    mockedHoriz.listHorizontalYears.mockResolvedValueOnce([2024])
+    mockedHoriz.listHorizontalByYear.mockResolvedValueOnce([
+      { id: 'i1', luogo: 'Az', descrizione: 'Desc', data: '2024-01-01' } as any,
     ])
     renderPage()
 
-    const row = await screen.findByRole('row', { name: /piano 1/i })
+    const row = await screen.findByRole('row', { name: /2024/i })
     const seeBtn = within(row).getByRole('button', { name: /vedi interventi/i })
-    const dialogs = screen.getAllByRole('dialog')
-    expect(dialogs[1]).not.toHaveAttribute('open')
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).not.toHaveAttribute('open')
 
     await userEvent.click(seeBtn)
 
-    expect(dialogs[1]).toHaveAttribute('open')
-    expect(mockedHoriz.listHorizontalSignageByPlan).toHaveBeenCalledWith('p1')
-  })
-
-  it('adds horizontal intervention', async () => {
-    mockedPlans.listHorizontalPlans.mockResolvedValueOnce([
-      { id: 'p1', descrizione: 'Piano 1', anno: 2024 } as any,
-    ])
-    renderPage()
-
-    const row = await screen.findByRole('row', { name: /piano 1/i })
-    const seeBtn = within(row).getByRole('button', { name: /vedi interventi/i })
-    await userEvent.click(seeBtn)
-
-    const interventions = screen.getAllByRole('dialog')[1]
-    await userEvent.click(within(interventions).getByRole('button', { name: /aggiungi/i }))
-
-    const horizDialog = screen.getAllByRole('dialog')[2]
-    const withinHoriz = within(horizDialog)
-    const [luogoInput, dateInput, descInput] = withinHoriz.getAllByRole('textbox')
-    await userEvent.type(luogoInput, 'Luogo')
-    await userEvent.type(dateInput, '2024-01-01')
-    await userEvent.type(descInput, 'Desc')
-    await userEvent.type(withinHoriz.getByPlaceholderText('Quantità'), '2')
-    await userEvent.click(withinHoriz.getByRole('button', { name: /aggiungi/i }))
-
-    expect(mockedHoriz.createHorizontalSignage).toHaveBeenCalledWith({
-      luogo: 'Luogo',
-      data: '2024-01-01',
-      descrizione: 'Desc',
-      quantita: 2,
-      piano_id: 'p1',
-    })
+    expect(mockedHoriz.listHorizontalByYear).toHaveBeenCalledWith(2024)
+    expect(dialog).toHaveAttribute('open')
+    expect(within(dialog).getByText('Az')).toBeInTheDocument()
   })
 
   it('downloads PDF by year', async () => {
+    mockedHoriz.listHorizontalYears.mockResolvedValueOnce([2023])
     const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
     const urlSpy = jest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:1')
 
     renderPage()
-    await userEvent.type(screen.getByTestId('hor-year'), '2023')
-    await userEvent.click(screen.getByTestId('hor-pdf'))
+
+    const row = await screen.findByRole('row', { name: /2023/i })
+    const pdfBtn = within(row).getByRole('button', { name: /pdf/i })
+    await userEvent.click(pdfBtn)
 
     expect(mockedHoriz.getHorizontalSignagePdf).toHaveBeenCalledWith(2023)
     expect(openSpy).toHaveBeenCalledWith('blob:1', '_blank')
 
     openSpy.mockRestore()
     urlSpy.mockRestore()
+  })
+
+  it('shows import button', async () => {
+    renderPage()
+    expect(await screen.findByRole('button', { name: /importa excel/i })).toBeInTheDocument()
   })
 })

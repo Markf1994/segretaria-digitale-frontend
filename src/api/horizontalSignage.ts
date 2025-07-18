@@ -42,11 +42,24 @@ export const getHorizontalSignagePdf = (year: number): Promise<Blob> =>
     })
     .then(r => r.data)
 
-export const listHorizontalSignageByPlan = (
-  planId: string,
+export const listHorizontalYears = (): Promise<number[]> =>
+  api
+    .get<number[]>('/inventario/signage-horizontal/years/')
+    .then(r => r.data)
+
+export const listHorizontalByYear = (
+  year: number,
 ): Promise<HorizontalSign[]> =>
   api
     .get<HorizontalSign[]>('/inventario/signage-horizontal/', {
-      params: { plan: planId },
+      params: { year },
     })
     .then(r => r.data)
+
+export const importHorizontalExcel = (file: File): Promise<void> => {
+  const form = new FormData()
+  form.append('file', file)
+  return api
+    .post('/inventario/signage-horizontal/import/xlsx', form)
+    .then(() => undefined)
+}
