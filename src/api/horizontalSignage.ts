@@ -56,10 +56,10 @@ export const listHorizontalByYear = (
     })
     .then(r => r.data)
 
-export const importHorizontalExcel = (file: File): Promise<void> => {
+export const importHorizontalExcel = (file: File): Promise<Blob> => {
   const form = new FormData()
   form.append('file', file)
   return api
-    .post('/inventario/signage-horizontal/import/xlsx', form)
-    .then(() => undefined)
+    .post('/segnaletica-orizzontale/import', form, { responseType: 'blob' })
+    .then(r => r.data)
 }

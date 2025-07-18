@@ -21,7 +21,16 @@ export default function ImportHorizontalExcel({ onComplete }: Props) {
     setBusy(true)
     setMessage('')
     try {
-      await importHorizontalExcel(file)
+      const pdfBlob = await importHorizontalExcel(file)
+      const pdfURL = URL.createObjectURL(pdfBlob)
+      const newWindow = window.open(pdfURL, '_blank')
+      if (newWindow) {
+        newWindow.addEventListener('load', () => {
+          URL.revokeObjectURL(pdfURL)
+        })
+      } else {
+        setTimeout(() => URL.revokeObjectURL(pdfURL))
+      }
       setMessage('File importato correttamente.')
       onComplete?.(true)
     } catch (err) {
