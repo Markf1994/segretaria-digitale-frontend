@@ -75,8 +75,8 @@ const SegnalazioniPage: React.FC = () => {
         priorita: priorita === "Alta" ? 1 : priorita === "Media" ? 2 : 3,
         data_segnalazione: data,
         descrizione,
-        latitudine: pos[0],
-        longitudine: pos[1]
+        lat: pos[0],
+        lng: pos[1]
       })
       setItems([...items, res])
       setTipo('')
@@ -141,7 +141,10 @@ const SegnalazioniPage: React.FC = () => {
               item.stato === 'In lavorazione'
           )
           .map((item, idx) => (
-          <Marker key={idx} position={[item.latitudine, item.longitudine]}>
+          <Marker
+            key={idx}
+            position={[item.lat ?? item.latitudine!, item.lng ?? item.longitudine!]}
+          >
             <Popup>
               <strong>{item.tipo}</strong>
               <br />
