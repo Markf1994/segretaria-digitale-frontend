@@ -249,11 +249,11 @@
   flex-wrap: wrap;
   gap: 1rem;
 }
-.inventory-wrapper > .temp-section,
-.inventory-wrapper > .vertical-section {
-  flex: 1;
-}
 .inventory-wrapper > .devices-section {
   order: 2;
   flex-basis: 100%;
+}
+
+.inventory-wrapper.devices-only {
+  justify-content: center;
 }
