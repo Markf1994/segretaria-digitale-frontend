@@ -243,6 +243,12 @@ After applying the Alembic migrations
 (`alembic -c backend/alembic.ini upgrade head`) you can start the API with
 `uvicorn backend.main:app` or simply run `python backend/main.py`.
 
+To run the backend and frontend together during development use:
+
+```bash
+npm run dev:full
+```
+
 
 ## License
 
