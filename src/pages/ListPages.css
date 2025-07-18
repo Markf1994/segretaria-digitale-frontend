@@ -257,3 +257,9 @@
 .inventory-wrapper.devices-only {
   justify-content: center;
 }
+
+/* Side-by-side layout for vertical and temporary signage */
+.inventory-wrapper > .temp-section,
+.inventory-wrapper > .vertical-section {
+  flex: 1 1 20rem;
+}
