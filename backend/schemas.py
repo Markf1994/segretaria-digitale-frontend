@@ -24,3 +24,12 @@ class User(BaseModel):
     id: str
     email: str
     nome: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
