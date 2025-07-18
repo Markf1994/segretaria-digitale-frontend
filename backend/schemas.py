@@ -12,6 +12,15 @@ class SegnalazioneBase(BaseModel):
 class SegnalazioneCreate(SegnalazioneBase):
     pass
 
+
+class SegnalazioneUpdate(BaseModel):
+    tipo: str | None = None
+    priorita: str | None = None
+    stato: str | None = None
+    descrizione: str | None = None
+    lat: float | None = None
+    lng: float | None = None
+
 class Segnalazione(SegnalazioneBase):
     id: int
     data: datetime

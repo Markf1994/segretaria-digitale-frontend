@@ -67,6 +67,22 @@ def create_segnalazione(segnalazione: schemas.SegnalazioneCreate, db: Session = 
     return crud.create_segnalazione(db, segnalazione)
 
 
+@app.patch(
+    "/segnalazioni/{segnalazione_id}",
+    response_model=schemas.Segnalazione,
+    dependencies=[Depends(get_current_user)],
+)
+def update_segnalazione(
+    segnalazione_id: int,
+    segnalazione: schemas.SegnalazioneUpdate,
+    db: Session = Depends(get_db),
+):
+    db_segnalazione = crud.update_segnalazione(db, segnalazione_id, segnalazione)
+    if db_segnalazione is None:
+        raise HTTPException(status_code=404, detail="Segnalazione not found")
+    return db_segnalazione
+
+
 @app.get("/segnalazioni", response_model=list[schemas.Segnalazione])
 def read_segnalazioni(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_segnalazioni(db, skip=skip, limit=limit)
