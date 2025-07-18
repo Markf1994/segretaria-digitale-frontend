@@ -18,11 +18,12 @@ export interface Segnalazione {
 
 export interface SegnalazioneCreate {
   tipo: string
-  priorita: string
-  stato: string
+  priorita: number
+  stato: 'aperta' | 'in lavorazione' | 'chiusa'
   descrizione?: string
-  lat?: number
-  lng?: number
+  latitudine: number
+  longitudine: number
+  data_segnalazione: string
 }
 
 export const listSegnalazioni = (): Promise<Segnalazione[]> =>
