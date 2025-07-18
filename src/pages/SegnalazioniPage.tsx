@@ -12,7 +12,11 @@ L.Marker.prototype.options.icon = L.icon({
 
 import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
-import { createSegnalazione, listSegnalazioni, Segnalazione } from '../api/segnalazioni'
+import {
+  createSegnalazione,
+  listSegnalazioni,
+  Segnalazione,
+} from '../api/segnalazioni'
 import './ListPages.css'
 import Modal from '../components/ui/Modal'
 import Button from '../components/ui/button'
@@ -72,12 +76,11 @@ const SegnalazioniPage: React.FC = () => {
       const res = await createSegnalazione({
         tipo, // solo uno tra: "Piante", "Danneggiamenti", "Reati", "Animali", "Altro"
         stato,
-        priorita: priorita === "Alta" ? 1 : priorita === "Media" ? 2 : 3,
-        data_segnalazione: data,
+        priorita,
         descrizione,
-        latitudine: pos[0],
-        longitudine: pos[1]
-      } as any)
+        lat: pos[0],
+        lng: pos[1]
+      })
       setItems([...items, res])
       setTipo('')
       setPriorita('')

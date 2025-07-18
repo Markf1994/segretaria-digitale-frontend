@@ -16,10 +16,19 @@ export interface Segnalazione {
   data_segnalazione?: string
 }
 
+export interface SegnalazioneCreate {
+  tipo: string
+  priorita: string
+  stato: string
+  descrizione?: string
+  lat?: number
+  lng?: number
+}
+
 export const listSegnalazioni = (): Promise<Segnalazione[]> =>
   api.get<Segnalazione[]>('/segnalazioni').then(r => r.data)
 
 export const createSegnalazione = (
-  data: Omit<Segnalazione, 'id'>
+  data: SegnalazioneCreate
 ): Promise<Segnalazione> =>
   api.post<Segnalazione>('/segnalazioni', data).then(r => r.data)
