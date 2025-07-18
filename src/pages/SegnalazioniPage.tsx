@@ -53,12 +53,12 @@ const SegnalazioniPage: React.FC = () => {
     try {
       const res = await createSegnalazione({
         tipo,
-        priorita,
-        data,
-        descrizione,
         stato,
-        lat: pos[0],
-        lng: pos[1]
+        priorita: priorita === "Alta" ? 1 : priorita === "Media" ? 2 : 3,
+        data_segnalazione: data,
+        descrizione,
+        latitudine: pos[0],
+        longitudine: pos[1]
       })
       setItems([...items, res])
       setTipo('')
