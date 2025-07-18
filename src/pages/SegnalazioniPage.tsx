@@ -105,15 +105,18 @@ const SegnalazioniPage: React.FC = () => {
       <MapContainer center={[45.9229, 10.0644]} zoom={13} style={{ height: '400px', width: '100%' }} data-testid="map">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
         <LocationMarker position={pos} onChange={setPos} />
-        {items.map(s => (
-          <Marker key={s.id} position={[s.lat, s.lng]}>
+        {items.map((item, idx) => (
+          <Marker key={idx} position={[item.latitudine, item.longitudine]}>
             <Popup>
-              <div>
-                <strong>{s.tipo}</strong>
-              </div>
-              {s.stato && <div>Stato: {s.stato}</div>}
-              <div>{new Date(s.data).toLocaleString()}</div>
-              <div>{s.descrizione}</div>
+              <strong>{item.tipo}</strong>
+              <br />
+              {item.descrizione}
+              <br />
+              Priorità: {item.priorita}
+              <br />
+              Stato: {item.stato}
+              <br />
+              {new Date(item.data_segnalazione).toLocaleString()}
             </Popup>
           </Marker>
         ))}

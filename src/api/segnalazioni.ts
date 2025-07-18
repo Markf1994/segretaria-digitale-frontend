@@ -10,6 +10,10 @@ export interface Segnalazione {
   stato?: string
   lat: number
   lng: number
+  /** Optional fields used by some backends */
+  latitudine?: number
+  longitudine?: number
+  data_segnalazione?: string
 }
 
 export const listSegnalazioni = (): Promise<Segnalazione[]> =>
