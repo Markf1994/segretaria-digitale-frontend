@@ -70,14 +70,14 @@ const SegnalazioniPage: React.FC = () => {
     if (!pos) return
     try {
       const res = await createSegnalazione({
-        tipo,
+        tipo, // solo uno tra: "Piante", "Danneggiamenti", "Reati", "Animali", "Altro"
         stato,
         priorita: priorita === "Alta" ? 1 : priorita === "Media" ? 2 : 3,
         data_segnalazione: data,
         descrizione,
-        lat: pos[0],
-        lng: pos[1]
-      })
+        latitudine: pos[0],
+        longitudine: pos[1]
+      } as any)
       setItems([...items, res])
       setTipo('')
       setPriorita('')
