@@ -37,7 +37,7 @@ const Header: React.FC = () => {
       <div className="header-right">
         <nav>
           <Link to="/">🏠 Dashboard</Link>
-          <Link to="/events">📅 Eventi</Link>
+          <Link to="/events">📅 Impegni</Link>
           <Link to="/todo">📝 To-Do</Link>
           <Link to="/orari">🕑 Orari</Link>
           <Link to="/determinazioni">📄 Determine</Link>
