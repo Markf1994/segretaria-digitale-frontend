@@ -147,7 +147,6 @@ const VerticalTempSignagePage: React.FC = () => {
 
   return (
     <div className="list-page">
-      <h2 className="wip-warning">🚧 LAVORI IN CORSO 🚧</h2>
       <div className="inventory-wrapper">
         <div className="temp-section">
           <h2>Segnaletica Temporanea</h2>
