@@ -73,7 +73,13 @@ const SegnalazioniPage: React.FC = () => {
     setError('')
     if (!pos) return
     try {
-      const status = stato.toLowerCase()
+      const statusMap: Record<string, 'aperta' | 'in lavorazione' | 'chiusa'> = {
+        Aperta: 'aperta',
+        'In lavorazione': 'in lavorazione',
+        Chiusa: 'chiusa'
+      }
+      const status =
+        statusMap[stato] ?? (stato.toLowerCase() as 'aperta' | 'in lavorazione' | 'chiusa')
       const priorityMap: Record<string, number> = {
         Alta: 1,
         Media: 2,
