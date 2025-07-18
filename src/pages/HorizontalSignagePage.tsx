@@ -15,6 +15,7 @@ import {
   getHorizontalSignagePdf,
   HorizontalSign,
 } from '../api/horizontalSignage'
+import ImportHorizontalExcel from '../components/ImportHorizontalExcel'
 
 const HorizontalSignagePage: React.FC = () => {
   const [plans, setPlans] = useState<HorizontalPlan[]>([])
@@ -309,6 +310,7 @@ const HorizontalSignagePage: React.FC = () => {
             PDF anno
           </button>
         </div>
+        <ImportHorizontalExcel />
       </div>
     </div>
   )
