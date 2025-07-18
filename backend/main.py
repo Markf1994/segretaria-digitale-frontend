@@ -64,3 +64,8 @@ def read_segnalazioni(skip: int = 0, limit: int = 100, db: Session = Depends(get
 @app.get("/users/me", response_model=schemas.User)
 def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

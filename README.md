@@ -229,7 +229,8 @@ Example JSON response:
 
 This repository now ships with a minimal FastAPI backend located in the
 `backend/` directory.  Install the Python dependencies and run the API with
-`uvicorn backend.main:app` after configuring the following environment
+`uvicorn backend.main:app` (or `python backend/main.py`) after configuring the
+following environment
 variables:
 
 - `DATABASE_URL` – connection string for the persistent database.
@@ -240,7 +241,7 @@ The backend must send an `Access-Control-Allow-Origin` header allowing the front
 
 After applying the Alembic migrations
 (`alembic -c backend/alembic.ini upgrade head`) you can start the API with
-`uvicorn backend.main:app`.
+`uvicorn backend.main:app` or simply run `python backend/main.py`.
 
 
 ## License
