@@ -1,3 +1,15 @@
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+
+L.Marker.prototype.options.icon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconAnchor: [12, 41]
+})
+
 import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import { createSegnalazione, listSegnalazioni, Segnalazione } from '../api/segnalazioni'
