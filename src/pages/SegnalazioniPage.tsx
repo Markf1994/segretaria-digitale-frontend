@@ -73,14 +73,21 @@ const SegnalazioniPage: React.FC = () => {
     setError('')
     if (!pos) return
     try {
+      const status = stato.toLowerCase()
+      const priorityMap: Record<string, number> = {
+        Alta: 1,
+        Media: 2,
+        Bassa: 3
+      }
       const res = await createSegnalazione({
         tipo, // solo uno tra: "Piante", "Danneggiamenti", "Reati", "Animali", "Altro"
-        stato,
-        priorita,
+        stato: status,
+        priorita: priorityMap[priorita] ?? (priorita as unknown as any),
         descrizione,
-        lat: pos[0],
-        lng: pos[1]
-      })
+        latitudine: pos[0],
+        longitudine: pos[1],
+        data_segnalazione: new Date(data).toISOString()
+      } as any)
       setItems([...items, res])
       setTipo('')
       setPriorita('')
