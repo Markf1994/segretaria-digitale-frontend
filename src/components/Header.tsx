@@ -52,7 +52,7 @@ const Header: React.FC = () => {
             </button>
             {dropOpen && (
               <div className="dropdown-content">
-                <Link to="/inventario">Segnaletica verticale/temporanea</Link>
+                <Link to="/segnaletica">Segnaletica verticale/temporanea</Link>
                 <Link to="/segnaletica-orizzontale">Segnaletica orizzontale</Link>
               </div>
             )}

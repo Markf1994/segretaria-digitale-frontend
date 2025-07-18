@@ -22,6 +22,7 @@ const SchedulePage = React.lazy(() => import("./pages/SchedulePage"));
 const PdfFilesPage = React.lazy(() => import("./pages/PdfFilesPage"));
 const InventoryPage = React.lazy(() => import("./pages/InventoryPage"));
 const HorizontalSignagePage = React.lazy(() => import("./pages/HorizontalSignagePage"));
+const VerticalTempSignagePage = React.lazy(() => import("./pages/VerticalTempSignagePage"));
 const SegnalazioniPage = React.lazy(() => import("./pages/SegnalazioniPage"));
 
 
@@ -49,6 +50,7 @@ const App: React.FC = () => {
           <Route path="/orari" element={<SchedulePage />} />
           <Route path="/determinazioni" element={<DeterminationsPage />} />
           <Route path="/inventario" element={<InventoryPage />} />
+          <Route path="/segnaletica" element={<VerticalTempSignagePage />} />
           <Route path="/segnaletica-orizzontale" element={<HorizontalSignagePage />} />
           <Route path="/segnalazioni" element={<SegnalazioniPage />} />
         </Route>
