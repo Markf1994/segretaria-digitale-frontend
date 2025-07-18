@@ -1,0 +1,15 @@
+{
+  "name": "Segretaria Digitale",
+  "short_name": "Segretaria",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "1024x1536",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#A52019"
+}
