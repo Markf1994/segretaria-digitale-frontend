@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaf
 import { createSegnalazione, listSegnalazioni, Segnalazione } from '../api/segnalazioni'
 import './ListPages.css'
 import Modal from '../components/ui/Modal'
+import Button from '../components/ui/button'
 
 const LocationMarker: React.FC<{
   position: [number, number] | null
@@ -29,7 +30,9 @@ const SegnalazioniPage: React.FC = () => {
   const [stato, setStato] = useState('')
   const [pos, setPos] = useState<[number, number] | null>(null)
   const [error, setError] = useState('')
-  const [showCompleted, setShowCompleted] = useState(false)
+  const [showClosed, setShowClosed] = useState(false)
+
+  const closedItems = items.filter(i => i.stato === 'Chiusa')
 
   useEffect(() => {
     const fetch = async () => {
@@ -96,15 +99,14 @@ const SegnalazioniPage: React.FC = () => {
           value={data}
           onChange={e => setData(e.target.value)}
         />
-        <label htmlFor="stato">Stato</label>
         <select
-          id="stato"
+          aria-label="Stato"
           value={stato}
           onChange={e => setStato(e.target.value)}
         >
           <option value="">Stato</option>
           <option value="Aperta">Aperta</option>
-          <option value="In corso">In corso</option>
+          <option value="In lavorazione">In lavorazione</option>
           <option value="Chiusa">Chiusa</option>
         </select>
         <textarea placeholder="Descrizione" value={descrizione} onChange={e => setDescrizione(e.target.value)} />
@@ -129,21 +131,33 @@ const SegnalazioniPage: React.FC = () => {
           </Marker>
         ))}
       </MapContainer>
-      <button type="button" onClick={() => setShowCompleted(true)}>
+      <Button type="button" onClick={() => setShowClosed(true)}>
         Completate
-      </button>
+      </Button>
       <Modal
-        open={showCompleted}
-        onClose={() => setShowCompleted(false)}
+        open={showClosed}
+        onClose={() => setShowClosed(false)}
         title="Segnalazioni completate"
       >
-        <ul>
-          {items
-            .filter(item => item.stato === 'Chiusa')
-            .map(item => (
-              <li key={item.id}>{item.tipo}</li>
+        <table className="item-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Data</th>
+              <th>Descrizione</th>
+            </tr>
+          </thead>
+          <tbody>
+            {closedItems.map(item => (
+              <tr key={item.id}>
+                <td>{item.tipo}</td>
+                <td>{new Date(item.data_segnalazione).toLocaleDateString()}</td>
+                <td>{item.descrizione}</td>
+              </tr>
             ))}
-        </ul>
+          </tbody>
+        </table>
+        <Button onClick={() => setShowClosed(false)}>Chiudi</Button>
       </Modal>
     </div>
   )
