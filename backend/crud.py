@@ -7,7 +7,7 @@ def get_segnalazioni(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_segnalazione(db: Session, segnalazione: schemas.SegnalazioneCreate):
-    db_segnalazione = models.Segnalazione(**segnalazione.dict())
+    db_segnalazione = models.Segnalazione(**segnalazione.model_dump(mode="json"))
     db.add(db_segnalazione)
     db.commit()
     db.refresh(db_segnalazione)
