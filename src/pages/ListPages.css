@@ -137,10 +137,6 @@
   text-align: center;
 }
 
-.wip-warning {
-  color: yellow;
-  font-size: 3rem;
-}
 
 @media (min-width: 601px) {
   .item-dropdown > summary {
