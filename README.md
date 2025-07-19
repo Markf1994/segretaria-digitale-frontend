@@ -170,7 +170,8 @@ Horizontal signage offers a **PDF anno** button that calls
 The `/segnalazioni` page lets users report issues on a map. Click anywhere on the
 map to place a marker, fill in the tipo, priorità, data and descrizione fields
 and submit the form. Existing segnalazioni are shown as markers with a popup
-containing the details.
+containing the details. Inside the popup you can change the segnalazione status
+using a drop-down menu.
 
 Leaflet's default CSS is imported in `src/main.tsx` so the map renders correctly.
 
