@@ -9,12 +9,14 @@ jest.mock('../../api/segnalazioni', () => ({
   __esModule: true,
   listSegnalazioni: jest.fn(),
   createSegnalazione: jest.fn(),
+  updateSegnalazione: jest.fn(),
 }))
 
 const mockedApi = api as jest.Mocked<typeof api>
 
 beforeEach(() => {
   mockedApi.listSegnalazioni.mockResolvedValue([])
+  mockedApi.updateSegnalazione.mockResolvedValue({} as any)
 })
 
 describe('SegnalazioniPage', () => {
@@ -138,5 +140,52 @@ describe('SegnalazioniPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /completate/i }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     expect(screen.getByText('Rifiuti')).toBeInTheDocument()
+  })
+
+  it('changes segnalazione status from popup', async () => {
+    mockedApi.listSegnalazioni.mockResolvedValue([
+      {
+        id: '1',
+        tipo: 'Buco',
+        priorita: 'Alta',
+        data: '2024-01-01',
+        descrizione: 'desc',
+        stato: 'aperta',
+        latitudine: 0,
+        longitudine: 0,
+      },
+    ])
+    mockedApi.updateSegnalazione.mockResolvedValue({
+      id: '1',
+      tipo: 'Buco',
+      priorita: 'Alta',
+      data: '2024-01-01',
+      descrizione: 'desc',
+      stato: 'chiusa',
+      latitudine: 0,
+      longitudine: 0,
+    } as any)
+
+    render(
+      <MemoryRouter initialEntries={["/segnalazioni"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/segnalazioni" element={<SegnalazioniPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    const map = await screen.findByTestId('map')
+    const marker = map.querySelector('.leaflet-marker-icon') as HTMLElement
+    fireEvent.click(marker)
+
+    const select = await screen.findByLabelText(/stato segnalazione/i)
+    await userEvent.selectOptions(select, 'chiusa')
+
+    expect(mockedApi.updateSegnalazione).toHaveBeenCalledWith('1', {
+      stato: 'chiusa',
+    })
+    expect((select as HTMLSelectElement).value).toBe('chiusa')
   })
 })

@@ -16,6 +16,7 @@ import {
   createSegnalazione,
   listSegnalazioni,
   Segnalazione,
+  updateSegnalazione
 } from '../api/segnalazioni'
 import './ListPages.css'
 import Modal from '../components/ui/Modal'
@@ -106,6 +107,17 @@ const SegnalazioniPage: React.FC = () => {
     }
   }
 
+  const onChangeStato = async (id: string, value: string) => {
+    try {
+      const res = await updateSegnalazione(id, {
+        stato: value as 'aperta' | 'in lavorazione' | 'chiusa'
+      })
+      setItems(items.map(i => (i.id === id ? { ...i, stato: res.stato } : i)))
+    } catch {
+      setError('Errore durante la modifica dello stato')
+    }
+  }
+
   return (
     <div className="list-page">
       <h2>Segnalazioni</h2>
@@ -170,7 +182,15 @@ const SegnalazioniPage: React.FC = () => {
               <br />
               Priorità: {item.priorita}
               <br />
-              Stato: {item.stato}
+              <select
+                aria-label="Stato segnalazione"
+                value={item.stato}
+                onChange={e => onChangeStato(item.id, e.target.value)}
+              >
+                <option value="aperta">Aperta</option>
+                <option value="in lavorazione">In lavorazione</option>
+                <option value="chiusa">Chiusa</option>
+              </select>
               <br />
               {new Date(item.data_segnalazione).toLocaleString()}
             </Popup>

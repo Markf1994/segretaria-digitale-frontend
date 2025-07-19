@@ -16,6 +16,10 @@ export interface Segnalazione {
   data_segnalazione?: string
 }
 
+export interface SegnalazioneUpdate {
+  stato?: 'aperta' | 'in lavorazione' | 'chiusa'
+}
+
 export interface SegnalazioneCreate {
   tipo: string
   priorita: number
@@ -33,3 +37,9 @@ export const createSegnalazione = (
   data: SegnalazioneCreate
 ): Promise<Segnalazione> =>
   api.post<Segnalazione>('/segnalazioni', data).then(r => r.data)
+
+export const updateSegnalazione = (
+  id: string,
+  data: SegnalazioneUpdate
+): Promise<Segnalazione> =>
+  api.patch<Segnalazione>(`/segnalazioni/${id}`, data).then(r => r.data)
