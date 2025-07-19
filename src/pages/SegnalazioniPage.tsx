@@ -216,6 +216,7 @@ const SegnalazioniPage: React.FC = () => {
               <th>Tipo</th>
               <th>Data</th>
               <th>Descrizione</th>
+              <th>Stato</th>
             </tr>
           </thead>
           <tbody>
@@ -224,6 +225,17 @@ const SegnalazioniPage: React.FC = () => {
                 <td>{item.tipo}</td>
                 <td>{new Date(item.data_segnalazione).toLocaleDateString()}</td>
                 <td>{item.descrizione}</td>
+                <td>
+                  <select
+                    aria-label="Stato segnalazione"
+                    value={item.stato}
+                    onChange={e => onChangeStato(item.id, e.target.value)}
+                  >
+                    <option value="aperta">Aperta</option>
+                    <option value="in lavorazione">In lavorazione</option>
+                    <option value="chiusa">Chiusa</option>
+                  </select>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -241,6 +253,7 @@ const SegnalazioniPage: React.FC = () => {
               <th>Tipo</th>
               <th>Data</th>
               <th>Descrizione</th>
+              <th>Stato</th>
             </tr>
           </thead>
           <tbody>
@@ -249,6 +262,17 @@ const SegnalazioniPage: React.FC = () => {
                 <td>{item.tipo}</td>
                 <td>{new Date(item.data_segnalazione).toLocaleDateString()}</td>
                 <td>{item.descrizione}</td>
+                <td>
+                  <select
+                    aria-label="Stato segnalazione"
+                    value={item.stato}
+                    onChange={e => onChangeStato(item.id, e.target.value)}
+                  >
+                    <option value="aperta">Aperta</option>
+                    <option value="in lavorazione">In lavorazione</option>
+                    <option value="chiusa">Chiusa</option>
+                  </select>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -266,6 +290,7 @@ const SegnalazioniPage: React.FC = () => {
               <th>Tipo</th>
               <th>Data</th>
               <th>Descrizione</th>
+              <th>Stato</th>
             </tr>
           </thead>
           <tbody>
@@ -274,6 +299,17 @@ const SegnalazioniPage: React.FC = () => {
                 <td>{item.tipo}</td>
                 <td>{new Date(item.data_segnalazione).toLocaleDateString()}</td>
                 <td>{item.descrizione}</td>
+                <td>
+                  <select
+                    aria-label="Stato segnalazione"
+                    value={item.stato}
+                    onChange={e => onChangeStato(item.id, e.target.value)}
+                  >
+                    <option value="aperta">Aperta</option>
+                    <option value="in lavorazione">In lavorazione</option>
+                    <option value="chiusa">Chiusa</option>
+                  </select>
+                </td>
               </tr>
             ))}
           </tbody>

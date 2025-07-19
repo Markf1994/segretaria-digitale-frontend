@@ -188,4 +188,48 @@ describe('SegnalazioniPage', () => {
     })
     expect((select as HTMLSelectElement).value).toBe('chiusa')
   })
+
+  it('changes segnalazione status from modal', async () => {
+    mockedApi.listSegnalazioni.mockResolvedValue([
+      {
+        id: '1',
+        tipo: 'Buco',
+        priorita: 'Alta',
+        data: '2024-01-01',
+        descrizione: 'desc',
+        stato: 'aperta',
+        latitudine: 0,
+        longitudine: 0,
+      },
+    ])
+    mockedApi.updateSegnalazione.mockResolvedValue({
+      id: '1',
+      tipo: 'Buco',
+      priorita: 'Alta',
+      data: '2024-01-01',
+      descrizione: 'desc',
+      stato: 'chiusa',
+      latitudine: 0,
+      longitudine: 0,
+    } as any)
+
+    render(
+      <MemoryRouter initialEntries={['/segnalazioni']}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/segnalazioni" element={<SegnalazioniPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /attive/i }))
+    const select = await screen.findByLabelText(/stato segnalazione/i)
+    await userEvent.selectOptions(select, 'chiusa')
+
+    expect(mockedApi.updateSegnalazione).toHaveBeenCalledWith('1', {
+      stato: 'chiusa',
+    })
+    expect((select as HTMLSelectElement).value).toBe('chiusa')
+  })
 })
