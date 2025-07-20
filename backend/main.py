@@ -99,11 +99,10 @@ def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     response_model=list[schemas.HorizontalSign],
 )
 def list_horizontal_signs(
-    plan: int | None = None,
     year: int | None = None,
     db: Session = Depends(get_db),
 ):
-    return crud.get_horizontal_signs(db, plan=plan, year=year)
+    return crud.get_horizontal_signs(db, year=year)
 
 
 @app.post(
