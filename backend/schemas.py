@@ -57,3 +57,30 @@ class LoginRequest(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+
+
+class HorizontalSignBase(BaseModel):
+    luogo: str
+    data: datetime
+    descrizione: str | None = None
+    quantita: int | None = None
+    piano_id: int | None = None
+
+
+class HorizontalSignCreate(HorizontalSignBase):
+    pass
+
+
+class HorizontalSignUpdate(BaseModel):
+    luogo: str | None = None
+    data: datetime | None = None
+    descrizione: str | None = None
+    quantita: int | None = None
+    piano_id: int | None = None
+
+
+class HorizontalSign(HorizontalSignBase):
+    id: int
+
+    class Config:
+        orm_mode = True
