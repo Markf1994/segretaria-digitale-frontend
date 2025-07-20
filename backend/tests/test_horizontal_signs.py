@@ -66,3 +66,23 @@ def test_horizontal_crud(tmp_path: _P):
     assert resp.status_code == 204
     resp = client.get("/inventario/signage-horizontal/")
     assert resp.json() == []
+
+
+def test_pdf_removed_after_response(tmp_path: _P) -> None:
+    app = get_test_app(tmp_path)
+
+    from backend import main as main_module
+
+    pdf_file = tmp_path / "out.pdf"
+
+    def fake_pdf(year: int, azienda: str, lavori: list[dict]):
+        pdf_file.write_text("dummy", encoding="utf-8")
+        return pdf_file
+
+    main_module.pdf.build_segnaletica_orizzontale_pdf = fake_pdf
+
+    client = TestClient(app)
+    resp = client.get("/inventario/signage-horizontal/pdf/", params={"year": 2024})
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/pdf"
+    assert not pdf_file.exists()
