@@ -183,12 +183,12 @@ The endpoint returns a PDF summarizing the imported interventions.
 
 ### API endpoints
 
-- `GET /inventario/signage-horizontal/` – list or filter records
-- `POST /inventario/signage-horizontal/` – create a record
-- `PUT /inventario/signage-horizontal/{id}/` – update
-- `DELETE /inventario/signage-horizontal/{id}/` – delete
-- `GET /inventario/signage-horizontal/years/` – list available years
-- `GET /inventario/signage-horizontal/pdf/` – annual PDF by year
+- `GET /segnaletica-orizzontale/` – list or filter records
+- `POST /segnaletica-orizzontale/` – create a record
+- `PUT /segnaletica-orizzontale/{id}/` – update
+- `DELETE /segnaletica-orizzontale/{id}/` – delete
+- `GET /segnaletica-orizzontale/years/` – list available years
+- `GET /segnaletica-orizzontale/pdf/` – annual PDF by year
 - `POST /segnaletica-orizzontale/import` – import a CSV file and return a PDF
 
 ### Generate PDFs
