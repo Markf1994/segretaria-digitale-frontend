@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
 import { deleteTodo } from '../api/todos';
 import './Dashboard.css';
-import { parseISO, endOfWeek, isWithinInterval } from 'date-fns';
+import { parseISO, addDays, isWithinInterval } from 'date-fns';
 import { DEFAULT_CALENDAR_ID, GOOGLE_COLOR_MAP } from '../constants';
 
 interface EventItem {
@@ -41,11 +41,11 @@ export default function Dashboard() {
   const [refreshCal, setRefreshCal] = useState(false);
 
   const today = new Date();
-  const weekEnd = endOfWeek(today, { weekStartsOn: 1 });
+  const nextWeek = addDays(today, 7);
   const upcomingEvents = events.filter(e => {
     if (e.source !== 'gc') return false;
     const date = parseISO(e.dateTime);
-    return isWithinInterval(date, { start: today, end: weekEnd });
+    return isWithinInterval(date, { start: today, end: nextWeek });
   });
   const dashboardTodos = todos;
 

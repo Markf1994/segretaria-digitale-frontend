@@ -51,7 +51,7 @@ describe('Dashboard', () => {
     expect(screen.getByRole('button', { name: /Aggiorna calendario/i })).toBeInTheDocument();
   });
 
-  it('shows Google events for the current week only', () => {
+  it('shows Google events for the next 7 days only', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-05-03T10:00:00Z'));
     localStorage.setItem(
       'events',
@@ -77,7 +77,7 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/GC next/)).not.toBeInTheDocument();
   });
 
-  it('hides past events from this week', () => {
+  it('hides past events from the next 7 days', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-05-03T10:00:00Z'));
     localStorage.setItem(
       'events',
