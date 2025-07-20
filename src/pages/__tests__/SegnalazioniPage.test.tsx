@@ -232,4 +232,35 @@ describe('SegnalazioniPage', () => {
     })
     expect((select as HTMLSelectElement).value).toBe('chiusa')
   })
+
+  it('shows success popup after segnalazione creation', async () => {
+    mockedApi.createSegnalazione.mockResolvedValue({
+      id: '1',
+      tipo: '',
+      priorita: '',
+      data: '',
+      descrizione: '',
+      lat: 0,
+      lng: 0,
+    } as any)
+
+    render(
+      <MemoryRouter initialEntries={['/segnalazioni']}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/segnalazioni" element={<SegnalazioniPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+    const map = screen.getByTestId('map')
+    fireEvent.click(map)
+
+    await userEvent.click(screen.getByRole('button', { name: /invia/i }))
+
+    expect(
+      await screen.findByText('Segnalazione inserita correttamente.')
+    ).toBeInTheDocument()
+  })
 })
