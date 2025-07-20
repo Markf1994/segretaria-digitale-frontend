@@ -158,12 +158,42 @@ The `/events` page shows the same calendar in **week** view.
 
 ## Inventory
 
-Visit `/inventario` to manage devices. Road signage is now available on the
-`/segnaletica` page. Items open in modal dialogs for editing and each record
+Visit `/inventario` to manage devices. Road signage entries live under the
+**Segnaletica** menu. Items open in modal dialogs for editing and each record
 includes a **quantità** field. The backend exposes Italian endpoints such as
 `/dispositivi`, `/segnaletica-temporanea` and `/segnaletica-verticale`.
-Horizontal signage offers a **PDF anno** button that calls
-`/segnaletica/pdf?year=YYYY` to download the annual plan.
+
+## Segnaletica
+
+The `/segnaletica` page shows vertical and temporary signage side by side in a
+single view. Each item opens in a modal for editing and the table stores the
+quantità for every entry. Horizontal signage uses a dedicated page at
+`/segnaletica-orizzontale` where the available years are listed.
+
+### Excel import
+
+The **Importa Excel** button accepts a spreadsheet with the header columns:
+
+```
+Luogo | Descrizione | Quantità | Data | Piano_ID
+```
+
+Dates must be in the `YYYY-MM-DD` format. Once uploaded the backend returns a PDF
+with the imported interventions.
+
+### API endpoints
+
+- `GET /inventario/signage-horizontal/` – list or filter records
+- `POST /inventario/signage-horizontal/` – create a record
+- `PUT /inventario/signage-horizontal/{id}/` – update
+- `DELETE /inventario/signage-horizontal/{id}/` – delete
+- `GET /inventario/signage-horizontal/years/` – list available years
+- `GET /inventario/signage-horizontal/pdf/` – annual PDF by year
+
+### Generate PDFs
+
+Open the **Segnaletica orizzontale** page, choose the year and click **PDF**.
+Importing an Excel file produces the same PDF automatically.
 
 ## Segnalazioni
 
