@@ -107,7 +107,7 @@ def read_users_me(current_user: schemas.User = Depends(get_current_user)):
 
 
 @app.get(
-    "/inventario/signage-horizontal/",
+    "/segnaletica-orizzontale/",
     response_model=list[schemas.HorizontalSign],
 )
 def list_horizontal_signs(
@@ -118,7 +118,7 @@ def list_horizontal_signs(
 
 
 @app.post(
-    "/inventario/signage-horizontal/",
+    "/segnaletica-orizzontale/",
     response_model=schemas.HorizontalSign,
 )
 def create_horizontal_sign(sign: schemas.HorizontalSignCreate, db: Session = Depends(get_db)):
@@ -126,7 +126,7 @@ def create_horizontal_sign(sign: schemas.HorizontalSignCreate, db: Session = Dep
 
 
 @app.put(
-    "/inventario/signage-horizontal/{sign_id}/",
+    "/segnaletica-orizzontale/{sign_id}/",
     response_model=schemas.HorizontalSign,
 )
 def update_horizontal_sign(sign_id: int, sign: schemas.HorizontalSignUpdate, db: Session = Depends(get_db)):
@@ -136,19 +136,19 @@ def update_horizontal_sign(sign_id: int, sign: schemas.HorizontalSignUpdate, db:
     return db_sign
 
 
-@app.delete("/inventario/signage-horizontal/{sign_id}/", status_code=204)
+@app.delete("/segnaletica-orizzontale/{sign_id}/", status_code=204)
 def delete_horizontal_sign(sign_id: int, db: Session = Depends(get_db)):
     if not crud.delete_horizontal_sign(db, sign_id):
         raise HTTPException(status_code=404, detail="Horizontal sign not found")
     return Response(status_code=204)
 
 
-@app.get("/inventario/signage-horizontal/years/", response_model=list[int])
+@app.get("/segnaletica-orizzontale/years/", response_model=list[int])
 def list_horizontal_years(db: Session = Depends(get_db)):
     return crud.get_horizontal_years(db)
 
 
-@app.get("/inventario/signage-horizontal/pdf/")
+@app.get("/segnaletica-orizzontale/pdf/")
 def horizontal_pdf(
     year: int,
     background_tasks: BackgroundTasks,

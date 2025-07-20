@@ -40,31 +40,31 @@ def test_horizontal_crud(tmp_path: _P):
         "descrizione": "Desc",
         "quantita": 1,
     }
-    resp = client.post("/inventario/signage-horizontal/", json=data)
+    resp = client.post("/segnaletica-orizzontale/", json=data)
     assert resp.status_code == 200
     sign = resp.json()
     sign_id = sign["id"]
 
-    resp = client.get("/inventario/signage-horizontal/")
+    resp = client.get("/segnaletica-orizzontale/")
     assert resp.status_code == 200
     assert len(resp.json()) == 1
 
     resp = client.put(
-        f"/inventario/signage-horizontal/{sign_id}/",
+        f"/segnaletica-orizzontale/{sign_id}/",
         json={"descrizione": "New"},
     )
     assert resp.json()["descrizione"] == "New"
 
-    resp = client.get("/inventario/signage-horizontal/years/")
+    resp = client.get("/segnaletica-orizzontale/years/")
     assert resp.json() == [2024]
 
-    resp = client.get("/inventario/signage-horizontal/pdf/", params={"year": 2024})
+    resp = client.get("/segnaletica-orizzontale/pdf/", params={"year": 2024})
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/pdf"
 
-    resp = client.delete(f"/inventario/signage-horizontal/{sign_id}/")
+    resp = client.delete(f"/segnaletica-orizzontale/{sign_id}/")
     assert resp.status_code == 204
-    resp = client.get("/inventario/signage-horizontal/")
+    resp = client.get("/segnaletica-orizzontale/")
     assert resp.json() == []
 
 
@@ -82,7 +82,7 @@ def test_pdf_removed_after_response(tmp_path: _P) -> None:
     main_module.pdf.build_segnaletica_orizzontale_pdf = fake_pdf
 
     client = TestClient(app)
-    resp = client.get("/inventario/signage-horizontal/pdf/", params={"year": 2024})
+    resp = client.get("/segnaletica-orizzontale/pdf/", params={"year": 2024})
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/pdf"
     assert not pdf_file.exists()
@@ -101,7 +101,7 @@ def test_import_signs(tmp_path: _P) -> None:
     assert resp.headers["content-type"] == "application/pdf"
 
     year = datetime.datetime.now().year
-    resp = client.get("/inventario/signage-horizontal/")
+    resp = client.get("/segnaletica-orizzontale/")
     data = resp.json()
     assert len(data) == 2
     for sign in data:
