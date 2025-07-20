@@ -24,6 +24,7 @@ const InventoryPage = React.lazy(() => import("./pages/InventoryPage"));
 const HorizontalSignagePage = React.lazy(() => import("./pages/HorizontalSignagePage"));
 const SegnalazioniPage = React.lazy(() => import("./pages/SegnalazioniPage"));
 const VerticalTempSignagePage = React.lazy(() => import("./pages/VerticalTempSignagePage"));
+const WorksPage = React.lazy(() => import("./pages/WorksPage"));
 
 
 const App: React.FC = () => {
@@ -48,6 +49,7 @@ const App: React.FC = () => {
           <Route path="/utilita" element={<UtilitaPage />} />
           <Route path="/pdfs" element={<PdfFilesPage />} />
           <Route path="/orari" element={<SchedulePage />} />
+          <Route path="/works" element={<WorksPage />} />
           <Route path="/determinazioni" element={<DeterminationsPage />} />
           <Route path="/inventario" element={<InventoryPage />} />
           <Route path="/segnaletica" element={<VerticalTempSignagePage />} />
