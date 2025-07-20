@@ -4,6 +4,7 @@ import os
 import sys
 from pathlib import Path as _P
 import importlib
+import datetime
 
 from fastapi.testclient import TestClient
 
@@ -85,3 +86,36 @@ def test_pdf_removed_after_response(tmp_path: _P) -> None:
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/pdf"
     assert not pdf_file.exists()
+
+
+def test_import_signs(tmp_path: _P) -> None:
+    app = get_test_app(tmp_path)
+    client = TestClient(app)
+
+    csv_data = "azienda,descrizione,anno\nACME,Linee,2024\nACME, ,2024\nACME,Altro,2024"
+    resp = client.post(
+        "/segnaletica-orizzontale/import",
+        files={"file": ("data.csv", csv_data, "text/csv")},
+    )
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/pdf"
+
+    year = datetime.datetime.now().year
+    resp = client.get("/inventario/signage-horizontal/")
+    data = resp.json()
+    assert len(data) == 2
+    for sign in data:
+        assert sign["luogo"] == "ACME"
+        assert sign["data"].startswith(str(year))
+
+
+def test_import_invalid_file(tmp_path: _P) -> None:
+    app = get_test_app(tmp_path)
+    client = TestClient(app)
+
+    csv_data = "foo,bar\n1,2"
+    resp = client.post(
+        "/segnaletica-orizzontale/import",
+        files={"file": ("data.csv", csv_data, "text/csv")},
+    )
+    assert resp.status_code == 400
