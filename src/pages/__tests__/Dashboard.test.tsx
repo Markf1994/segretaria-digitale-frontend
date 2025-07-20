@@ -77,5 +77,29 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/GC next/)).not.toBeInTheDocument();
   });
 
+  it('hides past events from this week', () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-05-03T10:00:00Z'));
+    localStorage.setItem(
+      'events',
+      JSON.stringify([
+        { id: '1', title: 'GC past', description: '', dateTime: '2023-05-01T10:00:00Z', isPublic: true, source: 'gc' },
+        { id: '2', title: 'GC future', description: '', dateTime: '2023-05-05T10:00:00Z', isPublic: true, source: 'gc' },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/GC future/)).toBeInTheDocument();
+    expect(screen.queryByText(/GC past/)).not.toBeInTheDocument();
+  });
+
 });
 
