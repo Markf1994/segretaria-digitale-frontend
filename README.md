@@ -181,7 +181,7 @@ azienda,descrizione
 
 The endpoint returns a PDF summarizing the imported interventions.
 
-### API endpoints
+### Segnaletica orizzontale endpoints
 
 - `GET /segnaletica-orizzontale/` – list or filter records
 - `POST /segnaletica-orizzontale/` – create a record
