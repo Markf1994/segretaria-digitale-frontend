@@ -1,4 +1,7 @@
 import os
+import csv
+from io import StringIO
+import datetime
 from fastapi import (
     Depends,
     FastAPI,
@@ -6,6 +9,8 @@ from fastapi import (
     status,
     Response,
     BackgroundTasks,
+    UploadFile,
+    File,
 )
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -154,6 +159,58 @@ def horizontal_pdf(
         {"descrizione": s.descrizione or "", "quantita": s.quantita or ""} for s in signs
     ]
     pdf_path = pdf.build_segnaletica_orizzontale_pdf(year, "Azienda", lavori)
+    background_tasks.add_task(pdf_path.unlink)
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename=f"segnaletica_orizzontale_{year}.pdf",
+    )
+
+
+@app.post("/segnaletica-orizzontale/import")
+def import_horizontal_signs(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    """Import horizontal signage from a CSV file and return a PDF summary."""
+    try:
+        content = file.file.read().decode("utf-8")
+    finally:
+        file.file.close()
+
+    reader = csv.DictReader(StringIO(content))
+    if not reader.fieldnames or not {"azienda", "descrizione"}.issubset(
+        {h.strip().lower() for h in reader.fieldnames}
+    ):
+        raise HTTPException(status_code=400, detail="Invalid CSV format")
+
+    year = datetime.datetime.now().year
+    lavori: list[dict] = []
+    azienda_name: str | None = None
+
+    for row in reader:
+        azienda = (row.get("azienda") or "").strip()
+        descrizione = (row.get("descrizione") or "").strip()
+        if not descrizione:
+            continue
+        if azienda_name is None:
+            azienda_name = azienda
+        sign = schemas.HorizontalSignCreate(
+            luogo=azienda,
+            data=datetime.datetime(year, 1, 1),
+            descrizione=descrizione,
+            quantita=None,
+        )
+        crud.create_horizontal_sign(db, sign)
+        lavori.append({"descrizione": descrizione, "quantita": ""})
+
+    if not lavori:
+        raise HTTPException(status_code=400, detail="No valid rows found")
+
+    pdf_path = pdf.build_segnaletica_orizzontale_pdf(
+        year, azienda_name or "", lavori
+    )
     background_tasks.add_task(pdf_path.unlink)
     return FileResponse(
         pdf_path,
