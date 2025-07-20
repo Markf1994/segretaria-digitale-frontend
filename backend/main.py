@@ -1,5 +1,12 @@
 import os
-from fastapi import Depends, FastAPI, HTTPException, status, Response
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    status,
+    Response,
+    BackgroundTasks,
+)
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -138,12 +145,17 @@ def list_horizontal_years(db: Session = Depends(get_db)):
 
 
 @app.get("/inventario/signage-horizontal/pdf/")
-def horizontal_pdf(year: int, db: Session = Depends(get_db)):
+def horizontal_pdf(
+    year: int,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
     signs = crud.get_horizontal_signs(db, year=year)
     lavori = [
         {"descrizione": s.descrizione or "", "quantita": s.quantita or ""} for s in signs
     ]
     pdf_path = pdf.build_segnaletica_orizzontale_pdf(year, "Azienda", lavori)
+    background_tasks.add_task(pdf_path.unlink)
     return FileResponse(
         pdf_path,
         media_type="application/pdf",
