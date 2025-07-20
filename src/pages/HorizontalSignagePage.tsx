@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './ListPages.css'
 import Modal from '../components/ui/Modal'
-import ImportHorizontalExcel from '../components/ImportHorizontalExcel'
+import ImportHorizontalCsv from '../components/ImportHorizontalCsv'
 import {
   listHorizontalYears,
   listHorizontalByYear,
@@ -97,7 +97,7 @@ const HorizontalSignagePage: React.FC = () => {
           </table>
         </Modal>
       </div>
-      <ImportHorizontalExcel />
+      <ImportHorizontalCsv />
     </div>
   )
 }
