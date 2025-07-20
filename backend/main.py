@@ -1,9 +1,10 @@
 import os
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Response
+from fastapi.responses import FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 import jwt
-from . import models, schemas, crud
+from . import models, schemas, crud, pdf
 from .database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -91,6 +92,63 @@ def read_segnalazioni(skip: int = 0, limit: int = 100, db: Session = Depends(get
 @app.get("/users/me", response_model=schemas.User)
 def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
+
+
+@app.get(
+    "/inventario/signage-horizontal/",
+    response_model=list[schemas.HorizontalSign],
+)
+def list_horizontal_signs(
+    plan: int | None = None,
+    year: int | None = None,
+    db: Session = Depends(get_db),
+):
+    return crud.get_horizontal_signs(db, plan=plan, year=year)
+
+
+@app.post(
+    "/inventario/signage-horizontal/",
+    response_model=schemas.HorizontalSign,
+)
+def create_horizontal_sign(sign: schemas.HorizontalSignCreate, db: Session = Depends(get_db)):
+    return crud.create_horizontal_sign(db, sign)
+
+
+@app.put(
+    "/inventario/signage-horizontal/{sign_id}/",
+    response_model=schemas.HorizontalSign,
+)
+def update_horizontal_sign(sign_id: int, sign: schemas.HorizontalSignUpdate, db: Session = Depends(get_db)):
+    db_sign = crud.update_horizontal_sign(db, sign_id, sign)
+    if db_sign is None:
+        raise HTTPException(status_code=404, detail="Horizontal sign not found")
+    return db_sign
+
+
+@app.delete("/inventario/signage-horizontal/{sign_id}/", status_code=204)
+def delete_horizontal_sign(sign_id: int, db: Session = Depends(get_db)):
+    if not crud.delete_horizontal_sign(db, sign_id):
+        raise HTTPException(status_code=404, detail="Horizontal sign not found")
+    return Response(status_code=204)
+
+
+@app.get("/inventario/signage-horizontal/years/", response_model=list[int])
+def list_horizontal_years(db: Session = Depends(get_db)):
+    return crud.get_horizontal_years(db)
+
+
+@app.get("/inventario/signage-horizontal/pdf/")
+def horizontal_pdf(year: int, db: Session = Depends(get_db)):
+    signs = crud.get_horizontal_signs(db, year=year)
+    lavori = [
+        {"descrizione": s.descrizione or "", "quantita": s.quantita or ""} for s in signs
+    ]
+    pdf_path = pdf.build_segnaletica_orizzontale_pdf(year, "Azienda", lavori)
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename=f"segnaletica_orizzontale_{year}.pdf",
+    )
 
 
 if __name__ == "__main__":
