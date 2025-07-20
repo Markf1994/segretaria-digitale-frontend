@@ -55,7 +55,7 @@ export const listHorizontalByYear = (
     })
     .then(r => r.data)
 
-export const importHorizontalExcel = (file: File): Promise<Blob> => {
+export const importHorizontalCsv = (file: File): Promise<Blob> => {
   const form = new FormData()
   form.append('file', file)
   return api

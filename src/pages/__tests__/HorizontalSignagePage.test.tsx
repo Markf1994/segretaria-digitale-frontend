@@ -72,6 +72,6 @@ describe('HorizontalSignagePage', () => {
 
   it('shows import button', async () => {
     renderPage()
-    expect(await screen.findByRole('button', { name: /importa excel/i })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /importa csv/i })).toBeInTheDocument()
   })
 })

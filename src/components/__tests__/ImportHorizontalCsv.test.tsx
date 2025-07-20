@@ -1,24 +1,24 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
-import ImportHorizontalExcel from '../ImportHorizontalExcel'
-import { importHorizontalExcel } from '../../api/horizontalSignage'
+import ImportHorizontalCsv from '../ImportHorizontalCsv'
+import { importHorizontalCsv } from '../../api/horizontalSignage'
 
 jest.mock('../../api/horizontalSignage', () => ({
   __esModule: true,
-  importHorizontalExcel: jest.fn(),
+  importHorizontalCsv: jest.fn(),
 }))
 
-const mockedImport = importHorizontalExcel as jest.MockedFunction<typeof importHorizontalExcel>
+const mockedImport = importHorizontalCsv as jest.MockedFunction<typeof importHorizontalCsv>
 
-describe('ImportHorizontalExcel', () => {
+describe('ImportHorizontalCsv', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
 
   it('calls API on file upload', async () => {
     mockedImport.mockResolvedValueOnce(new Blob())
-    const { container } = render(<ImportHorizontalExcel />)
+    const { container } = render(<ImportHorizontalCsv />)
     const input = container.querySelector('input[type="file"]') as HTMLInputElement
-    const file = new File(['1'], 'test.xlsx')
+    const file = new File(['1'], 'test.csv')
     fireEvent.change(input, { target: { files: [file] } })
 
     await waitFor(() => {

@@ -170,16 +170,16 @@ single view. Each item opens in a modal for editing and the table stores the
 quantità for every entry. Horizontal signage uses a dedicated page at
 `/segnaletica-orizzontale` where the available years are listed.
 
-### Excel import
+### CSV import
 
-The **Importa Excel** button accepts a spreadsheet with the header columns:
+The **Importa CSV** button uploads a file to `/segnaletica-orizzontale/import`.
+The CSV must include the header columns:
 
 ```
-Luogo | Descrizione | Quantità | Data | Piano_ID
+azienda,descrizione
 ```
 
-Dates must be in the `YYYY-MM-DD` format. Once uploaded the backend returns a PDF
-with the imported interventions.
+The endpoint returns a PDF summarizing the imported interventions.
 
 ### API endpoints
 
@@ -189,11 +189,12 @@ with the imported interventions.
 - `DELETE /inventario/signage-horizontal/{id}/` – delete
 - `GET /inventario/signage-horizontal/years/` – list available years
 - `GET /inventario/signage-horizontal/pdf/` – annual PDF by year
+- `POST /segnaletica-orizzontale/import` – import a CSV file and return a PDF
 
 ### Generate PDFs
 
 Open the **Segnaletica orizzontale** page, choose the year and click **PDF**.
-Importing an Excel file produces the same PDF automatically.
+Importing a CSV file produces the same PDF automatically.
 
 ## Segnalazioni
 

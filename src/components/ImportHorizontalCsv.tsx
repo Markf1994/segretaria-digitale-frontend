@@ -1,12 +1,12 @@
 import React, { useRef, useState, ChangeEvent } from 'react'
-import { importHorizontalExcel } from '../api/horizontalSignage'
+import { importHorizontalCsv } from '../api/horizontalSignage'
 import { getErrorDetail } from '../utils/errors'
 
 interface Props {
   onComplete?: (success: boolean) => void
 }
 
-export default function ImportHorizontalExcel({ onComplete }: Props) {
+export default function ImportHorizontalCsv({ onComplete }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
@@ -21,7 +21,7 @@ export default function ImportHorizontalExcel({ onComplete }: Props) {
     setBusy(true)
     setMessage('')
     try {
-      const pdfBlob = await importHorizontalExcel(file)
+      const pdfBlob = await importHorizontalCsv(file)
       const pdfURL = URL.createObjectURL(pdfBlob)
       const newWindow = window.open(pdfURL, '_blank')
       if (newWindow) {
@@ -35,7 +35,7 @@ export default function ImportHorizontalExcel({ onComplete }: Props) {
       onComplete?.(true)
     } catch (err) {
       const detail = await getErrorDetail(err)
-      console.error('ImportHorizontalExcel error →', detail)
+      console.error('ImportHorizontalCsv error →', detail)
       const msg = detail ? `Errore durante l'importazione del file: ${detail}` : 'Errore durante l\'importazione del file'
       setMessage(msg)
       onComplete?.(false)
@@ -63,7 +63,7 @@ export default function ImportHorizontalExcel({ onComplete }: Props) {
           zIndex: 1000,
         }}
       >
-        {busy ? 'Caricamento…' : 'Importa Excel'}
+        {busy ? 'Caricamento…' : 'Importa CSV'}
       </button>
       {message && (
         <p className={message.startsWith('Errore') ? 'error' : 'success-message'}>{message}</p>
@@ -71,7 +71,7 @@ export default function ImportHorizontalExcel({ onComplete }: Props) {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".xlsx, .xls"
+        accept=".csv"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
