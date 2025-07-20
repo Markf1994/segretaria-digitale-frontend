@@ -259,3 +259,13 @@
 .inventory-wrapper > .vertical-section {
   flex: 1 1 20rem;
 }
+
+/* Divider between temporary and vertical signage sections */
+.inventory-wrapper > .temp-section {
+  border-right: 3px solid #fff;
+  padding-right: 1rem;
+}
+
+.inventory-wrapper > .vertical-section {
+  padding-left: 1rem;
+}
