@@ -24,4 +24,3 @@ class HorizontalSign(Base):
     data = Column(DateTime, default=datetime.datetime.utcnow)
     descrizione = Column(String, nullable=True)
     quantita = Column(Integer, nullable=True)
-    piano_id = Column(Integer, nullable=True)

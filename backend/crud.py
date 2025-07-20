@@ -42,12 +42,8 @@ def create_horizontal_sign(db: Session, sign: schemas.HorizontalSignCreate):
     return db_sign
 
 
-def get_horizontal_signs(
-    db: Session, plan: int | None = None, year: int | None = None
-):
+def get_horizontal_signs(db: Session, year: int | None = None):
     query = db.query(models.HorizontalSign)
-    if plan is not None:
-        query = query.filter(models.HorizontalSign.piano_id == plan)
     if year is not None:
         start = datetime.datetime(year, 1, 1)
         end = datetime.datetime(year + 1, 1, 1)

@@ -38,7 +38,6 @@ def test_horizontal_crud(tmp_path: _P):
         "data": "2024-05-01T00:00:00",
         "descrizione": "Desc",
         "quantita": 1,
-        "piano_id": 2,
     }
     resp = client.post("/inventario/signage-horizontal/", json=data)
     assert resp.status_code == 200

@@ -6,7 +6,6 @@ export interface HorizontalSign {
   data: string
   descrizione?: string
   quantita?: number
-  piano_id?: string
 }
 
 export const listHorizontalSignage = (): Promise<HorizontalSign[]> =>
