@@ -250,6 +250,7 @@ To run the backend and frontend together during development use:
 npm run dev:full
 ```
 
+The previous `piani` and `items` tables are **deprecated**. After confirming the new unified table works well in production we will drop the old tables to keep the schema clean.
 
 ## License
 
