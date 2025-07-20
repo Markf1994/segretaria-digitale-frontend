@@ -50,6 +50,7 @@ const SegnalazioniPage: React.FC = () => {
   const [showClosed, setShowClosed] = useState(false)
   const [showActive, setShowActive] = useState(false)
   const [showProgress, setShowProgress] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const closedItems = items.filter(
     i => i.stato === 'chiusa' || i.stato === 'Chiusa'
@@ -102,6 +103,7 @@ const SegnalazioniPage: React.FC = () => {
       setDescrizione('')
       setStato('')
       setPos(null)
+      setShowSuccess(true)
     } catch {
       setError('Errore durante la creazione della segnalazione')
     }
@@ -315,6 +317,10 @@ const SegnalazioniPage: React.FC = () => {
           </tbody>
         </table>
         <Button onClick={() => setShowClosed(false)}>Chiudi</Button>
+      </Modal>
+      <Modal open={showSuccess} onClose={() => setShowSuccess(false)}>
+        <p>Segnalazione inserita correttamente.</p>
+        <Button onClick={() => setShowSuccess(false)}>Chiudi</Button>
       </Modal>
     </div>
   )
