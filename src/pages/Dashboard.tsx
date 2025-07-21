@@ -98,7 +98,12 @@ export default function Dashboard() {
                     }}
                   />
                   <strong>
-                    Evento: {e.title} – {new Date(e.dateTime).toLocaleString()}
+                    Evento: {e.title} –{' '}
+                    {new Date(e.dateTime).toLocaleDateString()} 🕒 ORE{' '}
+                    {new Date(e.dateTime).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </strong>
                 </li>
               ))}
