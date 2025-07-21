@@ -16,7 +16,7 @@ describe('Dashboard', () => {
   it('deletes todo from dashboard', async () => {
     localStorage.setItem(
       'todos',
-      JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01' }])
+      JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01', stato: 'ATTIVO' }])
     );
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
@@ -123,6 +123,29 @@ describe('Dashboard', () => {
 
     expect(screen.getByText(/Riunione/)).toBeInTheDocument();
     expect(screen.queryByText(/turno Mario/i)).not.toBeInTheDocument();
+  });
+
+  it('does not show archived todos', async () => {
+    localStorage.setItem(
+      'todos',
+      JSON.stringify([
+        { id: '1', text: 'Task', due: '2023-01-01', stato: 'ARCHIVIATO' },
+        { id: '2', text: 'Active', due: '2023-01-02', stato: 'ATTIVO' },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Active')).toBeInTheDocument();
+    expect(screen.queryByText('Task')).not.toBeInTheDocument();
   });
 
 });

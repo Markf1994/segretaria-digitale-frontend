@@ -4,6 +4,7 @@ export interface Todo {
   id: string
   descrizione: string
   scadenza: string        // ISO 8601: "2025-07-01T00:00:00"
+  stato: 'ATTIVO' | 'ARCHIVIATO'
 }
 
 export const listTodos = (): Promise<Todo[]> =>
