@@ -71,8 +71,9 @@ export default function Dashboard() {
               {dashboardTodos.map(t => (
                 <li key={t.id}>
                   <span>
-                    <strong>{t.text}</strong> –{' '}
-                    {new Date(t.due).toLocaleDateString()}
+                    <strong>
+                      {t.text} – {new Date(t.due).toLocaleDateString()}
+                    </strong>
                   </span>
                   <button
                     data-testid="dashboard-delete"
@@ -96,8 +97,9 @@ export default function Dashboard() {
                       backgroundColor: e.colorId ? GOOGLE_COLOR_MAP[e.colorId] : 'transparent',
                     }}
                   />
-                  Evento: <strong>{e.title}</strong> –{' '}
-                  {new Date(e.dateTime).toLocaleString()}
+                  <strong>
+                    Evento: {e.title} – {new Date(e.dateTime).toLocaleString()}
+                  </strong>
                 </li>
               ))}
               {!upcomingEvents.length && <li>Nessun evento imminente.</li>}
