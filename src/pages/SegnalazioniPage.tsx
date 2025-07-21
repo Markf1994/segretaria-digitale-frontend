@@ -22,6 +22,16 @@ import './ListPages.css'
 import Modal from '../components/ui/Modal'
 import Button from '../components/ui/button'
 
+const segButtonStyle: React.CSSProperties = {
+  backgroundColor: '#A52019',
+  color: '#fff',
+  padding: '1rem 1.25rem',
+  borderRadius: '9999px',
+  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+  fontSize: '1.1rem',
+  margin: '0.25rem',
+}
+
 const LocationMarker: React.FC<{
   position: [number, number] | null
   onChange: (p: [number, number]) => void
@@ -198,13 +208,13 @@ const SegnalazioniPage: React.FC = () => {
           </Marker>
         ))}
       </MapContainer>
-      <Button type="button" onClick={() => setShowActive(true)}>
+      <Button type="button" onClick={() => setShowActive(true)} style={segButtonStyle}>
         Attive
       </Button>
-      <Button type="button" onClick={() => setShowProgress(true)}>
+      <Button type="button" onClick={() => setShowProgress(true)} style={segButtonStyle}>
         In lavorazione
       </Button>
-      <Button type="button" onClick={() => setShowClosed(true)}>
+      <Button type="button" onClick={() => setShowClosed(true)} style={segButtonStyle}>
         Completate
       </Button>
       <Modal
