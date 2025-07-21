@@ -18,6 +18,7 @@ import useIsMobile from '../hooks/useIsMobile';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey, getUserId, decodeToken } from '../utils/auth';
 import { DEFAULT_CALENDAR_ID } from '../constants';
+import { parseISO, addDays, isWithinInterval } from 'date-fns';
 
 interface UnifiedEvent {
   id: string;
@@ -290,8 +291,15 @@ export default function EventsPage() {
   };
 
   const displayEvents = useMemo(() => {
+    const start = new Date();
+    const end = addDays(start, 15);
     const byKey = new Map<string, UnifiedEvent>();
     events.forEach(ev => {
+      if (/^turno/i.test(ev.title) || ev.title === 'Apertura ufficio al pubblico') {
+        return;
+      }
+      const date = parseISO(ev.dateTime);
+      if (!isWithinInterval(date, { start, end })) return;
       const key = `${ev.title}|${ev.dateTime}`;
       if (ev.source === 'db' || !byKey.has(key)) byKey.set(key, ev);
     });
