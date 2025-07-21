@@ -101,5 +101,29 @@ describe('Dashboard', () => {
     expect(screen.queryByText(/GC past/)).not.toBeInTheDocument();
   });
 
+  it('hides events that start with "turno"', () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-05-03T10:00:00Z'));
+    localStorage.setItem(
+      'events',
+      JSON.stringify([
+        { id: '1', title: 'turno Mario', description: '', dateTime: '2023-05-05T10:00:00Z', isPublic: true, source: 'gc' },
+        { id: '2', title: 'Riunione', description: '', dateTime: '2023-05-05T11:00:00Z', isPublic: true, source: 'gc' },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Riunione/)).toBeInTheDocument();
+    expect(screen.queryByText(/turno Mario/i)).not.toBeInTheDocument();
+  });
+
 });
 

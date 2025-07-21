@@ -44,6 +44,7 @@ export default function Dashboard() {
   const nextWeek = addDays(today, 7);
   const upcomingEvents = events.filter(e => {
     if (e.source !== 'gc') return false;
+    if (/^turno/i.test(e.title)) return false;
     const date = parseISO(e.dateTime);
     return isWithinInterval(date, { start: today, end: nextWeek });
   });
