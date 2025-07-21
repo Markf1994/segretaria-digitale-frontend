@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
-import { deleteTodo } from '../api/todos';
+import { deleteTodo, updateTodo } from '../api/todos';
 import './Dashboard.css';
 import { parseISO, addDays, isWithinInterval } from 'date-fns';
+import { withOffline } from '../utils/offline';
 import { DEFAULT_CALENDAR_ID, GOOGLE_COLOR_MAP } from '../constants';
 
 interface EventItem {
@@ -16,7 +17,7 @@ interface EventItem {
   source?: 'gc' | 'db';
   colorId?: string;
 }
-interface TodoItem { id: string; text: string; due: string; }
+interface TodoItem { id: string; text: string; due: string; stato: 'ATTIVO' | 'ARCHIVIATO'; }
 
 export default function Dashboard() {
   const token = useAuthStore(s => s.token);
@@ -48,7 +49,8 @@ export default function Dashboard() {
     const date = parseISO(e.dateTime);
     return isWithinInterval(date, { start: today, end: nextWeek });
   });
-  const dashboardTodos = todos;
+  const normalizedTodos = todos.map(t => ({ ...t, stato: t.stato || 'ATTIVO' }));
+  const dashboardTodos = normalizedTodos.filter(t => t.stato === 'ATTIVO');
 
   const onDelete = async (id: string): Promise<void> => {
     if (navigator.onLine) {
@@ -75,6 +77,23 @@ export default function Dashboard() {
                       {t.text} – {new Date(t.due).toLocaleDateString()}
                     </strong>
                   </span>
+                  <select
+                    value={t.stato}
+                    onChange={async e => {
+                      const stato = e.target.value as 'ATTIVO' | 'ARCHIVIATO';
+                      const res = await withOffline(
+                        () => updateTodo(t.id, { stato }),
+                        () => ({ id: t.id, descrizione: t.text, scadenza: t.due, stato })
+                      );
+                      const updated = todos.map(td =>
+                        td.id === t.id ? { ...td, stato: res.stato } : td
+                      );
+                      setTodos(updated);
+                    }}
+                  >
+                    <option value="ATTIVO">ATTIVO</option>
+                    <option value="ARCHIVIATO">ARCHIVIATO</option>
+                  </select>
                   <button
                     data-testid="dashboard-delete"
                     onClick={() => onDelete(t.id)}

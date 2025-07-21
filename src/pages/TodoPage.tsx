@@ -17,6 +17,7 @@ interface TodoItem {
   id: string;
   text: string;
   due: string;
+  stato: 'ATTIVO' | 'ARCHIVIATO';
   readonly?: boolean;
 }
 
@@ -45,7 +46,7 @@ export default function TodoPage() {
       if (navigator.onLine) {
         try {
           const data = await listTodos();
-          all = data.map(t => ({ id: t.id, text: t.descrizione, due: t.scadenza }));
+          all = data.map(t => ({ id: t.id, text: t.descrizione, due: t.scadenza, stato: t.stato }));
         } catch {
           // ignore and try local storage
         }
@@ -54,7 +55,12 @@ export default function TodoPage() {
       if (!all.length) {
         const stored = localStorage.getItem(storageKey);
         if (stored) {
-          try { all = JSON.parse(stored) as TodoItem[]; } catch {}
+          try {
+            all = (JSON.parse(stored) as TodoItem[]).map(t => ({
+              stato: 'stato' in t ? t.stato : 'ATTIVO',
+              ...t,
+            }));
+          } catch {}
         }
       }
 
@@ -83,6 +89,7 @@ export default function TodoPage() {
           id: `det-${d.id}`,
           text: `Determina ${d.numero}`,
           due: d.scadenza,
+          stato: 'ATTIVO',
           readonly: true,
         }));
 
@@ -104,25 +111,26 @@ export default function TodoPage() {
     if (!text || !due) return;
 
     if (edit) {
+      const original = todos.find(t => t.id === edit);
       const res = await withOffline(
         () => updateTodo(edit, { descrizione: text, scadenza: due }),
-        () => ({ id: edit, descrizione: text, scadenza: due })
+        () => ({ id: edit, descrizione: text, scadenza: due, stato: original?.stato || 'ATTIVO' })
       );
       const updated = todos.map(t =>
         t.id === edit
-          ? { id: res.id, text: res.descrizione, due: res.scadenza }
+          ? { id: res.id, text: res.descrizione, due: res.scadenza, stato: t.stato }
           : t
       );
       setTodos(updated);
       saveLocal(updated);
     } else {
       const res = await withOffline(
-        () => createTodo({ descrizione: text, scadenza: due }),
-        () => ({ id: Date.now().toString(), descrizione: text, scadenza: due })
+        () => createTodo({ descrizione: text, scadenza: due, stato: 'ATTIVO' }),
+        () => ({ id: Date.now().toString(), descrizione: text, scadenza: due, stato: 'ATTIVO' })
       );
       const updated = [
         ...todos,
-        { id: res.id, text: res.descrizione, due: res.scadenza },
+        { id: res.id, text: res.descrizione, due: res.scadenza, stato: res.stato },
       ];
       setTodos(updated);
       saveLocal(updated);
@@ -156,11 +164,13 @@ export default function TodoPage() {
           <tr>
             <th><strong>Attività</strong></th>
             <th><strong>Scadenza</strong></th>
+            <th><strong>Stato</strong></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {[...todos]
+            .filter(t => t.stato === 'ATTIVO')
             .sort((a, b) =>
               new Date(a.due).getTime() - new Date(b.due).getTime(),
             )
@@ -168,6 +178,28 @@ export default function TodoPage() {
             <tr key={t.id}>
               <td className="desc-cell">{t.text}</td>
               <td className="digit-font">{new Date(t.due).toLocaleDateString()}</td>
+              <td>
+                {!t.readonly && (
+                  <select
+                    value={t.stato}
+                    onChange={async e => {
+                      const stato = e.target.value as 'ATTIVO' | 'ARCHIVIATO';
+                      const res = await withOffline(
+                        () => updateTodo(t.id, { stato }),
+                        () => ({ id: t.id, descrizione: t.text, scadenza: t.due, stato })
+                      );
+                      const updated = todos.map(td =>
+                        td.id === t.id ? { ...td, stato: res.stato } : td
+                      );
+                      setTodos(updated);
+                      saveLocal(updated);
+                    }}
+                  >
+                    <option value="ATTIVO">ATTIVO</option>
+                    <option value="ARCHIVIATO">ARCHIVIATO</option>
+                  </select>
+                )}
+              </td>
               <td>
                 {!t.readonly && (
                   <>

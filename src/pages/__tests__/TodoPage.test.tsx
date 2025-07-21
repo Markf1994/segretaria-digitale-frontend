@@ -54,7 +54,7 @@ describe('TodoPage offline', () => {
   });
 
   it('edits todo offline', async () => {
-    localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01' }]));
+    localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01', stato: 'ATTIVO' }]));
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
     render(
@@ -80,7 +80,7 @@ describe('TodoPage offline', () => {
   });
 
   it('deletes todo offline', async () => {
-    localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01' }]));
+    localStorage.setItem('todos', JSON.stringify([{ id: '1', text: 'Task', due: '2023-01-01', stato: 'ATTIVO' }]));
     Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
 
     render(
@@ -136,5 +136,29 @@ describe('TodoPage offline', () => {
 
     expect(await screen.findByText('Determina 001')).toBeInTheDocument();
     expect(screen.queryByText('Determina 002')).not.toBeInTheDocument();
+  });
+
+  it('hides archived todos', async () => {
+    localStorage.setItem(
+      'todos',
+      JSON.stringify([
+        { id: '1', text: 'Task', due: '2023-01-01', stato: 'ARCHIVIATO' },
+        { id: '2', text: 'Task2', due: '2023-02-02', stato: 'ATTIVO' },
+      ])
+    );
+    Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
+
+    render(
+      <MemoryRouter initialEntries={["/todo"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/todo" element={<TodoPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Task2')).toBeInTheDocument();
+    expect(screen.queryByText('Task')).not.toBeInTheDocument();
   });
 });
