@@ -41,7 +41,7 @@ const Header: React.FC = () => {
           <Link to="/todo">📝 To-Do</Link>
           <Link to="/orari">🕑 Orari</Link>
           <Link to="/determinazioni">📄 Determine</Link>
-          <Link to="/inventario">📦 DISPOSITIVI PL</Link>
+          <Link to="/inventario">📦 Dispositivi PL</Link>
           <div className="dropdown" ref={dropRef}>
             <button
               type="button"
