@@ -142,8 +142,6 @@ export default function Dashboard() {
               ))}
               {!todaysEvents.length && <li>Nessun evento oggi.</li>}
             </ul>
-          </div>
-          <div className="notifications dashboard-section">
             <h2>Impegni dei prossimi giorni 📅</h2>
             <ul>
               {upcomingEvents.map(e => (
