@@ -3,6 +3,10 @@
   font-family: 'Cormorant Garamond', serif;
 }
 
+.dashboard .digit-font {
+  font-family: 'TikTok Sans', sans-serif;
+}
+
 .dashboard {
   display: flex;
   flex-direction: column;

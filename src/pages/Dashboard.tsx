@@ -72,7 +72,10 @@ export default function Dashboard() {
                 <li key={t.id}>
                   <span>
                     <strong>
-                      {t.text} – {new Date(t.due).toLocaleDateString()}
+                      {t.text} –{' '}
+                      <span className="digit-font">
+                        {new Date(t.due).toLocaleDateString()}
+                      </span>
                     </strong>
                   </span>
                   <button
@@ -99,11 +102,13 @@ export default function Dashboard() {
                   />
                   <strong>
                     Evento: {e.title} –{' '}
-                    {new Date(e.dateTime).toLocaleDateString()} 🕒 ORE{' '}
-                    {new Date(e.dateTime).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    <span className="digit-font">
+                      {new Date(e.dateTime).toLocaleDateString()} 🕒 ORE{' '}
+                      {new Date(e.dateTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
                   </strong>
                 </li>
               ))}
