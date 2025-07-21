@@ -97,7 +97,13 @@ export default function Dashboard() {
                     }}
                   />
                   Evento: <strong>{e.title}</strong> –{' '}
-                  {new Date(e.dateTime).toLocaleString()}
+                  {(() => {
+                    const dt = new Date(e.dateTime);
+                    return `${dt.toLocaleDateString('it-IT')}, ORE ${dt.toLocaleTimeString('it-IT', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}`;
+                  })()}
                 </li>
               ))}
               {!upcomingEvents.length && <li>Nessun evento imminente.</li>}
