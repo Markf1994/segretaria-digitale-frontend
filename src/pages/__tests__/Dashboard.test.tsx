@@ -51,11 +51,12 @@ describe('Dashboard', () => {
     expect(screen.getByRole('button', { name: /Aggiorna calendario/i })).toBeInTheDocument();
   });
 
-  it('shows Google events for the next 7 days only', () => {
+  it('shows today events and those for the next 7 days', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-05-03T10:00:00Z'));
     localStorage.setItem(
       'events',
       JSON.stringify([
+        { id: '0', title: 'Today', description: '', dateTime: '2023-05-03T12:00:00Z', isPublic: true, source: 'gc' },
         { id: '1', title: 'DB', description: '', dateTime: '2023-05-04T10:00:00Z', isPublic: true, source: 'db' },
         { id: '2', title: 'GC week', description: '', dateTime: '2023-05-05T10:00:00Z', isPublic: true, source: 'gc' },
         { id: '3', title: 'GC next', description: '', dateTime: '2023-05-12T10:00:00Z', isPublic: true, source: 'gc' },
@@ -72,6 +73,7 @@ describe('Dashboard', () => {
       </MemoryRouter>
     );
 
+    expect(screen.getByText(/Today/)).toBeInTheDocument();
     expect(screen.getByText(/GC week/)).toBeInTheDocument();
     expect(screen.queryByText(/DB/)).not.toBeInTheDocument();
     expect(screen.queryByText(/GC next/)).not.toBeInTheDocument();
