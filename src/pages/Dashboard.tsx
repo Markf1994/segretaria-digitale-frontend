@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/auth';
 import { getUserStorageKey } from '../utils/auth';
 import { deleteTodo, updateTodo } from '../api/todos';
 import './Dashboard.css';
-import { parseISO, addDays, isWithinInterval } from 'date-fns';
+import { parseISO, addDays, isWithinInterval, isSameDay } from 'date-fns';
 import { withOffline } from '../utils/offline';
 import { DEFAULT_CALENDAR_ID, GOOGLE_COLOR_MAP } from '../constants';
 
@@ -43,11 +43,20 @@ export default function Dashboard() {
 
   const today = new Date();
   const nextWeek = addDays(today, 7);
+  const todaysEvents = events.filter(e => {
+    if (e.source !== 'gc') return false;
+    if (/^turno/i.test(e.title)) return false;
+    const date = parseISO(e.dateTime);
+    return isSameDay(date, today);
+  });
   const upcomingEvents = events.filter(e => {
     if (e.source !== 'gc') return false;
     if (/^turno/i.test(e.title)) return false;
     const date = parseISO(e.dateTime);
-    return isWithinInterval(date, { start: today, end: nextWeek });
+    return (
+      !isSameDay(date, today) &&
+      isWithinInterval(date, { start: today, end: nextWeek })
+    );
   });
   const normalizedTodos = todos.map(t => ({ ...t, stato: t.stato || 'ATTIVO' }));
   const dashboardTodos = normalizedTodos.filter(t => t.stato === 'ATTIVO');
@@ -106,6 +115,32 @@ export default function Dashboard() {
                 </li>
               ))}
               {!dashboardTodos.length && <li>Nessun todo.</li>}
+            </ul>
+          </div>
+          <div className="notifications dashboard-section">
+            <h2>Impegni di oggi ⏰</h2>
+            <ul>
+              {todaysEvents.map(e => (
+                <li key={e.id}>
+                  <span
+                    className="event-color-dot"
+                    style={{
+                      backgroundColor: e.colorId ? GOOGLE_COLOR_MAP[e.colorId] : 'transparent',
+                    }}
+                  />
+                  <strong>
+                    Evento: {e.title} –{' '}
+                    <span className="digit-font">
+                      {new Date(e.dateTime).toLocaleDateString()} 🕒 ORE{' '}
+                      {new Date(e.dateTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  </strong>
+                </li>
+              ))}
+              {!todaysEvents.length && <li>Nessun evento oggi.</li>}
             </ul>
           </div>
           <div className="notifications dashboard-section">
