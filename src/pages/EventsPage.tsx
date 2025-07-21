@@ -294,8 +294,14 @@ export default function EventsPage() {
     const start = new Date();
     const end = addDays(start, 15);
     const byKey = new Map<string, UnifiedEvent>();
+    const hiddenTitles = [
+      'apertura ufficio al pubblico',
+      'spunta mercato bratto',
+      'spunta mercato castione capoluogo',
+    ];
     events.forEach(ev => {
-      if (/^turno/i.test(ev.title) || ev.title === 'Apertura ufficio al pubblico') {
+      const normalized = ev.title.trim().toLowerCase();
+      if (/^turno/.test(normalized) || hiddenTitles.includes(normalized)) {
         return;
       }
       const date = parseISO(ev.dateTime);
