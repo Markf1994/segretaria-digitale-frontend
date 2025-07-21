@@ -289,6 +289,15 @@ export default function EventsPage() {
     saveLocal(updated);
   };
 
+  const displayEvents = useMemo(() => {
+    const byKey = new Map<string, UnifiedEvent>();
+    events.forEach(ev => {
+      const key = `${ev.title}|${ev.dateTime}`;
+      if (ev.source === 'db' || !byKey.has(key)) byKey.set(key, ev);
+    });
+    return Array.from(byKey.values());
+  }, [events]);
+
   return (
     <div className="list-page">
         <h2>Eventi</h2>
@@ -342,8 +351,7 @@ export default function EventsPage() {
           </tr>
         </thead>
         <tbody>
-          {events
-            .filter(ev => ev.source === 'db')
+          {displayEvents
             .sort((a, b) =>
               new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
             )
