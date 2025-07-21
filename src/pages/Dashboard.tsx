@@ -97,7 +97,7 @@ export default function Dashboard() {
                     }}
                   />
                   Evento: <strong>{e.title}</strong> –{' '}
-                  {new Date(e.dateTime).toLocaleDateString()}
+                  {new Date(e.dateTime).toLocaleString()}
                 </li>
               ))}
               {!upcomingEvents.length && <li>Nessun evento imminente.</li>}
