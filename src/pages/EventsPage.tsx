@@ -108,6 +108,7 @@ export default function EventsPage() {
           const dbEvents: UnifiedEvent[] = db
             .filter(ev =>
               ev.is_public === true ||
+              ev.owner_id == null ||
               (currentUserId
                 ? String(ev.owner_id) === String(currentUserId)
                 : false)
@@ -137,6 +138,7 @@ export default function EventsPage() {
           const parsed = JSON.parse(stored) as UnifiedEvent[];
           const filtered = parsed.filter(ev =>
             ev.isPublic ||
+            ev.owner_id == null ||
             (currentUserId
               ? String(ev.owner_id) === String(currentUserId)
               : false)
