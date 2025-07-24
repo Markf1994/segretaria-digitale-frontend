@@ -59,7 +59,11 @@ export default function Dashboard() {
     );
   });
   const normalizedTodos = todos.map(t => ({ ...t, stato: t.stato || 'ATTIVO' }));
-  const dashboardTodos = normalizedTodos.filter(t => t.stato === 'ATTIVO');
+  const dashboardTodos = normalizedTodos
+    .filter(t => t.stato === 'ATTIVO')
+    .sort(
+      (a, b) => new Date(a.due).getTime() - new Date(b.due).getTime()
+    );
 
   const onDelete = async (id: string): Promise<void> => {
     if (navigator.onLine) {
