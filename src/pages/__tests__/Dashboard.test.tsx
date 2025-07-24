@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Dashboard from '../Dashboard';
 import PageTemplate from '../../components/PageTemplate';
@@ -148,6 +148,31 @@ describe('Dashboard', () => {
 
     expect(screen.getByText('Active')).toBeInTheDocument();
     expect(screen.queryByText('Task')).not.toBeInTheDocument();
+  });
+
+  it('orders todos by deadline', () => {
+    localStorage.setItem(
+      'todos',
+      JSON.stringify([
+        { id: '1', text: 'Due later', due: '2023-06-01', stato: 'ATTIVO' },
+        { id: '2', text: 'Due soon', due: '2023-05-01', stato: 'ATTIVO' },
+      ])
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<PageTemplate />}>
+            <Route path="/" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const todoList = screen.getAllByRole('list')[0];
+    const items = within(todoList).getAllByRole('listitem');
+    expect(items[0]).toHaveTextContent('Due soon');
+    expect(items[1]).toHaveTextContent('Due later');
   });
 
 });
